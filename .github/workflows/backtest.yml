@@ -3,6 +3,8 @@ on:
   workflow_dispatch:
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'results/**'
 permissions:
   contents: write
 jobs:
@@ -10,21 +12,29 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - run: pip install pandas numpy
-      - run: python download_data.py
-      - run: python backtest.py --data data --out results
-      - name: Commit results
+      - name: Checkout without marketplace actions
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" repo
+      - name: Install dependencies
+        run: |
+          cd repo
+          python3 -m pip install --upgrade pip
+          python3 -m pip install pandas numpy
+      - name: Download price data
+        run: |
+          cd repo
+          python3 download_data.py
+      - name: Run RFBC Phase 2 falsification pass
+        run: |
+          cd repo
+          python3 backtest.py --data data --out results
+      - name: Commit generated results
+        run: |
+          cd repo
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add results
           git diff --cached --quiet || git commit -m "Add RFBC Phase 2 backtest results"
           git push
-      - uses: actions/upload-artifact@v4
-        with:
-          name: rfbc-phase2-results
-          path: results/
