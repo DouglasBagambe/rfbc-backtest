@@ -1,16 +1,27 @@
 # RFBC Backtest
 
-Reproducible Phase 2 validation harness for the RFBC forex strategy.
+Reproducible Phase 2 falsification harness for frozen RFBC v1.0.
 
-## Scope
-- Pairs: EURUSD, GBPUSD, USDJPY, AUDUSD
-- Core stack: D1 regime, H4 setup, H1 confirmation
-- Lower-timeframe validation variants: M30 and M15
-- Baseline: 20-H4 breakout, ATR(14) stop at 1.5×ATR, 2.5R target
-- Conservative same-bar handling: if stop and target are both touched in one H4 candle, stop is assumed first
-- Costs: pair-specific spread assumptions + 0.2 pip slippage per side approximation
+## Frozen baseline
+- Pairs: EURUSD, GBPUSD, USDJPY
+- D1 regime: EMA50 above/below EMA200 plus EMA50 slope over 5 completed D1 candles
+- H4 trigger: strict 20-bar breakout using preceding completed H4 bars only
+- Signal candle true range <= 2.0x ATR(14)
+- Eligible UTC signal closes: Mon-Thu 08:00/12:00/16:00, Fri 08:00/12:00
+- Entry: next H4 open; cancel if adverse displacement exceeds 0.20x signal ATR
+- SL: 1.50x signal ATR
+- TP: 2.50R
+- Breakeven: only after a completed H4 close at or beyond +1.50R, then cost-adjusted BE
+- Friday flat cutoff: 16:00 UTC
+- No H1 confirmation in baseline
+- No D1 trend-invalidation exit
+- No unfrozen ATR-quantile volatility filter
+- No arbitrary 30-day time stop
 
-The lower-timeframe variants are tested separately and do not alter baseline RFBC results.
+## Execution variants
+M30 and M15 are tested separately as execution-resolution variants. They do not silently modify the frozen H4 RFBC baseline.
 
-## Important limitation
-The first pass is price-only. Historical high-impact news-event filtering and broker-specific tick/spread reconstruction are separate validation passes before any live PASS decision.
+## Scope of this dataset
+This is the first price-only empirical falsification pass, not final validation. Fixed spread/slippage approximations are used; historical news blocks/exits, historical bid/ask spreads, exact broker slippage, swap, missing-pair expansion, Dukascopy/HistData cross-validation and exact prop-firm adapters remain subsequent validation work if RFBC survives this pass.
+
+AUDUSD may be downloaded for later exploratory coverage but is not part of frozen RFBC v1.0 baseline performance.
