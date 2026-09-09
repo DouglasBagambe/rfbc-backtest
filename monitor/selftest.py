@@ -4,6 +4,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 import rfbc_monitor_multi as m
+import rfbc_monitor_live as live
 import telegram_notify as tg
 
 
@@ -76,12 +77,16 @@ def run() -> dict:
         text = tg.format_action(payload)
         _assert_contains(text, *expected)
 
+    decision_paths = live.run_operational_selftests()
+    assert decision_paths["ok"] is True
+
     return {
         "ok": True,
         "pairs": [m.PAIR_CONFIGS[p].symbol for p in ("USDJPY", "AUDJPY")],
         "risk_cap_pct": m.RISK_CAP_PCT,
         "aggregate_risk_cap_pct": m.AGGREGATE_RISK_CAP_PCT,
         "alert_actions_tested": [x[0]["action"] for x in samples],
+        "decision_path_selftest": decision_paths,
     }
 
 
