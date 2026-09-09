@@ -71,12 +71,13 @@ def validate_pair_alignment(bid: pd.DataFrame, ask: pd.DataFrame, pair: str) -> 
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--pairs",nargs="+",default=["USDJPY"])
-    ap.add_argument("--root",default="data_independent/dukascopy_h1")
+    ap.add_argument("--root")
     ap.add_argument("--out",default="data_independent/derived")
+    ap.add_argument("--source-interval", choices=("h1", "m15"), default="h1")
     ap.add_argument("--start",default="2013-01-01")
     ap.add_argument("--end",default="2026-09-01")
     args=ap.parse_args()
-    root=Path(args.root); out=Path(args.out); out.mkdir(parents=True,exist_ok=True)
+    root=Path(args.root or f"data_independent/dukascopy_{args.source_interval}"); out=Path(args.out); out.mkdir(parents=True,exist_ok=True)
     start=pd.Timestamp(args.start, tz="UTC"); end=pd.Timestamp(args.end, tz="UTC") + pd.Timedelta(days=1)
     rows=[]
     for pair in args.pairs:
@@ -84,8 +85,13 @@ def main():
         rows.append(validate_pair_alignment(bid,ask,pair))
         pairdir=out/pair; pairdir.mkdir(parents=True,exist_ok=True)
         for side,df in (("bid",bid),("ask",ask)):
-            df.to_csv(pairdir/f"{pair}_{side}_h1.csv")
-            resample_ohlc(df,"4h",expected_rows=4).to_csv(pairdir/f"{pair}_{side}_h4.csv")
+            if args.source_interval == "m15":
+                df.to_csv(pairdir/f"{pair}_{side}_m15.csv")
+                resample_ohlc(df,"1h",expected_rows=4).to_csv(pairdir/f"{pair}_{side}_h1.csv")
+                resample_ohlc(df,"4h",expected_rows=16).to_csv(pairdir/f"{pair}_{side}_h4.csv")
+            else:
+                df.to_csv(pairdir/f"{pair}_{side}_h1.csv")
+                resample_ohlc(df,"4h",expected_rows=4).to_csv(pairdir/f"{pair}_{side}_h4.csv")
             resample_d1(df).to_csv(pairdir/f"{pair}_{side}_d1.csv")
     pd.DataFrame(rows).to_csv(out/"dataset_manifest.csv",index=False)
     print(pd.DataFrame(rows).to_string(index=False))

@@ -30,6 +30,10 @@ SIDE_TO_CONST = {
     "bid": dukascopy_python.OFFER_SIDE_BID,
     "ask": dukascopy_python.OFFER_SIDE_ASK,
 }
+INTERVALS = {
+    "h1": dukascopy_python.INTERVAL_HOUR_1,
+    "m15": dukascopy_python.INTERVAL_MIN_15,
+}
 
 
 def month_starts(start: pd.Timestamp, end: pd.Timestamp):
@@ -53,7 +57,7 @@ def normalize_frame(df: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
-def fetch_month(pair: str, side: str, start: pd.Timestamp, end: pd.Timestamp, retries: int = 4) -> pd.DataFrame:
+def fetch_month(pair: str, side: str, interval: str, start: pd.Timestamp, end: pd.Timestamp, retries: int = 4) -> pd.DataFrame:
     inst = PAIR_TO_INSTRUMENT[pair]
     offer = SIDE_TO_CONST[side]
     s = start.to_pydatetime().replace(tzinfo=None)
@@ -63,7 +67,7 @@ def fetch_month(pair: str, side: str, start: pd.Timestamp, end: pd.Timestamp, re
         try:
             df = dukascopy_python.fetch(
                 instrument=inst,
-                interval=dukascopy_python.INTERVAL_HOUR_1,
+                interval=INTERVALS[interval],
                 offer_side=offer,
                 start=s,
                 end=e,
@@ -86,16 +90,17 @@ def main():
     ap.add_argument("--pairs", nargs="+", default=["USDJPY"], choices=PAIR_TO_INSTRUMENT.keys())
     ap.add_argument("--start", default="2013-01-01")
     ap.add_argument("--end", default="2026-09-01")
-    ap.add_argument("--out", default="data_independent/dukascopy_h1")
+    ap.add_argument("--interval", choices=INTERVALS, default="h1")
+    ap.add_argument("--out")
     ap.add_argument("--sleep", type=float, default=0.05)
     args = ap.parse_args()
 
     start = pd.Timestamp(args.start, tz="UTC")
     end = pd.Timestamp(args.end, tz="UTC") + pd.Timedelta(days=1)
-    outroot = Path(args.out)
+    outroot = Path(args.out or f"data_independent/dukascopy_{args.interval}")
     outroot.mkdir(parents=True, exist_ok=True)
 
-    print(f"Dukascopy H1 BID/ASK download: {start.date()} to {end.date()}")
+    print(f"Dukascopy {args.interval.upper()} BID/ASK download: {start.date()} to {end.date()}")
     for pair in args.pairs:
         for side in ("bid", "ask"):
             side_dir = outroot / pair / side
@@ -108,7 +113,7 @@ def main():
                     print("skip", path)
                     continue
                 print("fetch", pair, side, mstart.strftime("%Y-%m"), flush=True)
-                df = fetch_month(pair, side, mstart, mend)
+                df = fetch_month(pair, side, args.interval, mstart, mend)
                 df.to_csv(path, index=False)
                 time.sleep(args.sleep)
 
