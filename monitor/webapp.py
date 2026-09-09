@@ -95,22 +95,6 @@ def health():
     })
 
 
-@app.get("/telegram-test-9sep2026")
-def telegram_test():
-    now = datetime.now(timezone.utc).isoformat()
-    payload = {
-        "action": "TEST",
-        "symbol": "USDJPYc + AUDJPYc",
-        "volume": m.VOLUME,
-        "risk_cap_pct": m.RISK_CAP_PCT,
-        "aggregate_risk_cap_pct": m.AGGREGATE_RISK_CAP_PCT,
-        "reason": "Direct Render to Telegram delivery test. No trade.",
-        "checked_at": now,
-    }
-    ok, status = tg.send_action(payload)
-    return jsonify({"ok": ok, "telegram_configured": tg.configured(), "telegram_sent": ok, "telegram_status": status})
-
-
 @app.get("/check")
 def check():
     now = datetime.now(timezone.utc)
@@ -145,4 +129,15 @@ def check():
 
 
 if __name__ == "__main__":
+    test_payload = {
+        "action": "TEST",
+        "symbol": "USDJPYc + AUDJPYc",
+        "volume": m.VOLUME,
+        "risk_cap_pct": m.RISK_CAP_PCT,
+        "aggregate_risk_cap_pct": m.AGGREGATE_RISK_CAP_PCT,
+        "reason": "Direct Render to Telegram delivery test. No trade.",
+        "checked_at": datetime.now(timezone.utc).isoformat(),
+    }
+    ok, status = tg.send_action(test_payload)
+    print(f"RFBC_TELEGRAM_STARTUP_TEST configured={tg.configured()} sent={ok} status={status}", flush=True)
     app.run(host="0.0.0.0", port=10000)
