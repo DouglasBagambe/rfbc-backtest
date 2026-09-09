@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import argparse
-from datetime import datetime, timezone
 from pathlib import Path
 import time
 
@@ -15,6 +14,17 @@ PAIR_TO_INSTRUMENT = {
     "GBPUSD": instruments.INSTRUMENT_FX_MAJORS_GBP_USD,
     "USDJPY": instruments.INSTRUMENT_FX_MAJORS_USD_JPY,
     "AUDUSD": instruments.INSTRUMENT_FX_MAJORS_AUD_USD,
+    "NZDUSD": instruments.INSTRUMENT_FX_MAJORS_NZD_USD,
+    "USDCAD": instruments.INSTRUMENT_FX_MAJORS_USD_CAD,
+    "USDCHF": instruments.INSTRUMENT_FX_MAJORS_USD_CHF,
+    "EURJPY": instruments.INSTRUMENT_FX_CROSSES_EUR_JPY,
+    "GBPJPY": instruments.INSTRUMENT_FX_CROSSES_GBP_JPY,
+    "AUDJPY": instruments.INSTRUMENT_FX_CROSSES_AUD_JPY,
+    "CADJPY": instruments.INSTRUMENT_FX_CROSSES_CAD_JPY,
+    "CHFJPY": instruments.INSTRUMENT_FX_CROSSES_CHF_JPY,
+    "EURGBP": instruments.INSTRUMENT_FX_CROSSES_EUR_GBP,
+    "EURAUD": instruments.INSTRUMENT_FX_CROSSES_EUR_AUD,
+    "GBPAUD": instruments.INSTRUMENT_FX_CROSSES_GBP_AUD,
 }
 SIDE_TO_CONST = {
     "bid": dukascopy_python.OFFER_SIDE_BID,
@@ -81,7 +91,6 @@ def main():
     args = ap.parse_args()
 
     start = pd.Timestamp(args.start, tz="UTC")
-    # CLI end dates are inclusive calendar dates; fetch uses an exclusive end.
     end = pd.Timestamp(args.end, tz="UTC") + pd.Timedelta(days=1)
     outroot = Path(args.out)
     outroot.mkdir(parents=True, exist_ok=True)
@@ -98,7 +107,7 @@ def main():
                 if path.exists() and path.stat().st_size > 100:
                     print("skip", path)
                     continue
-                print("fetch", pair, side, mstart.strftime("%Y-%m"))
+                print("fetch", pair, side, mstart.strftime("%Y-%m"), flush=True)
                 df = fetch_month(pair, side, mstart, mend)
                 df.to_csv(path, index=False)
                 time.sleep(args.sleep)
