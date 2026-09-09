@@ -44,6 +44,10 @@ This overlay is an execution constraint, not part of frozen RFBC v1.0 strategy l
 
 Status: research-qualified, NOT YET broker-qualified.
 
+The required broker-validation procedure is documented at:
+
+`execution/RFBC_AUDJPYC_BROKER_VALIDATION_CHECKLIST.md`
+
 Before enabling AUDJPYc, collect and verify the same Exness symbol properties used for USDJPYc:
 
 - exact symbol name/suffix
@@ -62,11 +66,23 @@ Then calculate whether 0.01 volume can respect the account-risk cap for realisti
 
 ## Portfolio execution rule
 
-Both research-qualified pairs contain JPY. Their historical return and drawdown correlations are low, but simultaneous exposure can still create common JPY event risk.
+The deterministic live overlay is documented at:
 
-Before enabling both live, define and validate a deterministic portfolio overlay for simultaneous signals. The overlay must control total account risk without altering either pair's RFBC entry/exit rules.
+`execution/RFBC_V10_PORTFOLIO_RISK_OVERLAY.md`
 
-Until that overlay is finalized, do not assume two simultaneous 1% trades are automatically acceptable.
+Current small-account rules include:
+
+- 0.01 maximum live volume per RFBC position;
+- <= 1.00% risk for any individual entry;
+- <= 1.00% aggregate initial open risk across simultaneous RFBC positions;
+- chronological signal ordering;
+- for same-checkpoint signals that cannot both fit the aggregate cap, prefer the lower-risk trade; use USDJPYc only as the deterministic tie-break if risk is effectively equal;
+- daily new-entry stop at -1.00% realized RFBC loss;
+- weekly new-entry stop at -2.00% realized RFBC loss;
+- 3.00% high-water-mark drawdown warning/review;
+- 5.00% high-water-mark hard kill for new RFBC entries.
+
+Both research-qualified pairs contain JPY. Their historical return and drawdown correlations are low, but the aggregate risk cap remains necessary because common JPY event risk can still occur.
 
 ## Monitoring architecture
 
@@ -74,8 +90,11 @@ Target live architecture:
 
 1. deterministic RFBC code computes the signal and management state
 2. broker-specific execution layer calculates exact manual order fields and actual account risk
-3. alert layer tells the user exactly what to place/manage on MT5 mobile
-4. ChatGPT is oversight and diagnostics, not the critical strategy execution engine
+3. portfolio overlay applies individual, aggregate, daily, weekly and drawdown gates
+4. alert layer tells the user exactly what to place/manage on MT5 mobile
+5. ChatGPT is oversight and diagnostics, not the critical strategy execution engine
+
+Required alert vocabulary includes `TRADE`, `SKIP_RISK`, `SKIP_CHASE`, `SKIP_PORTFOLIO_RISK`, `MOVE_BE`, `FRIDAY_CLOSE`, `DAILY_STOP`, `WEEKLY_STOP`, `DRAWDOWN_WARNING`, `HARD_KILL`, `STALE`, and `ERROR`.
 
 The current live path should remain manual/semi-automatic until forward evidence and operational reliability justify anything more automated.
 
@@ -84,17 +103,19 @@ The current live path should remain manual/semi-automatic until forward evidence
 RFBC v1.0 should be considered operationally finalized for the current account only when all of the following are true:
 
 - USDJPYc broker properties remain verified/current
-- AUDJPYc broker properties are verified
+- AUDJPYc broker properties are verified and saved
 - current account equity is refreshed in the risk calculation
 - per-pair manual order calculations are deterministic and tested
-- simultaneous USDJPYc/AUDJPYc risk overlay is defined and tested
+- simultaneous USDJPYc/AUDJPYc risk overlay is implemented and tested
+- daily/weekly/drawdown state tracking is implemented and tested
 - monitoring/alert delivery is reliable enough for the H4 checkpoints and management events
 - Friday close and breakeven management are tested end to end
+- live journal/review procedure is active before the first forward trade
 
 ## Expansion policy
 
 Do not retune RFBC v1.0 to force more pairs.
 
-After this execution layer is complete, additional research may begin as a separate strategy family/version. Any new strategy should be developed and validated independently, ideally adding behavior that is meaningfully different from RFBC and improving portfolio diversification rather than duplicating the same breakout/JYP concentration.
+After this execution layer is complete, additional research may begin as a separate strategy family/version. Any new strategy should be developed and validated independently, ideally adding behavior that is meaningfully different from RFBC and improving portfolio diversification rather than duplicating the same breakout/JPY concentration.
 
 New strategies and new validated pair sets should remain separate from the frozen RFBC v1.0 evidence chain.
