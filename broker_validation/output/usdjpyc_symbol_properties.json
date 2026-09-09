@@ -1,7 +1,58 @@
 {
-  "capture_status": "PENDING_MT5_EXPORT",
-  "capture_note": "Run broker_validation/mql5/ExportUSDJPYcProperties.mq5 inside the connected MT5 terminal, then copy its Common/Files export over this file. No credentials or account ID belong here.",
-  "symbol": {},
-  "account": {},
-  "quote": {}
+  "capture_status": "PARTIAL_MT5_MOBILE_CAPTURE",
+  "capture_note": "Captured manually from MT5 mobile symbol Properties/Quotes screenshots on 2026-09-09. No credentials or account ID stored. Tick-value and account leverage/equity fields remain pending because they were not shown in the screenshots.",
+  "symbol": {
+    "name": "USDJPYc",
+    "description": "US Dollar vs Japanese Yen",
+    "category": "Majors",
+    "digits": 3,
+    "contract_size_usd": 1000,
+    "spread_mode": "floating",
+    "stops_level": 0,
+    "margin_currency": "USD",
+    "profit_currency": "JPY",
+    "calculation": "Forex",
+    "chart_mode": "By bid price",
+    "trade": "Full access",
+    "execution": "Market Execution",
+    "gtc_mode": "Good till cancelled",
+    "filling": ["Fill or Kill", "Immediate or Cancel"],
+    "minimal_volume": 0.01,
+    "maximal_volume": 200.0,
+    "volume_step": 0.01,
+    "swap_type": "In points",
+    "swap_long": 0.0,
+    "swap_short": -13.2,
+    "triple_swap_day": "Wednesday",
+    "sessions": {
+      "Sunday": "21:05-24:00",
+      "Monday": "00:00-24:00",
+      "Tuesday": "00:00-24:00",
+      "Wednesday": "00:00-24:00",
+      "Thursday": "00:00-24:00",
+      "Friday": "00:00-20:59",
+      "Saturday": "closed"
+    },
+    "tick_size": null,
+    "tick_value": null,
+    "tick_value_profit": null,
+    "tick_value_loss": null,
+    "freeze_level": null
+  },
+  "account": {
+    "currency": "USC",
+    "balance": 1001.0,
+    "equity": null,
+    "leverage": null,
+    "note": "Balance carried from prior user-provided MT5/Exness account screenshot; exact current equity/leverage not visible in the new symbol-property screenshots."
+  },
+  "quote": {
+    "snapshot_bid": 153.258,
+    "snapshot_ask": 153.268,
+    "snapshot_spread_price": 0.010,
+    "snapshot_spread_pips": 1.0,
+    "secondary_bid": 153.282,
+    "secondary_ask": 153.292,
+    "secondary_spread_pips": 1.0
+  }
 }
