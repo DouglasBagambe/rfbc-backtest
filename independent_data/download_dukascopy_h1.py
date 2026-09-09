@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 import time
+import re
 
 import pandas as pd
 import dukascopy_python
@@ -85,14 +86,37 @@ def fetch_month(pair: str, side: str, interval: str, start: pd.Timestamp, end: p
     raise RuntimeError(f"Failed {pair} {side} {start:%Y-%m}: {last_exc}")
 
 
+def checkpoint_valid(path: Path, start: pd.Timestamp, end: pd.Timestamp) -> bool:
+    """Reject empty, malformed, duplicate, or clearly truncated monthly checkpoints."""
+    try:
+        frame = pd.read_csv(path, usecols=["dt"])
+        dt = pd.to_datetime(frame["dt"], utc=True, errors="coerce")
+        return bool(
+            not frame.empty and not dt.isna().any() and not dt.duplicated().any()
+            and dt.min() < start + pd.Timedelta(days=8)
+            and dt.max() >= end - pd.Timedelta(days=8)
+        )
+    except Exception:
+        return False
+
+
+def available_memory_mb() -> float:
+    for line in Path("/proc/meminfo").read_text().splitlines():
+        if line.startswith("MemAvailable:"):
+            return int(re.findall(r"\d+", line)[0]) / 1024
+    return 0.0
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pairs", nargs="+", default=["USDJPY"], choices=PAIR_TO_INSTRUMENT.keys())
     ap.add_argument("--start", default="2013-01-01")
     ap.add_argument("--end", default="2026-09-01")
     ap.add_argument("--interval", choices=INTERVALS, default="h1")
+    ap.add_argument("--sides", nargs="+", choices=SIDE_TO_CONST, default=("bid", "ask"))
     ap.add_argument("--out")
     ap.add_argument("--sleep", type=float, default=0.05)
+    ap.add_argument("--min-available-mb", type=float, default=0.0)
     args = ap.parse_args()
 
     start = pd.Timestamp(args.start, tz="UTC")
@@ -102,16 +126,20 @@ def main():
 
     print(f"Dukascopy {args.interval.upper()} BID/ASK download: {start.date()} to {end.date()}")
     for pair in args.pairs:
-        for side in ("bid", "ask"):
+        for side in args.sides:
             side_dir = outroot / pair / side
             side_dir.mkdir(parents=True, exist_ok=True)
             for mstart, mend in month_starts(start, end):
                 if mend <= mstart:
                     continue
                 path = side_dir / f"{pair}_{side}_{mstart:%Y_%m}.csv"
-                if path.exists() and path.stat().st_size > 100:
+                if path.exists() and checkpoint_valid(path, mstart, mend):
                     print("skip", path)
                     continue
+                if path.exists():
+                    print("refetch invalid checkpoint", path, flush=True)
+                if args.min_available_mb and available_memory_mb() < args.min_available_mb:
+                    raise RuntimeError(f"Available RAM {available_memory_mb():.0f} MB below {args.min_available_mb:.0f} MB safety floor")
                 print("fetch", pair, side, mstart.strftime("%Y-%m"), flush=True)
                 df = fetch_month(pair, side, args.interval, mstart, mend)
                 df.to_csv(path, index=False)
