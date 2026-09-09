@@ -98,28 +98,29 @@ def run_pair(pair:str,data_dir:Path,p:Params):
 
         for j in range(ei,len(execdf)):
             b=execdf.iloc[j]
-            if b.dt.weekday()==4 and b.dt>=b.dt.normalize()+pd.Timedelta(hours=16):
-                exit_px=float(b.open)-side*(spread/2+slip); exit_dt=b.dt; reason="FRIDAY"; break
+            bar_dt=b["dt"]
+            if bar_dt.weekday()==4 and bar_dt>=bar_dt.normalize()+pd.Timedelta(hours=16):
+                exit_px=float(b.open)-side*(spread/2+slip); exit_dt=bar_dt; reason="FRIDAY"; break
             active_stop=be_stop if be_armed else stop
             stop_hit=(b.low<=active_stop) if side==1 else (b.high>=active_stop)
             tgt_hit=(b.high>=target) if side==1 else (b.low<=target)
             if stop_hit and tgt_hit:
-                exit_px=active_stop-side*(spread/2+slip); exit_dt=b.dt; reason="BE_both" if be_armed else "SL_both"; break
+                exit_px=active_stop-side*(spread/2+slip); exit_dt=bar_dt; reason="BE_both" if be_armed else "SL_both"; break
             if stop_hit:
-                exit_px=active_stop-side*(spread/2+slip); exit_dt=b.dt; reason="BE" if be_armed else "SL"; break
+                exit_px=active_stop-side*(spread/2+slip); exit_dt=bar_dt; reason="BE" if be_armed else "SL"; break
             if tgt_hit:
-                exit_px=target-side*(spread/2+slip); exit_dt=b.dt; reason="TP"; break
+                exit_px=target-side*(spread/2+slip); exit_dt=bar_dt; reason="TP"; break
 
             if p.execution_tf=="h4":
                 if side*(float(b.close)-entry)/risk_dist >= 1.50: be_armed=True
             else:
-                close_dt=b.dt + (pd.Timedelta(minutes=30) if p.execution_tf=="m30" else pd.Timedelta(minutes=15))
+                close_dt=bar_dt + (pd.Timedelta(minutes=30) if p.execution_tf=="m30" else pd.Timedelta(minutes=15))
                 if close_dt.hour in (0,4,8,12,16,20) and close_dt.minute==0 and side*(float(b.close)-entry)/risk_dist >= 1.50:
                     be_armed=True
 
         if exit_px is None: continue
         realized_r=side*(float(exit_px)-entry)/risk_dist
-        trades.append({"pair":pair,"signal_dt":signal_dt,"entry_dt":execdf.iloc[ei].dt,"exit_dt":exit_dt,
+        trades.append({"pair":pair,"signal_dt":signal_dt,"entry_dt":execdf.iloc[ei]["dt"],"exit_dt":exit_dt,
                        "side":side,"entry":entry,"signal_close":float(s.close),"stop":stop,"target":target,
                        "exit":float(exit_px),"reason":reason,"r":realized_r,"atr":float(s.atr),"execution_tf":p.execution_tf})
         next_allowed=exit_dt

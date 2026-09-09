@@ -1,0 +1,48 @@
+{
+  "frozen_baseline_pairs": [
+    "EURUSD",
+    "GBPUSD",
+    "USDJPY"
+  ],
+  "exploratory_data_pairs": [
+    "EURUSD",
+    "GBPUSD",
+    "USDJPY",
+    "AUDUSD"
+  ],
+  "params": {
+    "breakout_lookback": 20,
+    "atr_period": 14,
+    "atr_mult": 1.5,
+    "rr": 2.5,
+    "d1_fast": 50,
+    "d1_slow": 200,
+    "d1_slope_lookback": 5,
+    "extreme_candle_atr": 2.0,
+    "chase_atr": 0.2,
+    "risk_pct": 0.005,
+    "slippage_pips_per_side": 0.2,
+    "execution_tf": "h4"
+  },
+  "rules": {
+    "d1_regime": "EMA50/EMA200 plus EMA50 5-day slope, latest completed D1 only",
+    "signal": "strict 20-H4 breakout; true range <=2x ATR14; eligible UTC close only",
+    "entry": "next H4 open; cancel if adverse displacement >0.20x signal ATR",
+    "sl": "1.50x signal ATR",
+    "tp": "2.50R",
+    "breakeven": "after completed H4 close >= +1.50R, cost-adjusted BE",
+    "friday_cutoff": "16:00 UTC",
+    "h1_confirmation": false,
+    "d1_trend_invalidation_exit": false,
+    "unfrozen_volatility_quantile_filter": false,
+    "unfrozen_30_day_time_stop": false
+  },
+  "limitations": [
+    "price-only first-pass dataset; not final validation",
+    "news exits/blocks not modeled in this dataset",
+    "spread is fixed approximation, not historical bid/ask",
+    "slippage fixed approximation",
+    "exact prop firm reset/trailing/news rules not modeled",
+    "AUDUSD excluded from frozen baseline; may be tested later as an exploratory missing-pair candidate"
+  ]
+}

@@ -1,0 +1,4 @@
+risk_pct,prob_internal_5pct_halt,prob_generic_10pct_total_breach,prob_generic_5pct_daily_breach,final_median
+0.0025,0.9616,0.3518,0.8388,94587.12857021001
+0.005,0.9998,0.7258,0.985,89051.28773526175
+0.01,1.0,0.893,0.9986,77863.90265821137
