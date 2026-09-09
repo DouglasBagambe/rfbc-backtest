@@ -6,61 +6,91 @@ from datetime import datetime, timezone
 import pandas as pd
 from flask import Flask, jsonify
 
-import rfbc_monitor_exact as m
+import rfbc_monitor_multi as m
 import telegram_notify as tg
 
 app = Flask(__name__)
 
 # Best-effort duplicate suppression for repeated checks while this process lives.
-_last_alert_key = None
+_last_alert_keys: set[str] = set()
 
 
-def serialise_action(action):
-    if action is None:
-        return {"action": "NONE"}
-    out = {}
-    for k, v in action.items():
-        if isinstance(v, pd.Timestamp):
-            out[k] = v.isoformat()
-        elif hasattr(v, "item"):
-            try:
-                out[k] = v.item()
-            except Exception:
-                out[k] = str(v)
-        else:
-            out[k] = v
-    out["action"] = out.pop("kind", "UNKNOWN").upper()
+def serialise(value):
+    if isinstance(value, pd.Timestamp):
+        return value.isoformat()
+    if isinstance(value, dict):
+        return {k: serialise(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [serialise(v) for v in value]
+    if hasattr(value, "item"):
+        try:
+            return value.item()
+        except Exception:
+            return str(value)
+    return value
+
+
+def flatten_result(pair_result: dict, checked_at: str) -> dict:
+    action = serialise(pair_result.get("action") or {"kind": "none"})
+    out = {
+        "ok": True,
+        "pair": pair_result["pair"],
+        "symbol": pair_result["symbol"],
+        "volume": m.VOLUME,
+        "risk_cap_pct": m.RISK_CAP_PCT,
+        "aggregate_risk_cap_pct": m.AGGREGATE_RISK_CAP_PCT,
+        "last_h4_close": serialise(pair_result.get("last_h4_close")),
+        "checked_at": checked_at,
+        **{k: v for k, v in action.items() if k != "kind"},
+        "action": str(action.get("kind", "none")).upper(),
+    }
+    if pair_result.get("open_trade"):
+        out["open_trade"] = serialise(pair_result["open_trade"])
     return out
 
 
-def alert_key(result):
+def alert_key(result: dict) -> str:
     return "|".join(
         str(result.get(k, ""))
         for k in ("action", "symbol", "signal_dt", "entry_dt", "last_h4_close", "reason")
     )
 
 
-def maybe_send_alert(result):
-    global _last_alert_key
-    if result.get("action") == "NONE":
+def maybe_send_alert(result: dict) -> dict:
+    action = result.get("action", "NONE")
+    if action in ("NONE", "OPEN_TRADE"):
         return {"telegram_configured": tg.configured(), "telegram_sent": False, "telegram_status": "not_needed"}
 
     key = alert_key(result)
-    if key == _last_alert_key:
+    if key in _last_alert_keys:
         return {"telegram_configured": tg.configured(), "telegram_sent": False, "telegram_status": "duplicate_suppressed"}
 
     ok, status = tg.send_action(result)
     if ok:
-        _last_alert_key = key
+        _last_alert_keys.add(key)
     return {"telegram_configured": tg.configured(), "telegram_sent": ok, "telegram_status": status}
+
+
+@app.get("/")
+def root():
+    return jsonify({
+        "ok": True,
+        "service": "rfbc-two-pair-monitor",
+        "pairs": [cfg.symbol for cfg in m.PAIR_CONFIGS.values()],
+        "logic": "frozen_rfbc_v1_exact",
+    })
 
 
 @app.get("/health")
 def health():
     return jsonify({
         "ok": True,
-        "service": "rfbc-usdjpy-monitor",
-        "logic": "exact_external_v1",
+        "service": "rfbc-two-pair-monitor",
+        "pairs": [cfg.symbol for cfg in m.PAIR_CONFIGS.values()],
+        "logic": "frozen_rfbc_v1_exact",
+        "equity_usd": float(__import__("os").environ.get("RFBC_EQUITY_USD", "10.01")),
+        "risk_cap_pct": m.RISK_CAP_PCT,
+        "aggregate_risk_cap_pct": m.AGGREGATE_RISK_CAP_PCT,
         "telegram_configured": tg.configured(),
     })
 
@@ -68,54 +98,31 @@ def health():
 @app.get("/check")
 def check():
     now = datetime.now(timezone.utc)
+    checked_at = now.isoformat()
     try:
-        h4, ask4, h1 = m.build_signal_frame(now)
-        last_close = pd.Timestamp(h4.iloc[-1].close_dt)
-        freshness = pd.Timestamp(now) - last_close
-        if freshness > pd.Timedelta(minutes=20):
-            result = {
-                "ok": True,
-                "action": "STALE",
-                "reason": "no_fresh_completed_h4_bar",
-                "last_h4_close": last_close.isoformat(),
-                "checked_at": now.isoformat(),
-                "symbol": m.SYMBOL,
-                "volume": m.VOLUME,
-                "risk_cap_pct": m.RISK_CAP_PCT,
-            }
+        raw = m.evaluate_all(now)
+        results = []
+        for item in raw:
+            result = flatten_result(item, checked_at)
             result.update(maybe_send_alert(result))
-            return jsonify(result)
+            results.append(result)
 
-        trade = m.candidate_trade(h4, now)
-        event = m.infer_open_trade_and_event(h4, ask4, h1, now)
-
-        if event and event.get("kind") == "friday_close":
-            result = serialise_action(event)
-        elif event and event.get("kind") == "move_be":
-            result = serialise_action(event)
-        elif trade:
-            result = serialise_action(trade)
-        else:
-            result = {"action": "NONE"}
-
-        result.update({
+        actionable = [r for r in results if r["action"] not in ("NONE", "OPEN_TRADE")]
+        return jsonify({
             "ok": True,
-            "symbol": m.SYMBOL,
-            "volume": m.VOLUME,
-            "risk_cap_pct": m.RISK_CAP_PCT,
-            "last_h4_close": last_close.isoformat(),
-            "checked_at": now.isoformat(),
+            "service": "rfbc-two-pair-monitor",
+            "checked_at": checked_at,
+            "results": results,
+            "actionable": actionable,
         })
-        result.update(maybe_send_alert(result))
-        return jsonify(result)
     except Exception as exc:
         result = {
             "ok": False,
             "action": "ERROR",
             "error_type": type(exc).__name__,
             "error": str(exc),
-            "checked_at": now.isoformat(),
-            "symbol": getattr(m, "SYMBOL", "USDJPYc"),
+            "checked_at": checked_at,
+            "symbol": "PORTFOLIO",
         }
         result.update(maybe_send_alert(result))
         return jsonify(result), 500
