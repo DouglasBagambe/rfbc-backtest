@@ -1,0 +1,2 @@
+h1_first,h1_last,h1_bid_ask_exact_alignment,h1_duplicate_timestamps,crossed_open_spreads,h4_allowed_utc_opens,d1_midnight_utc,missing_expected_h1_bars
+2013-01-01 00:00:00+00:00,2026-09-01 21:00:00+00:00,True,0,0,True,True,595

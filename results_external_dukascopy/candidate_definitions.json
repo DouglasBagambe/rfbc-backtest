@@ -1,0 +1,20 @@
+[
+  {
+    "code": "A_frozen_usdjpy_v10",
+    "breakout_lookback": 20,
+    "atr_mult": 1.5,
+    "rr": 2.5
+  },
+  {
+    "code": "B_l25_atr150_rr300",
+    "breakout_lookback": 25,
+    "atr_mult": 1.5,
+    "rr": 3.0
+  },
+  {
+    "code": "C_l25_atr175_rr250",
+    "breakout_lookback": 25,
+    "atr_mult": 1.75,
+    "rr": 2.5
+  }
+]

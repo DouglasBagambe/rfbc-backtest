@@ -6,7 +6,7 @@ from pathlib import Path
 import pandas as pd
 
 
-def load_side(root: Path, pair: str, side: str) -> pd.DataFrame:
+def load_side(root: Path, pair: str, side: str, start: pd.Timestamp, end: pd.Timestamp) -> pd.DataFrame:
     files = sorted((root / pair / side).glob("*.csv"))
     if not files:
         raise FileNotFoundError(f"No {pair} {side} files under {root}")
@@ -20,14 +20,35 @@ def load_side(root: Path, pair: str, side: str) -> pd.DataFrame:
     if not chunks:
         raise RuntimeError(f"No usable rows for {pair} {side}")
     out=pd.concat(chunks,ignore_index=True).sort_values("dt").drop_duplicates("dt")
+    out=out[(out["dt"] >= start) & (out["dt"] < end)]
     return out.set_index("dt")
 
 
-def resample_ohlc(df: pd.DataFrame, rule: str) -> pd.DataFrame:
+def resample_ohlc(df: pd.DataFrame, rule: str, expected_rows: int | None = None) -> pd.DataFrame:
     agg={"open":"first","high":"max","low":"min","close":"last"}
     if "volume" in df.columns: agg["volume"]="sum"
-    out=df.resample(rule,label="left",closed="left",origin="epoch").agg(agg)
+    grouped=df.resample(rule,label="left",closed="left")
+    out=grouped.agg(agg)
+    if expected_rows is not None:
+        out=out[grouped["open"].count().eq(expected_rows)]
     return out.dropna(subset=["open","high","low","close"])
+
+
+def resample_d1(df: pd.DataFrame) -> pd.DataFrame:
+    """Build forex D1 bars on UTC weekdays; do not turn Sunday fragments into EMA days."""
+    agg={"open":"first","high":"max","low":"min","close":"last"}
+    if "volume" in df.columns: agg["volume"]="sum"
+    grouped=df.resample("1D",label="left",closed="left")
+    out=grouped.agg(agg).dropna(subset=["open","high","low","close"])
+    counts=grouped["open"].count()
+    out=out[out.index.weekday < 5]
+    # The requested end date can end before its final H1 bucket closes.
+    if not out.empty:
+        last=out.index[-1]
+        expected=21 if last.weekday()==4 else 24
+        if counts.loc[last] < expected:
+            out=out.iloc[:-1]
+    return out
 
 
 def validate_pair_alignment(bid: pd.DataFrame, ask: pd.DataFrame, pair: str) -> dict:
@@ -52,17 +73,20 @@ def main():
     ap.add_argument("--pairs",nargs="+",default=["USDJPY"])
     ap.add_argument("--root",default="data_independent/dukascopy_h1")
     ap.add_argument("--out",default="data_independent/derived")
+    ap.add_argument("--start",default="2013-01-01")
+    ap.add_argument("--end",default="2026-09-01")
     args=ap.parse_args()
     root=Path(args.root); out=Path(args.out); out.mkdir(parents=True,exist_ok=True)
+    start=pd.Timestamp(args.start, tz="UTC"); end=pd.Timestamp(args.end, tz="UTC") + pd.Timedelta(days=1)
     rows=[]
     for pair in args.pairs:
-        bid=load_side(root,pair,"bid"); ask=load_side(root,pair,"ask")
+        bid=load_side(root,pair,"bid",start,end); ask=load_side(root,pair,"ask",start,end)
         rows.append(validate_pair_alignment(bid,ask,pair))
         pairdir=out/pair; pairdir.mkdir(parents=True,exist_ok=True)
         for side,df in (("bid",bid),("ask",ask)):
             df.to_csv(pairdir/f"{pair}_{side}_h1.csv")
-            resample_ohlc(df,"4h").to_csv(pairdir/f"{pair}_{side}_h4.csv")
-            resample_ohlc(df,"1D").to_csv(pairdir/f"{pair}_{side}_d1.csv")
+            resample_ohlc(df,"4h",expected_rows=4).to_csv(pairdir/f"{pair}_{side}_h4.csv")
+            resample_d1(df).to_csv(pairdir/f"{pair}_{side}_d1.csv")
     pd.DataFrame(rows).to_csv(out/"dataset_manifest.csv",index=False)
     print(pd.DataFrame(rows).to_string(index=False))
 

@@ -23,9 +23,8 @@ SIDE_TO_CONST = {
 
 
 def month_starts(start: pd.Timestamp, end: pd.Timestamp):
-    cur = start.to_period("M").start_time
-    last = end.to_period("M").start_time
-    while cur <= last:
+    cur = start.normalize().replace(day=1)
+    while cur < end:
         nxt = cur + pd.offsets.MonthBegin(1)
         yield cur, min(nxt, end)
         cur = nxt
@@ -61,7 +60,10 @@ def fetch_month(pair: str, side: str, start: pd.Timestamp, end: pd.Timestamp, re
                 max_retries=3,
                 debug=False,
             )
-            return normalize_frame(df)
+            out = normalize_frame(df)
+            if out.empty:
+                raise RuntimeError(f"Empty response for {pair} {side} {start:%Y-%m}")
+            return out
         except Exception as exc:
             last_exc = exc
             if attempt < retries:
@@ -79,7 +81,8 @@ def main():
     args = ap.parse_args()
 
     start = pd.Timestamp(args.start, tz="UTC")
-    end = pd.Timestamp(args.end, tz="UTC")
+    # CLI end dates are inclusive calendar dates; fetch uses an exclusive end.
+    end = pd.Timestamp(args.end, tz="UTC") + pd.Timedelta(days=1)
     outroot = Path(args.out)
     outroot.mkdir(parents=True, exist_ok=True)
 
@@ -97,10 +100,7 @@ def main():
                     continue
                 print("fetch", pair, side, mstart.strftime("%Y-%m"))
                 df = fetch_month(pair, side, mstart, mend)
-                if not df.empty:
-                    df.to_csv(path, index=False)
-                else:
-                    path.write_text("dt,open,high,low,close,volume\n")
+                df.to_csv(path, index=False)
                 time.sleep(args.sleep)
 
     print("done")
