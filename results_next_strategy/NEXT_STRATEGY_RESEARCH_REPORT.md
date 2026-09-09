@@ -1,0 +1,25 @@
+# Next Strategy Research Report
+
+## Scope
+
+RFBC was not modified. Track 1 independent RFBC replication is **not completed**: HistData exposes independent M1 bid-price archives, but a reliable multi-year download/resampling path was not technically practical in this constrained run. RFBC survival is therefore **UNKNOWN**, not YES.
+
+## Stage A/B prototype screen
+
+```csv
+family,rationale,promoted_after_validation,trades,expectancy_r,profit_factor,win_rate,max_dd_pct,return_pct,cagr,trades_per_month,longest_loss_streak,development_expectancy_r,validation_expectancy_r,holdout_expectancy_r
+trend_pullback,D1 trend; controlled H4 pullback to EMA20 with a same-bar continuation close.,False,1776,-0.030438420013002312,0.9395772782256908,0.35867117117117114,0.3776814090922662,-0.258690451171093,-0.034708966705034094,17.24271844660194,14,-0.0861596675595381,0.006650175332465359,0.002423755960232464
+breakout_retest,"D1 trend; a preceding H4 range breakout followed by a successful retest, not a raw breakout.",False,498,-0.12622301883804599,0.7592476232702512,0.3313253012048193,0.30515684982041014,-0.2749661491729952,-0.037424425942134465,4.882352941176471,15,-0.14155055050955417,-0.051098542134137157,-0.19344204096985676
+mtf_momentum,D1 regime plus aligned H4 EMA20/EMA50 momentum and a three-bar expansion.,False,1763,-0.02987768365847136,0.9389654185160331,0.36585365853658536,0.38872048103564827,-0.25240995237315267,-0.033736716782102105,17.116504854368934,13,-0.06358670090170308,-0.05406504981588684,0.050461371223649555
+contraction_expansion,D1 trend; a low-volatility H4 regime followed by a range expansion and breakout.,False,245,-0.06379098489511416,0.8756372638184101,0.3224489795918367,0.13234174816069777,-0.07880308515533452,-0.009950249900617547,2.45,13,-0.0890105127585042,-0.06627822101532463,-0.027599231250388757
+range_mean_reversion,Low D1 trend separation; H4 extension from its mean followed by a reversal candle.,False,351,-0.10269186063206263,0.7691194329605402,0.41025641025641024,0.18138102539585577,-0.1677925026926882,-0.022231309980917824,3.5454545454545454,9,-0.14596169479710996,-0.08920393726965409,-0.06036130111563584
+session_momentum,D1 trend; 08:00 UTC H4 expansion candle aligned with the higher-timeframe regime.,False,149,-0.07622091114229762,0.8545645889945486,0.37583892617449666,0.10151622553509687,-0.05728039912843108,-0.0070366723773442885,1.4752475247524752,9,0.00210159914865883,-0.22155342242226098,-0.05348724106594766
+```
+
+## Decision
+
+**NO ROBUST STRATEGY FOUND.** All six non-RFBC prototype families were rejected before holdout promotion because they failed the predeclared development/validation gate. No parameters were tuned on holdout.
+
+## Required next step
+
+Acquire a versioned, independently sourced bid/ask dataset, validate UTC/session and candle construction, rerun unchanged prototypes, then evaluate any survivor on untouched external data. Do not connect to MT5/Exness or trade.

@@ -1,0 +1,7 @@
+family,rationale,development_expectancy_r,validation_expectancy_r,holdout_expectancy_r,profit_factor,max_dd_pct
+trend_pullback,D1 trend; controlled H4 pullback to EMA20 with a same-bar continuation close.,-0.0861596675595381,0.006650175332465359,0.002423755960232464,0.9395772782256908,0.3776814090922662
+breakout_retest,"D1 trend; a preceding H4 range breakout followed by a successful retest, not a raw breakout.",-0.14155055050955417,-0.051098542134137157,-0.19344204096985676,0.7592476232702512,0.30515684982041014
+mtf_momentum,D1 regime plus aligned H4 EMA20/EMA50 momentum and a three-bar expansion.,-0.06358670090170308,-0.05406504981588684,0.050461371223649555,0.9389654185160331,0.38872048103564827
+contraction_expansion,D1 trend; a low-volatility H4 regime followed by a range expansion and breakout.,-0.0890105127585042,-0.06627822101532463,-0.027599231250388757,0.8756372638184101,0.13234174816069777
+range_mean_reversion,Low D1 trend separation; H4 extension from its mean followed by a reversal candle.,-0.14596169479710996,-0.08920393726965409,-0.06036130111563584,0.7691194329605402,0.18138102539585577
+session_momentum,D1 trend; 08:00 UTC H4 expansion candle aligned with the higher-timeframe regime.,0.00210159914865883,-0.22155342242226098,-0.05348724106594766,0.8545645889945486,0.10151622553509687

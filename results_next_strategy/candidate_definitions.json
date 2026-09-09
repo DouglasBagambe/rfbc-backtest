@@ -1,0 +1,50 @@
+[
+  {
+    "family": "trend_pullback",
+    "rationale": "D1 trend; controlled H4 pullback to EMA20 with a same-bar continuation close.",
+    "lookback": 20,
+    "stop_atr": 1.5,
+    "rr": 2.0,
+    "max_bars": 20
+  },
+  {
+    "family": "contraction_expansion",
+    "rationale": "D1 trend; a low-volatility H4 regime followed by a range expansion and breakout.",
+    "lookback": 20,
+    "stop_atr": 1.5,
+    "rr": 2.0,
+    "max_bars": 20
+  },
+  {
+    "family": "range_mean_reversion",
+    "rationale": "Low D1 trend separation; H4 extension from its mean followed by a reversal candle.",
+    "lookback": 20,
+    "stop_atr": 1.5,
+    "rr": 1.2,
+    "max_bars": 12
+  },
+  {
+    "family": "session_momentum",
+    "rationale": "D1 trend; 08:00 UTC H4 expansion candle aligned with the higher-timeframe regime.",
+    "lookback": 20,
+    "stop_atr": 1.5,
+    "rr": 1.8,
+    "max_bars": 20
+  },
+  {
+    "family": "breakout_retest",
+    "rationale": "D1 trend; a preceding H4 range breakout followed by a successful retest, not a raw breakout.",
+    "lookback": 20,
+    "stop_atr": 1.5,
+    "rr": 2.0,
+    "max_bars": 20
+  },
+  {
+    "family": "mtf_momentum",
+    "rationale": "D1 regime plus aligned H4 EMA20/EMA50 momentum and a three-bar expansion.",
+    "lookback": 20,
+    "stop_atr": 1.5,
+    "rr": 2.0,
+    "max_bars": 20
+  }
+]
