@@ -1,0 +1,3 @@
+# Local runtime artifacts and reproducible input cache
+__pycache__/
+data/
