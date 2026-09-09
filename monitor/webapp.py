@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 import pandas as pd
 from flask import Flask, jsonify
 
-import rfbc_monitor as m
+import rfbc_monitor_exact as m
 
 app = Flask(__name__)
 
@@ -31,29 +31,28 @@ def serialise_action(action):
 
 @app.get("/health")
 def health():
-    return jsonify({"ok": True, "service": "rfbc-usdjpy-monitor"})
+    return jsonify({"ok": True, "service": "rfbc-usdjpy-monitor", "logic": "exact_external_v1"})
 
 
 @app.get("/check")
 def check():
     now = datetime.now(timezone.utc)
     try:
-        h4, _, _ = m.build_signal_frame(now)
+        h4, ask4, h1 = m.build_signal_frame(now)
         last_close = pd.Timestamp(h4.iloc[-1].close_dt)
         freshness = pd.Timestamp(now) - last_close
         if freshness > pd.Timedelta(minutes=20):
             return jsonify({
                 "ok": True,
-                "action": "NONE",
-                "reason": "no_fresh_h4_close",
+                "action": "STALE",
+                "reason": "no_fresh_completed_h4_bar",
                 "last_h4_close": last_close.isoformat(),
                 "checked_at": now.isoformat(),
             })
 
         trade = m.candidate_trade(h4, now)
-        event = m.infer_open_trade_and_event(h4, now)
+        event = m.infer_open_trade_and_event(h4, ask4, h1, now)
 
-        # Manual management actions take priority at the Friday cutoff, then BE, then new trade/skip.
         if event and event.get("kind") == "friday_close":
             result = serialise_action(event)
         elif event and event.get("kind") == "move_be":
