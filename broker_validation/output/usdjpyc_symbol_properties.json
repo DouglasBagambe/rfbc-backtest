@@ -1,0 +1,7 @@
+{
+  "capture_status": "PENDING_MT5_EXPORT",
+  "capture_note": "Run broker_validation/mql5/ExportUSDJPYcProperties.mq5 inside the connected MT5 terminal, then copy its Common/Files export over this file. No credentials or account ID belong here.",
+  "symbol": {},
+  "account": {},
+  "quote": {}
+}

@@ -2,3 +2,7 @@
 __pycache__/
 data/
 data_independent/
+
+# Local broker observations and non-shareable broker captures
+broker_validation/local_data/
+broker_validation/output/*_private.*
