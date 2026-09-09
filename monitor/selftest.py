@@ -3,8 +3,6 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-import pytest
-
 import rfbc_monitor_multi as m
 import telegram_notify as tg
 
