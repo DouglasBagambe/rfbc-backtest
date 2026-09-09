@@ -49,6 +49,16 @@ No broker rule shown in the screenshots requires changing RFBC signal, stop, tar
 
 The Friday market remains open well beyond RFBC's frozen 16:00 UTC forced-close checkpoint.
 
+## Fresh account state
+
+Fresh account screenshots on 9 September 2026 show:
+
+- Balance: **1,001.00 USC**
+- Equity: **1,001.00 USC**
+- Free margin: **1,001.00 USC**
+- USD-equivalent equity for risk calculations: **$10.01**
+- No open positions at the time of capture
+
 ## Small-account risk economics
 
 At 0.01 volume and a 1,000 AUD contract size, the position represents approximately 10 AUD of base notional.
@@ -61,15 +71,15 @@ Frozen RFBC stop distance is:
 
 `stop_distance_JPY = 1.50 * signal_ATR`
 
-Using the contemporaneous USDJPY quote near 153.464 and an account around $10 for illustration only:
+Using contemporaneous USDJPY near 153.464 and fresh equity of $10.01:
 
-`risk_pct ~= 0.9774 * ATR_JPY`
+`risk_pct ~= 0.9764 * ATR_JPY`
 
 Therefore the approximate ATR threshold at which minimum-volume risk reaches the 1.00% cap is about:
 
-`ATR ~= 1.02 JPY`
+`ATR ~= 1.024 JPY`
 
-This is not a permanent threshold because actual risk must use the **fresh account equity and current USDJPY conversion rate at the trade checkpoint**.
+This threshold is only a live-checkpoint approximation. Actual risk must always use current account equity, current USDJPY conversion and the actual RFBC stop distance.
 
 ## Functional execution checks
 
@@ -80,11 +90,11 @@ This is not a permanent threshold because actual risk must use the **fresh accou
 - [x] Friday session is compatible with frozen 16:00 UTC flat rule.
 - [x] Swap economics are documented.
 - [x] Broker properties do not require a strategy-rule modification.
-- [ ] Fresh account equity is still required before live sizing.
+- [x] Fresh account equity has been captured and mapped to $10.01 for current risk calculations.
 - [ ] First live/manual order ticket should be sanity-checked end to end before enabling routine use.
 
 ## Final status
 
-Status: **BROKER-QUALIFIED, LIVE-RISK-FINALIZATION PENDING**.
+Status: **BROKER-QUALIFIED. MONITOR / END-TO-END LIVE WORKFLOW PENDING.**
 
-`AUDJPYc` may be added to the deterministic monitor once the monitor is updated for multi-pair operation and fresh-equity risk sizing. Do not place a live trade using stale equity.
+`AUDJPYc` is approved for inclusion in the deterministic multi-pair monitor subject to the existing 1.00% per-trade and aggregate open-risk overlay. The first actual ticket must still be sanity-checked end to end before routine live use.
