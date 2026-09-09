@@ -1,90 +1,113 @@
 # RFBC Backtest
 
-Reproducible research and execution repository for frozen RFBC v1.0.
+Reproducible research, validation and execution repository for **frozen RFBC v1.0**.
 
-## Current validated state
+> **Current status:** RFBC v1.0 is research-qualified, broker-qualified and authorized for **small manual forward trading** on `USDJPYc` and `AUDJPYc` only. Full automatic order placement is not enabled.
 
-The full independent 15-pair discovery study is complete using Dukascopy BID/ASK H1 data from 2013-01-01 through 2026-09-01, with H4/D1 bars built from that source and the frozen RFBC v1.0 rules applied unchanged.
+## Validated pair set
+
+The independent 15-pair discovery study used Dukascopy BID/ASK data from 2013-01-01 through 2026-09-01, with H4/D1 bars built from that source and frozen RFBC v1.0 applied unchanged.
 
 Only two pairs passed the fixed promotion gate:
 
-- USDJPY
-- AUDJPY
+- **USDJPY**
+- **AUDJPY**
 
-All other tested pairs were rejected.
+All other tested pairs were rejected. No arbitrary maximum number of pairs was imposed.
 
-The fixed promotion gate was:
+Promotion gate:
 
 - full-sample expectancy >= +0.15R
 - full-sample profit factor >= 1.30
 - unseen-period expectancy > 0
 
-No arbitrary maximum number of pairs was imposed.
+## Frozen RFBC v1.0
 
-## Frozen RFBC v1.0 rules
-
-- D1 regime: EMA50 above/below EMA200 plus EMA50 slope over 5 completed D1 candles
+- D1 regime: EMA50 vs EMA200 plus EMA50 slope over 5 completed D1 candles
 - H4 trigger: strict 20-bar breakout using preceding completed H4 bars only
-- Signal candle true range <= 2.0x ATR(14)
-- Eligible UTC signal closes: Mon-Thu 08:00/12:00/16:00, Fri 08:00/12:00
-- Entry: next H4 open; cancel if adverse displacement exceeds 0.20x signal ATR
-- SL: 1.50x signal ATR
+- Signal candle TR <= 2.0 x ATR(14)
+- Eligible UTC closes: Mon-Thu 08:00/12:00/16:00; Fri 08:00/12:00
+- Entry: next H4 open; cancel if adverse displacement > 0.20 x signal ATR
+- SL: 1.50 x signal ATR
 - TP: 2.50R
-- Breakeven: only after a completed H4 close at or beyond +1.50R, then cost-adjusted BE
-- Friday flat cutoff: 16:00 UTC
-- No H1 confirmation
-- No D1 trend-invalidation exit
-- No unfrozen ATR-quantile filter
-- No arbitrary time stop
+- Breakeven: only after a completed H4 close >= +1.50R
+- Friday flat: 16:00 UTC
+- No discretionary overrides or unfrozen filters
 
-Any strategic rule change creates a new strategy version and requires fresh validation.
+Any strategic rule change creates a new version and requires fresh validation.
 
-## Independent survivor results
+## Survivor evidence
 
-### USDJPY
+| Pair | Trades | Expectancy | PF | Max DD | Unseen expectancy | Unseen PF |
+|---|---:|---:|---:|---:|---:|---:|
+| USDJPY | 248 | +0.1833R | 1.403 | 5.22% | +0.2021R | 1.468 |
+| AUDJPY | 247 | +0.1998R | 1.426 | 3.70% | +0.1824R | 1.409 |
 
-- Full sample: 248 trades
-- Expectancy: +0.1833R
-- Profit factor: 1.403
-- Max drawdown: 5.22%
-- Total return at 0.5% nominal risk: +24.83%
-- Unseen expectancy: +0.2021R
-- Unseen profit factor: 1.468
+Portfolio evidence:
 
-### AUDJPY
+- return correlation: 0.0227
+- drawdown correlation: -0.0850
+- overlapping trade pairs: 89
+- portfolio MC DD P50/P95: 3.76% / 6.43%
+- P(portfolio DD >10%): 0.22%
 
-- Full sample: 247 trades
-- Expectancy: +0.1998R
-- Profit factor: 1.426
-- Max drawdown: 3.70%
-- Total return at 0.5% nominal risk: +27.28%
-- Unseen expectancy: +0.1824R
-- Unseen profit factor: 1.409
+Both survivors contain JPY, so aggregate live risk control remains mandatory.
 
-## Two-pair portfolio evidence
+## Current execution status
 
-- Return correlation: 0.0227
-- Drawdown correlation: -0.0850
-- Overlapping trade pairs: 89
-- Portfolio Monte Carlo DD P50/P95: 3.76% / 6.43%
-- Probability portfolio DD >10%: 0.22%
+Both Exness Standard Cent symbols are broker-qualified:
 
-Both survivors contain JPY, so JPY concentration remains a live risk-control concern. It is not a reason to change the frozen strategy.
+- `USDJPYc`
+- `AUDJPYc`
 
-## Execution status
+Current account snapshot used for sizing: **1,001 USC = $10.01 equivalent**.
 
-USDJPYc has undergone initial Exness Standard Cent execution-property validation and has a manual execution specification under `execution/`.
+Tiny-account overlay:
 
-AUDJPYc must receive the same broker-specific validation before it is enabled for live/manual execution. Until that validation is complete, AUDJPY is research-qualified but not yet broker-qualified.
+- 0.01 maximum volume per RFBC position
+- <=1.00% individual new-trade risk
+- <=1.00% aggregate initial open risk
+- -1.00% daily realized-loss stop
+- -2.00% weekly realized-loss stop
+- -3.00% closed-balance HWM warning
+- -5.00% hard kill for new entries
 
-## Evidence
+Daily/weekly/high-water-mark account state remains operator-enforced during manual execution because the monitor has no broker-account API.
 
-Primary outputs are under `results_external_discovery/`, including:
+## Live monitoring
 
-- `PAIR_DISCOVERY_SUMMARY.md`
-- `pair_ranking.csv`
-- `survivors.json`
-- `portfolio_monte_carlo.json`
-- per-pair trades, metrics, yearly results and Monte Carlo outputs
+Production monitor supports both `USDJPYc` and `AUDJPYc` and sends actionable alerts directly to Telegram.
 
-The completed discovery study was committed in `0b1d4df354de7b16d0071d3faf8e422c0c063bf7`.
+Direct Render -> Telegram delivery has been tested successfully. Production startup self-tests cover pair mapping, account-risk conversion, simultaneous-signal portfolio gating and all operator-facing alert formats.
+
+Current action vocabulary:
+
+`TRADE`, `SKIP_RISK`, `SKIP_CHASE`, `SKIP_PORTFOLIO_RISK`, `MOVE_BE`, `FRIDAY_CLOSE`, `STALE`, `ERROR`, `NONE`.
+
+Detailed operating instructions: `docs/RFBC_V10_LIVE_OPERATIONS_MANUAL.md`.
+
+## Forward phase
+
+RFBC v1.0 is now in **small manual forward trading**. The first naturally occurring live ticket must be visually sanity-checked before submission.
+
+Formal review is planned after approximately **30 forward/live trades or six months**, whichever provides the more meaningful evidence window.
+
+Full automatic execution remains a later phase and should use an MT5 EA, VPS or dedicated scheduler rather than ChatGPT in the critical timing/execution path.
+
+## Evidence and documentation
+
+- `docs/RFBC_V10_MASTER_SYSTEM_MANUAL.md`
+- `docs/RFBC_V10_LIVE_OPERATIONS_MANUAL.md`
+- `docs/RFBC_V10_VALIDATION_REPORT.md`
+- `execution/RFBC_V10_PORTFOLIO_RISK_OVERLAY.md`
+- `execution/RFBC_V10_LIVE_JOURNAL_AND_REVIEW.md`
+- `results_external_discovery/PAIR_DISCOVERY_SUMMARY.md`
+- `results_external_discovery/pair_ranking.csv`
+- `results_external_discovery/survivors.json`
+- `results_external_discovery/portfolio_monte_carlo.json`
+
+The completed 15-pair discovery study was committed in `0b1d4df354de7b16d0071d3faf8e422c0c063bf7`.
+
+## Expansion
+
+Do not retune RFBC v1.0 to force more pairs. Strategy 2 and any future system are separate evidence chains. There is no arbitrary five-pair cap: future components are added only when they independently validate and improve the portfolio.
