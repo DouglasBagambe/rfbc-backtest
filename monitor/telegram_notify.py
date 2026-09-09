@@ -52,6 +52,14 @@ def format_action(payload: dict[str, Any]) -> str:
             continue
         lines.append(f"{key}: {_fmt_value(value)}")
 
+    if action == "TRADE":
+        lines.extend([
+            "",
+            "OPERATOR GATE BEFORE ENTRY:",
+            "Confirm MT5 balance/equity is current and RFBC daily (-1%), weekly (-2%), DD warning (-3%) and hard-kill (-5%) limits have not been hit.",
+            "If account state differs materially from configured equity, do not place the trade until RFBC_EQUITY_USD is refreshed.",
+        ])
+
     if payload.get("checked_at"):
         lines.append(f"Checked UTC: {payload['checked_at']}")
     return "\n".join(lines)
