@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 import pandas as pd
 from flask import Flask, jsonify
 
-import rfbc_monitor_multi as m
+import rfbc_monitor_live as m
 import selftest
 import telegram_notify as tg
 
