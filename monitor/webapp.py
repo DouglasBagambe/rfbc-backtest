@@ -7,7 +7,11 @@ import pandas as pd
 from flask import Flask, jsonify
 
 import rfbc_monitor_multi as m
+import selftest
 import telegram_notify as tg
+
+SELFTEST = selftest.run()
+print(f"RFBC_OPERATIONAL_SELFTEST {SELFTEST}", flush=True)
 
 app = Flask(__name__)
 
@@ -84,7 +88,7 @@ def root():
 @app.get("/health")
 def health():
     return jsonify({
-        "ok": True,
+        "ok": bool(SELFTEST.get("ok")),
         "service": "rfbc-two-pair-monitor",
         "pairs": [cfg.symbol for cfg in m.PAIR_CONFIGS.values()],
         "logic": "frozen_rfbc_v1_exact",
@@ -92,6 +96,7 @@ def health():
         "risk_cap_pct": m.RISK_CAP_PCT,
         "aggregate_risk_cap_pct": m.AGGREGATE_RISK_CAP_PCT,
         "telegram_configured": tg.configured(),
+        "selftest": SELFTEST,
     })
 
 
