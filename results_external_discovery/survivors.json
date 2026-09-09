@@ -1,0 +1,7 @@
+{
+  "survivors": [
+    "AUDJPY",
+    "USDJPY"
+  ],
+  "promotion_gate": "full expectancy >= 0.15R; full PF >= 1.30; unseen expectancy > 0"
+}
