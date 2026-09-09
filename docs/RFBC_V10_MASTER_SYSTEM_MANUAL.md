@@ -1,11 +1,12 @@
 # RFBC v1.0
-## Master System Manual, Validation Record & Live-Readiness Guide
+## Master System Manual, Validation Record & Operational Guide
 
 > **Version:** RFBC v1.0  
 > **Prepared:** 9 September 2026  
 > **Research-qualified pairs:** **USDJPY, AUDJPY**  
-> **Live status:** **PENDING final operational qualification**  
-> **Source of truth:** this repository + committed independent validation outputs
+> **Broker-qualified symbols:** **USDJPYc, AUDJPYc**  
+> **Operational status:** **READY FOR SMALL MANUAL FORWARD TRADING**  
+> **Full-auto status:** **NOT ENABLED**
 
 ---
 
@@ -13,9 +14,9 @@
 
 RFBC v1.0 survived independent external testing on exactly **two** instruments: **USDJPY** and **AUDJPY**.
 
-> **DECISION:** The frozen RFBC v1.0 research pair set is **USDJPY + AUDJPY**. No arbitrary pair cap is applied; the other 13 tested pairs were rejected by the unchanged promotion gate.
+> **DECISION:** The frozen RFBC v1.0 pair set is **USDJPY + AUDJPY**. No arbitrary pair cap was used; the other 13 tested pairs were rejected by the unchanged promotion gate.
 
-RFBC is now frozen as a research-qualified strategy. It should not be retuned merely to create more signals or force additional pairs.
+RFBC v1.0 is frozen. Do not retune it merely to create more signals, raise the win rate, or force additional pairs.
 
 ---
 
@@ -36,9 +37,9 @@ RFBC is now frozen as a research-qualified strategy. It should not be retuned me
 
 ### Strategy integrity
 
-**Do not silently add:** H1 confirmation, D1 invalidation exits, arbitrary time stops, ATR-quantile filters, discretionary early exits, averaging down, pyramiding or pair-specific tuning.
+Do not silently add H1 confirmation, D1 invalidation exits, arbitrary time stops, ATR-quantile filters, discretionary early exits, averaging down, pyramiding, stop widening or pair-specific tuning.
 
-Any strategic change creates a **new version** and must be independently revalidated.
+Any strategic change creates a **new version** and requires a new evidence chain.
 
 ---
 
@@ -60,7 +61,7 @@ Any strategic change creates a **new version** and must be independently revalid
 | Portfolio MC DD P95 | 6.43% |
 | P(portfolio DD >10%) | 0.22% |
 
-> **RISK NOTE:** both survivors contain JPY. The historical return/drawdown relationship is low-correlation, but common JPY event exposure remains a live portfolio risk that must be controlled operationally.
+> **RISK NOTE:** both survivors contain JPY. Historical return/drawdown correlation is low, but common JPY event exposure remains a live concentration risk.
 
 Raw evidence: `results_external_discovery/`.
 
@@ -79,130 +80,160 @@ Raw evidence: `results_external_discovery/`.
 | USDJPY | **SURVIVED** | EURAUD | REJECTED |
 | GBPAUD | REJECTED |  |  |
 
-**Promotion gate:** full expectancy >= +0.15R; full PF >= 1.30; unseen expectancy > 0.
-
-The gate was not moved after seeing results.
+Promotion gate remained unchanged: full expectancy >= +0.15R, full PF >= 1.30, unseen expectancy > 0.
 
 ---
 
-## Tiny-account execution overlay
+## Broker qualification
 
-The current Exness Standard Cent account requires a separate execution overlay because minimum lot granularity can force risk above the normal 0.50% target.
+### USDJPYc
 
-| Control | Current tiny-account rule |
-|---|---|
-| Preferred risk | Lowest executable risk consistent with broker minimum volume |
-| Hard risk / trade | **1.00% maximum** |
-| Total initial open risk | **1.00% maximum** |
-| Daily stop | **1.00%** |
-| Weekly stop | **2.00%** |
-| DD warning | **3.00%** below closed-balance high-water mark |
-| Hard DD kill | **5.00%** |
-| Current minimum volume | 0.01 on validated cent symbols |
-| Volume escalation | Forbidden merely to target a desired risk percentage |
+- Contract size: 1,000 USD
+- Minimum volume: 0.01
+- Volume step: 0.01
+- Digits: 3
+- Stops level: 0
 
-> **IMPORTANT:** a valid RFBC signal may still be skipped if the broker minimum volume makes actual account risk exceed the hard cap. This is an execution constraint, not a strategy change.
+### AUDJPYc
 
----
+Verified from MT5 mobile on 9 September 2026:
 
-## Manual ticket format
+- Contract size: 1,000 AUD
+- Minimum volume: 0.01
+- Volume step: 0.01
+- Digits: 3
+- Floating spread; observed about 1.1 pips
+- Stops level: 0
+- Swap long: -0.2 points
+- Swap short: -2.1 points
+- Triple swap: Wednesday
+- Friday session through 20:59
+- Chart mode: Bid
 
-```text
-STRATEGY: RFBC v1.0
-PAIR: [USDJPYc / AUDJPYc]
-SIDE: [BUY / SELL]
-
-VALID UNTIL: [UTC timestamp]
-ENTRY: MARKET
-MAX ACCEPTABLE ENTRY: [price]
-
-SL: [price]
-TP: [price]
-
-ACCOUNT EQUITY: [fresh amount]
-RISK: [percentage]
-CASH RISK: [amount]
-VOLUME: [cent lots]
-
-DAILY LOSS USED: [x%]
-WEEKLY LOSS USED: [x%]
-OPEN RISK AFTER FILL: [x%]
-
-MANAGEMENT:
-Move SL only after a completed H4 close >= +1.50R.
-Friday flat at 16:00 UTC.
-Otherwise hold.
-
-CANCEL IF:
-price exceeds maximum entry,
-risk gate fails,
-portfolio gate fails,
-data is stale,
-ticket expires.
-```
+AUDJPYc broker evidence is stored in `execution/RFBC_AUDJPYC_BROKER_VALIDATION_CHECKLIST.md` and `broker_validation/output/audjpyc_symbol_properties.json`.
 
 ---
 
-## Operational architecture
+## Current account and tiny-account overlay
+
+Fresh account snapshot captured 9 September 2026:
+
+| Field | Value |
+|---|---:|
+| Balance | 1,001 USC |
+| Equity | 1,001 USC |
+| USD-equivalent equity | **$10.01** |
+| Open positions | None |
+
+Current Render sizing input: `RFBC_EQUITY_USD=10.01`.
+
+| Control | Current rule |
+|---|---:|
+| Volume | 0.01 maximum per RFBC position |
+| Individual new-trade risk | **<= 1.00%** |
+| Aggregate initial open risk | **<= 1.00%** |
+| Daily realized-loss stop | **-1.00%** |
+| Weekly realized-loss stop | **-2.00%** |
+| Drawdown warning | **-3.00%** from closed-balance HWM |
+| Hard kill for new entries | **-5.00%** from closed-balance HWM |
+
+> **IMPORTANT:** a valid RFBC signal may still be skipped because broker minimum size makes risk too high. This is an execution overlay, not a strategy change.
+
+Because the monitor does not have broker-account API access, actual daily/weekly realized loss and high-water-mark state remain operator-enforced in the manual-forward phase. Every `TRADE` alert reminds the operator to verify these gates.
+
+---
+
+## Deterministic live architecture
 
 ```mermaid
 flowchart LR
-    A[Market data] --> B[Deterministic RFBC engine]
-    B --> C[Broker/risk adapter]
-    C --> D[Exact MT5 mobile ticket]
-    D --> E[Manual execution]
-    B --> F[Monitoring + journal]
-    F --> G[ChatGPT oversight]
+    A[Dukascopy BID/ASK] --> B[RFBC v1.0 monitor]
+    B --> C[Individual + aggregate risk gates]
+    C --> D[Direct Telegram]
+    D --> E[Operator account-state check]
+    E --> F[MT5 mobile manual execution]
 ```
 
-**ChatGPT is not part of the critical execution path.**
+Current production monitor:
+
+- `monitor/rfbc_monitor_multi.py`
+- `monitor/webapp.py`
+- `monitor/telegram_notify.py`
+- `monitor/selftest.py`
+
+It evaluates `USDJPYc` and `AUDJPYc`, calculates 0.01-volume risk, converts AUDJPY JPY risk through USDJPY, applies individual and portfolio risk gates, reconstructs breakeven/Friday management, and emits operator instructions.
+
+### Alert vocabulary
+
+`TRADE`, `SKIP_RISK`, `SKIP_CHASE`, `SKIP_PORTFOLIO_RISK`, `MOVE_BE`, `FRIDAY_CLOSE`, `STALE`, `ERROR`, `NONE`.
+
+---
+
+## Operational verification
+
+- [x] USDJPY research-qualified
+- [x] AUDJPY research-qualified
+- [x] 15-pair discovery completed
+- [x] Portfolio correlation / overlap / Monte Carlo reviewed
+- [x] USDJPYc broker-qualified
+- [x] AUDJPYc broker-qualified
+- [x] Fresh account equity captured
+- [x] Individual risk calculation implemented
+- [x] Aggregate risk gate implemented
+- [x] Same-checkpoint conflict handling implemented
+- [x] Direct Telegram secrets configured on Render
+- [x] Direct Render -> Telegram test received on phone
+- [x] Production startup self-test passed
+- [x] Self-test covers all required operator-facing alert actions
+- [x] H4 scheduling expanded to every completed H4 checkpoint
+- [x] Live journal/review procedure documented
+- [x] Live Operations Manual created
+- [ ] First naturally occurring live RFBC ticket visually sanity-checked before pressing Buy/Sell
+
+The final unchecked item requires a genuine market signal and is not an engineering blocker.
+
+> **LIVE STATUS:** RFBC v1.0 is **authorized for small manual forward trading on USDJPYc and AUDJPYc only**.
+
+---
+
+## Scheduling and automation boundary
+
+The zero-cost current trigger is an external scheduled wake/check into the free Render service. Render then makes the deterministic decision and sends Telegram directly.
+
+A free Render cron job is not available. A paid cron was deliberately not enabled.
+
+For eventual unattended/full-auto execution, move timing and order placement to an MT5 EA, VPS or dedicated scheduler so ChatGPT is completely outside the critical timing/execution path.
 
 Automation roadmap:
 
 ```mermaid
 flowchart LR
-    A[Alert-only] --> B[Semi-automatic]
+    A[Manual forward] --> B[Semi-automatic]
     B --> C[Full automatic]
 ```
 
-Full automatic execution comes only after forward evidence and operational reliability justify it.
+Full automatic execution remains a later phase after forward evidence and operational reliability justify it.
 
 ---
 
-## Live-enable checklist
+## Live operations source
 
-- [x] USDJPY independently research-qualified
-- [x] AUDJPY independently research-qualified
-- [x] 15-pair discovery completed without arbitrary pair cap
-- [x] Portfolio correlation / overlap / Monte Carlo reviewed
-- [x] USDJPYc broker properties substantially validated
-- [ ] AUDJPYc broker properties validated
-- [ ] Fresh account equity loaded before live sizing
-- [ ] AUDJPYc 0.01-volume risk tested under realistic ATR stop distances
-- [ ] Simultaneous USDJPYc/AUDJPYc overlay implemented and end-to-end tested
-- [ ] Alert path proven reliable for signals and management events
-- [ ] Breakeven management tested end to end
-- [ ] Friday-close management tested end to end
+Detailed day-to-day instructions: `docs/RFBC_V10_LIVE_OPERATIONS_MANUAL.md`.
 
-> **LIVE STATUS:** RFBC v1.0 is **research-qualified but not yet fully live-ready**.
+Journal and review process: `execution/RFBC_V10_LIVE_JOURNAL_AND_REVIEW.md`.
+
+Portfolio risk policy: `execution/RFBC_V10_PORTFOLIO_RISK_OVERLAY.md`.
 
 ---
 
-## After operationalisation
+## Expansion policy
 
-Once the live-enable checklist is complete, RFBC should enter small forward/live execution **without strategy changes**.
+RFBC v1.0 remains frozen. Do not retune it to force more pairs.
 
-A separate Strategy 2 research track may then begin. It should preferably express a meaningfully different edge so the eventual portfolio is diversified by both **strategy** and **instrument**, rather than simply multiplying the same breakout exposure.
-
-### Expansion rule
-
-- Do not force more RFBC pairs.
-- Do not cap valid future strategy portfolios at five or any other arbitrary number.
-- Keep every independently qualified component only if portfolio testing supports it.
-- Preserve RFBC v1.0 as an immutable evidence chain.
+Strategy 2 research is separate. Future strategies or pair sets may be added only after independent validation, broker qualification, portfolio analysis and their own operational readiness review. There is no arbitrary five-pair cap.
 
 ---
 
 ## Documentation rule
 
-All formal RFBC documentation follows `docs/DOCUMENTATION_STANDARD.md`: structured title/status blocks, concise sections, tables, callouts, diagrams/checklists where useful, and polished PDF/DOCX equivalents for master documents and formal validation records.
+All formal RFBC documentation follows `docs/DOCUMENTATION_STANDARD.md`: structured title/status blocks, concise sections, clean tables, callouts, diagrams/checklists where useful, and polished PDF/DOCX equivalents for master and operational documents.
