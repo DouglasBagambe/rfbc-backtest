@@ -38,6 +38,15 @@ Round 2 is deliberately not a parameter neighborhood around Round 1. It replaces
 
 The 12 exact strategy families and triggers are recorded in [the hypothesis register](HYPOTHESIS_REGISTER.md#round-2--frozen-pending-approval). No implementation or screening will begin until approval.
 
+## Final deterministic clarifications
+
+- **S2R2-02:** London extreme is 07:00 UTC through the completed M15 immediately preceding the signal. The signal bar makes the excursion and closes back inside.
+- **S2R2-03:** dominant wick is `max(upper_wick, lower_wick) / (H1_high - H1_low)` and must be <= 0.25.
+- **S2R2-09:** impulse is completed H1 open-to-close. Residual is candidate normalized H1 return minus its comparison-basket median. Residual >= +1.50 seeks a short and <= -1.50 a long; the following completed M15 must retrace through 50% of that impulse before entry.
+- **S2R2-10:** Asia move is the 06:45 close minus 00:00 open, divided by H1 ATR. Absolute value must be >= 0.80. A positive move fails Asia high and seeks short; a negative move fails Asia low and seeks long.
+- **S2R2-11:** impulse is UTC-day open to the first intraday extreme which takes day range to >= 0.90× its trailing 20-day median while H1 trend aligns. It is then frozen; only the first subsequent 38.2–61.8% retracement is eligible.
+- **S2R2-12:** bars 1–3 have strictly monotonic closes, create no weekly extreme, and bar 4 closes through bar 3 midpoint in the opposite direction.
+
 ## Proposed Round 2 preliminary promotion gate
 
 The Round 1 gate remains unchanged: development expectancy >= +0.10R, development PF >= 1.15, validation expectancy >= +0.05R, validation PF >= 1.10, and at least 120 combined development-plus-validation trades. A Round 2 survivor must also show positive expectancy in at least 8 of 15 pairs before parameter-neighborhood work.

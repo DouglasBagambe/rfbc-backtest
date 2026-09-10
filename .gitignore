@@ -1,5 +1,7 @@
 # Local runtime artifacts and reproducible input cache
 __pycache__/
+*.py[cod]
+*$py.class
 data/
 data_independent/
 
