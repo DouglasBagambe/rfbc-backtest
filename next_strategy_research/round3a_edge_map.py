@@ -249,7 +249,9 @@ def _partition_checkpoints(paths,tmp):
     """Read each checkpoint once and spool each edge group to its own small file."""
     groups=["event","horizon","dispersion_regime"]
     cols=groups+["pair","year","forward_atr_return","continuation_atr_return"]
-    fingerprint=[{"path":str(path.resolve()),"sha256":_sha(path)} for path in paths]
+    # finalize() has just validated these manifests against their CSV digests.
+    # Reuse that verified identity rather than hashing every large CSV again.
+    fingerprint=[{"path":str(path.resolve()),"sha256":json.loads(path.with_suffix(".json").read_text(encoding="utf-8"))["sha256"]} for path in paths]
     state=tmp/"partition_state.json"
     if state.exists():
         saved=json.loads(state.read_text(encoding="utf-8"))
