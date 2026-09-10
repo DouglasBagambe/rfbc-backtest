@@ -146,6 +146,15 @@ def test_streaming_aggregation_matches_reference_exactly():
         pd.testing.assert_frame_equal(got_pair,expected_pair,check_dtype=False,check_exact=False,rtol=1e-12,atol=1e-12)
         pd.testing.assert_frame_equal(got_year,expected_year,check_dtype=False,check_exact=False,rtol=1e-12,atol=1e-12)
 
+def test_interrupted_partition_resumes_without_double_counting():
+    with tempfile.TemporaryDirectory() as td:
+        out=Path(td); rows=checkpoint_rows(); m.write_checkpoint(out,"pair_A",rows); m.write_checkpoint(out,"cross",rows)
+        paths=[m.checkpoint_paths(out,u)[0] for u in ("pair_A","cross")]
+        tmp=out/".aggregation_tmp"; m._partition_checkpoints(paths,tmp)
+        # A second call models a restart after source completion markers exist.
+        m._partition_checkpoints(paths,tmp); m.aggregate_streaming(paths,out)
+        assert pd.read_csv(out/"edge_map.csv").event_count.iloc[0]==2
+
 def test_vectorized_event_rows_match_reference_and_are_faster():
     x=bars(420); x.loc[x.index[::17],"close"]+=.02; h=bars(420,"1h"); prepared=m.attach_h1(x,m.h1_state(h))
     t=time.perf_counter(); old,old_events=m.event_rows_reference(prepared.copy(),"EURUSD"); old_time=time.perf_counter()-t

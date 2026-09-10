@@ -245,12 +245,28 @@ def _partition_checkpoints(paths,tmp):
     """Read each checkpoint once and spool each edge group to its own small file."""
     groups=["event","horizon","dispersion_regime"]
     cols=groups+["pair","year","forward_atr_return","continuation_atr_return"]
-    tmp.mkdir(parents=True,exist_ok=True); key_map={}
+    fingerprint=[{"path":str(path.resolve()),"sha256":_sha(path)} for path in paths]
+    state=tmp/"partition_state.json"
+    if state.exists():
+        saved=json.loads(state.read_text(encoding="utf-8"))
+        if saved.get("inputs")!=fingerprint: shutil.rmtree(tmp)
+    elif tmp.exists():
+        # Old temporary files predate resumable partition state and cannot be
+        # safely distinguished from an interrupted source pass.
+        shutil.rmtree(tmp)
+    tmp.mkdir(parents=True,exist_ok=True)
+    saved=json.loads(state.read_text(encoding="utf-8")) if state.exists() else {"inputs":fingerprint,"groups":{}}
+    key_map={token:tuple(key) for token,key in saved.get("groups",{}).items()}
     for path in paths:
+        done=tmp/f".{path.stem}.complete"
+        if done.exists(): continue
         for chunk in pd.read_csv(path,usecols=cols,chunksize=250000):
             for key,part in chunk.groupby(groups,dropna=False,sort=False):
                 key=key if isinstance(key,tuple) else (key,); token=_partition_token(key); key_map[token]=key
                 target=tmp/f"{token}.csv"; part.to_csv(target,index=False,mode="a",header=not target.exists())
+        saved={"inputs":fingerprint,"groups":{k:list(v) for k,v in key_map.items()}}
+        staged=state.with_suffix(".json.tmp"); staged.write_text(json.dumps(saved,sort_keys=True),encoding="utf-8"); os.replace(staged,state)
+        staged=done.with_suffix(".tmp"); staged.write_text("complete\n",encoding="utf-8"); os.replace(staged,done)
     (tmp/"complete.json").write_text(json.dumps({"groups":{k:list(v) for k,v in key_map.items()}},sort_keys=True),encoding="utf-8")
     return key_map
 
@@ -263,7 +279,6 @@ def aggregate_streaming(paths,out):
     have completed.
     """
     out=Path(out); tmp=out/".aggregation_tmp"
-    if tmp.exists(): shutil.rmtree(tmp)
     key_map=_partition_checkpoints(paths,tmp)
     edge_rows=[]; pair_rows=[]; year_rows=[]; count_rows=[]
     groups=["event","horizon","dispersion_regime"]
