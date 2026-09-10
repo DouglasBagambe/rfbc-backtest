@@ -34,7 +34,12 @@ def select_extremes(x):
 def read(path):
     rows=[]
     for x in pd.read_csv(path,usecols=["dt","open","high","low","close","volume"],parse_dates=["dt"],chunksize=40000,dtype={k:"float32" for k in ("open","high","low","close","volume")}):
-        x.dt=pd.to_datetime(x.dt,utc=True); rows.append(x[(x.dt>=START)&(x.dt<END)])
+        x.dt=pd.to_datetime(x.dt,utc=True)
+        # Derived bars with no Dukascopy ticks are market-closed forward-fill
+        # padding, not completed price observations.  Treat them as missing so
+        # they cannot decay ATR or create a phantom forward label at reopen.
+        valid=(x.volume>0)&np.isfinite(x[["open","high","low","close","volume"]]).all(axis=1)&x.high.ge(x.low)
+        rows.append(x[(x.dt>=START)&(x.dt<END)&valid])
     if not rows: raise RuntimeError(f"no development rows: {path}")
     out=pd.concat(rows,ignore_index=True).set_index("dt").sort_index(); out.index.name="dt"; return out
 

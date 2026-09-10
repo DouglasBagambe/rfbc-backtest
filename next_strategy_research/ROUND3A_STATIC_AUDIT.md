@@ -6,6 +6,7 @@
 | Area | Finding / control |
 |---|---|
 | Date boundary | `read()` filters each CSV chunk to 2013-01-01 through before 2018-01-01 before concatenation or features. |
+| Closed-market padding | Derived rows with zero Dukascopy tick volume are treated as unavailable market-closed padding, not completed price observations. This prevents a forward-filled weekend quote from decaying ATR or forming a reopen label. |
 | ATR regimes | M15 percentile ranks the current Wilder ATR only against preceding 252 M15 ATR values. H1 percentile is calculated on H1 rows before one-hour-delayed mapping. |
 | Forward labels | Labels use exact UTC timestamp lookup at +15/+30/+60/+120/+240 minutes. Missing slots are unavailable, never positional jumps. |
 | Sessions | Asia, London open/body, NY open and overlap are independent UTC booleans; NY-open and overlap intentionally overlap. Session extrema are merged only after each source session ends. |

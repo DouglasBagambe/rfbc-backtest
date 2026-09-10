@@ -4,6 +4,9 @@ __pycache__/
 *$py.class
 data/
 data_independent/
+results_next_strategy/round3a/checkpoints/
+results_next_strategy/round3a/.aggregation_tmp/
+results_next_strategy/round3a_pre_zero_volume_validity/checkpoints/
 
 # Local broker observations and non-shareable broker captures
 broker_validation/local_data/

@@ -17,6 +17,11 @@ def test_reader_hard_stops_at_2018():
         p=Path(td)/"x.csv"; pd.DataFrame({"dt":["2017-12-31T23:45:00Z","2018-01-01T00:00:00Z"],"open":[1,2],"high":[1,2],"low":[1,2],"close":[1,2],"volume":[1,2]}).to_csv(p,index=False)
         assert len(m.read(p))==1
 
+def test_zero_tick_padding_is_not_completed_market_information():
+    with tempfile.TemporaryDirectory() as td:
+        p=Path(td)/"x.csv"; pd.DataFrame({"dt":["2017-01-01T20:00:00Z","2017-01-01T20:15:00Z"],"open":[1,1],"high":[1,1.01],"low":[1,.99],"close":[1,1.005],"volume":[0,5]}).to_csv(p,index=False)
+        x=m.read(p); assert len(x)==1 and x.index[0]==pd.Timestamp("2017-01-01T20:15:00Z")
+
 def test_wilder_atr_and_current_percentile_prior_sample():
     x=bars(270); x.loc[x.index[14],"high"]=1.11; a=m.atr(x); tr=pd.concat((x.high-x.low,(x.high-x.close.shift()).abs(),(x.low-x.close.shift()).abs()),axis=1).max(axis=1)
     assert abs(a.iloc[14]-((tr.iloc[13]*13+tr.iloc[14])/14))<1e-12
