@@ -14,5 +14,6 @@
 | ICT state | FVG and MSS use completed bars; sweep→MSS is ordered within the frozen 8-bar sequence window; OB selection scans the preceding four and breakers require later invalidation. |
 | Statistics | Pair breadth is calculated from per-pair effects; year breadth from per-year effects. Aggregate rows merge both values rather than deriving them from aggregate statistics. |
 | Resumption | Each pair/cross unit is atomically written with a SHA-256 completion manifest. Invalid, truncated or checksum-mismatched checkpoints cannot be resumed or finalized; exact group-at-a-time aggregation prevents full-event-row retention. |
+| Performance | Event/horizon row construction is bulk-vectorized with exact timestamp labels precomputed once per horizon. The prior Python row loop is retained only as a synthetic equivalence oracle; no event predicate, output column or statistic changed. |
 
 > **RESULT:** The mapper remains pre-data. It emits descriptive event statistics only; it contains no order execution, P&L, stop/target or selection logic.

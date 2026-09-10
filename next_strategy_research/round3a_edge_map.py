@@ -91,7 +91,7 @@ def primitives(f):
     out["ote_down"]=out["mss_down"]&(f.high>=f.low)&((a_high-f.close)/(a_high-f.low).replace(0,np.nan)).between(.21,.38)
     return out
 
-def event_rows(f,pair):
+def event_rows_reference(f,pair):
     f,flags=add_context(f); e=primitives(f); p4h=f.high.shift(1).rolling(4).max(); p4l=f.low.shift(1).rolling(4).min()
     # Levels are first used after known_session_levels made them available.
     for name in ("asia","london_open","london_body","ny_open"):
@@ -111,6 +111,30 @@ def event_rows(f,pair):
             future,exists=exact_forward(f,h); z=(future-f.close)/f.atr15; valid=mask&exists&f.atr15.gt(0)&z.notna()
             for t,v in z[valid].items(): rows.append((name,pair,t,f.year.loc[t],h,float(v),float(direction*v),np.nan,np.nan,"not_applicable"))
     return pd.DataFrame(rows,columns=["event","pair","dt","year","horizon","forward_atr_return","continuation_atr_return","dispersion_level","dispersion_percentile","dispersion_regime"]),e
+
+def event_rows(f,pair):
+    """Vectorized equivalent of event_rows_reference; labels remain exact-time."""
+    f,flags=add_context(f); e=primitives(f)
+    for name in ("asia","london_open","london_body","ny_open"):
+        e[f"{name}_sweep_low"]=(f.low<f[f"{name}_low"])&(f.close>=f[f"{name}_low"]); e[f"{name}_sweep_high"]=(f.high>f[f"{name}_high"])&(f.close<=f[f"{name}_high"])
+        e[f"{name}_range_break_up"]=(f.close>f[f"{name}_high"]); e[f"{name}_range_break_down"]=(f.close<f[f"{name}_low"])
+        move=f[f"{name}_last_close"]-f[f"{name}_first_open"]; e[f"{name}_extreme_up"]=move>=1.5*f.atr15; e[f"{name}_extreme_down"]=move<=-1.5*f.atr15
+    shock=(f.close-f.close.shift())/f.atr15
+    for lo,hi,label in ((.5,1.,"0_5_1_0"),(1.,1.5,"1_0_1_5"),(1.5,2.,"1_5_2_0"),(2.,np.inf,"gt_2_0")):
+        e[f"m15_shock_up_{label}"]=(shock>=lo)&(shock<hi); e[f"m15_shock_down_{label}"]=(shock<=-lo)&(shock>-hi)
+    e["atr_compression"]=f.atr_pct<=.20; e["atr_expansion"]=f.atr_pct>=.80; e["fvg_up_h1_up"]=e["fvg_up"]&f.h1_trend.eq(1); e["fvg_down_h1_down"]=e["fvg_down"]&f.h1_trend.eq(-1)
+    prior_low=e["asia_sweep_low"].rolling(SEQUENCE_BARS+1,min_periods=1).max().shift(1).fillna(0).astype(bool); prior_high=e["asia_sweep_high"].rolling(SEQUENCE_BARS+1,min_periods=1).max().shift(1).fillna(0).astype(bool)
+    e["sweep_then_mss_up"]=prior_low&e["mss_up"]; e["sweep_then_mss_down"]=prior_high&e["mss_down"]
+    labels={h:exact_forward(f,h) for h in HORIZONS}; frames=[]
+    base=pd.DataFrame({"dt":f.index,"year":f.year.to_numpy(),"pair":pair,"dispersion_level":np.nan,"dispersion_percentile":np.nan,"dispersion_regime":"not_applicable"})
+    for name,mask in e.items():
+        direction=-1 if name.endswith(("_down","_high")) else 1
+        for h,(future,exists) in labels.items():
+            z=(future-f.close)/f.atr15; valid=(mask&exists&f.atr15.gt(0)&z.notna()).to_numpy()
+            if not valid.any(): continue
+            x=base.loc[valid].copy(); x["event"]=name; x["horizon"]=h; x["forward_atr_return"]=z.loc[valid].to_numpy(); x["continuation_atr_return"]=direction*x.forward_atr_return
+            frames.append(x[["event","pair","dt","year","horizon","forward_atr_return","continuation_atr_return","dispersion_level","dispersion_percentile","dispersion_regime"]])
+    return (pd.concat(frames,ignore_index=True) if frames else pd.DataFrame(columns=ROW_COLUMNS)),e
 
 def cross_rows(root):
     h={p:h1_state(read(root/p/f"{p}_bid_h1.csv")) for p in PAIRS}; norm={p:h[p].h1_norm_return.rename(p) for p in PAIRS}; rows=[]

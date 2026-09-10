@@ -2,6 +2,7 @@
 """Synthetic-only invariants for Round 3A; never opens research data."""
 from pathlib import Path
 import tempfile
+import time
 import numpy as np
 import pandas as pd
 import round3a_edge_map as m
@@ -105,6 +106,13 @@ def test_partial_checkpoint_set_cannot_create_final_outputs():
         out=Path(td); m.write_checkpoint(out,"pair_A",checkpoint_rows())
         try: m.finalize(out,["pair_A","cross"]); assert False
         except RuntimeError: assert not (out/"edge_map.csv").exists()
+
+def test_vectorized_event_rows_match_reference_and_are_faster():
+    x=bars(420); x.loc[x.index[::17],"close"]+=.02; h=bars(420,"1h"); prepared=m.attach_h1(x,m.h1_state(h))
+    t=time.perf_counter(); old,old_events=m.event_rows_reference(prepared.copy(),"EURUSD"); old_time=time.perf_counter()-t
+    t=time.perf_counter(); new,new_events=m.event_rows(prepared.copy(),"EURUSD"); new_time=time.perf_counter()-t
+    cols=m.ROW_COLUMNS; old=old.sort_values(cols[:5]).reset_index(drop=True); new=new.sort_values(cols[:5]).reset_index(drop=True)
+    pd.testing.assert_frame_equal(old,new,check_exact=False,rtol=1e-12,atol=1e-12); assert old_events.keys()==new_events.keys() and new_time<old_time
 
 if __name__=="__main__":
     tests=[v for k,v in sorted(globals().items()) if k.startswith("test_")]
