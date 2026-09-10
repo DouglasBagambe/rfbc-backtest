@@ -3,6 +3,7 @@
 from pathlib import Path
 import tempfile
 import time
+import json
 import numpy as np
 import pandas as pd
 import round3a_edge_map as m
@@ -159,6 +160,15 @@ def test_interrupted_partition_resumes_without_double_counting():
         tmp=out/".aggregation_tmp"; m._partition_checkpoints(paths,tmp)
         # A second call models a restart after source completion markers exist.
         m._partition_checkpoints(paths,tmp); m.aggregate_streaming(paths,out)
+        assert pd.read_csv(out/"edge_map.csv").event_count.iloc[0]==2
+
+def test_interrupted_summary_resumes_without_double_counting():
+    with tempfile.TemporaryDirectory() as td:
+        out=Path(td); rows=checkpoint_rows(); m.write_checkpoint(out,"pair_A",rows); m.write_checkpoint(out,"cross",rows)
+        paths=[m.checkpoint_paths(out,u)[0] for u in ("pair_A","cross")]; tmp=out/".aggregation_tmp"; keys=m._partition_checkpoints(paths,tmp)
+        token,key=next(iter(keys.items())); part=pd.read_csv(tmp/f"{token}.csv"); base=dict(zip(["event","horizon","dispersion_regime"],key)); d=tmp/"summaries"; d.mkdir()
+        (d/f"{token}.json").write_text(json.dumps({"edge":{**base,**m._stats(part)},"pair":[{**base,"pair":"EURUSD",**m._stats(part)}],"year":[{**base,"year":2017,**m._stats(part)}],"counts":[{"event":"synthetic","pair":"EURUSD","event_count":2}]},allow_nan=True),encoding="utf-8")
+        m.aggregate_streaming(paths,out)
         assert pd.read_csv(out/"edge_map.csv").event_count.iloc[0]==2
 
 def test_vectorized_event_rows_match_reference_and_are_faster():

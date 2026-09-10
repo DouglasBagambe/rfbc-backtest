@@ -286,14 +286,22 @@ def aggregate_streaming(paths,out):
     """
     out=Path(out); tmp=out/".aggregation_tmp"
     key_map=_partition_checkpoints(paths,tmp)
-    edge_rows=[]; pair_rows=[]; year_rows=[]; count_rows=[]
+    summary_dir=tmp/"summaries"; summary_dir.mkdir(parents=True,exist_ok=True)
     groups=["event","horizon","dispersion_regime"]
     for token,key in sorted(key_map.items(),key=lambda item:item[1]):
+        summary_path=summary_dir/f"{token}.json"
+        if summary_path.exists(): continue
         part=pd.read_csv(tmp/f"{token}.csv")
-        base=dict(zip(groups,key)); edge_rows.append({**base,**_stats(part)})
-        for pair,g in part.groupby("pair",dropna=False,sort=True): pair_rows.append({**base,"pair":pair,**_stats(g)})
-        for year,g in part.groupby("year",dropna=False,sort=True): year_rows.append({**base,"year":year,**_stats(g)})
-        count_rows.extend({"event":event,"pair":pair,"event_count":int(n)} for (event,pair),n in part.groupby(["event","pair"],dropna=False).size().items())
+        base=dict(zip(groups,key))
+        payload={
+            "edge":{**base,**_stats(part)},
+            "pair":[{**base,"pair":pair,**_stats(g)} for pair,g in part.groupby("pair",dropna=False,sort=True)],
+            "year":[{**base,"year":year,**_stats(g)} for year,g in part.groupby("year",dropna=False,sort=True)],
+            "counts":[{"event":event,"pair":pair,"event_count":int(n)} for (event,pair),n in part.groupby(["event","pair"],dropna=False).size().items()],
+        }
+        staged=summary_path.with_suffix(".json.tmp"); staged.write_text(json.dumps(payload,allow_nan=True,separators=(",",":")),encoding="utf-8"); os.replace(staged,summary_path)
+    payloads=[json.loads((summary_dir/f"{token}.json").read_text(encoding="utf-8")) for token in key_map]
+    edge_rows=[p["edge"] for p in payloads]; pair_rows=[r for p in payloads for r in p["pair"]]; year_rows=[r for p in payloads for r in p["year"]]; count_rows=[r for p in payloads for r in p["counts"]]
     edge=pd.DataFrame(edge_rows); bp=pd.DataFrame(pair_rows); by=pd.DataFrame(year_rows)
     pb,yb=breadth(bp,by); edge=edge.merge(pb,on=groups,how="left").merge(yb,on=groups,how="left")
     counts=pd.DataFrame(count_rows).groupby(["event","pair"],as_index=False).event_count.sum()
