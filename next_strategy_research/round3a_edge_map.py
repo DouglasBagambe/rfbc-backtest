@@ -3,6 +3,7 @@
 from __future__ import annotations
 import argparse
 import hashlib
+import heapq
 import json
 import os
 from pathlib import Path
@@ -74,16 +75,21 @@ def primitives(f):
     out["prior_sweep_low"]=(f.low<f.prior_low)&(f.close>=f.prior_low); out["prior_sweep_high"]=(f.high>f.prior_high)&(f.close<=f.prior_high)
     # Statefully define the latest opposite-colour candle in the four bars before an MSS.
     ob_up=pd.Series(False,index=f.index); ob_down=pd.Series(False,index=f.index); br_up=pd.Series(False,index=f.index); br_down=pd.Series(False,index=f.index)
-    active=[]
+    # Heap thresholds preserve the old state machine exactly: a bullish OB
+    # invalidates later when close < its low; a bearish OB when close > high.
+    # The previous list scan was O(number_of_bars²) on long histories.
+    bull_lows=[]; bear_highs=[]
     for i,t in enumerate(f.index):
-        for ob in active[:]:
-            if (ob["dir"]==1 and f.close.iloc[i]<ob["low"]) or (ob["dir"]==-1 and f.close.iloc[i]>ob["high"]): ob["invalid"]=True
-            if ob["invalid"] and i>ob["formed"]: (br_down if ob["dir"]==1 else br_up).iloc[i]=True; active.remove(ob)
+        close=float(f.close.iloc[i])
+        while bull_lows and close < -bull_lows[0]: heapq.heappop(bull_lows); br_down.iloc[i]=True
+        while bear_highs and close > bear_highs[0]: heapq.heappop(bear_highs); br_up.iloc[i]=True
         direction=1 if bool(out["mss_up"].iloc[i]) else (-1 if bool(out["mss_down"].iloc[i]) else 0)
         if direction and i>=4:
             candidates=[j for j in range(i-4,i) if (f.close.iloc[j]<f.open.iloc[j]) if direction==1] if direction==1 else [j for j in range(i-4,i) if f.close.iloc[j]>f.open.iloc[j]]
             if candidates:
-                j=candidates[-1]; active.append({"dir":direction,"high":f.high.iloc[j],"low":f.low.iloc[j],"formed":i,"invalid":False}); (ob_up if direction==1 else ob_down).iloc[i]=True
+                j=candidates[-1]
+                if direction==1: heapq.heappush(bull_lows,-float(f.low.iloc[j])); ob_up.iloc[i]=True
+                else: heapq.heappush(bear_highs,float(f.high.iloc[j])); ob_down.iloc[i]=True
     out.update(ob_candidate_up=ob_up,ob_candidate_down=ob_down,breaker_up=br_up,breaker_down=br_down)
     # OTE comes only from accepted four-bar MSS impulse A -> B.
     a_low=f.low.shift(1).rolling(4,min_periods=4).min(); a_high=f.high.shift(1).rolling(4,min_periods=4).max()

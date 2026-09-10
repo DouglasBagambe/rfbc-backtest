@@ -54,6 +54,21 @@ def test_latest_opposite_candle_ob_and_stateful_breaker():
     x=bars(12); x.loc[x.index[4:8],"open"]=[1,1,1,1]; x.loc[x.index[4:8],"close"]=[.9,1.1,.8,1.2]; x.loc[x.index[8],"high"]=1.3; x.loc[x.index[8],"close"]=1.3; x.loc[x.index[9],"low"]=.7; x.loc[x.index[9],"close"]=.7; x["asia_low"]=0.; x["asia_high"]=2.; x["prior_low"]=0.; x["prior_high"]=2.
     p=m.primitives(x); assert p["ob_candidate_up"].iloc[8] and p["breaker_down"].iloc[9]
 
+def test_heap_order_block_state_matches_bruteforce_reference():
+    x=bars(80); x["asia_low"]=0.; x["asia_high"]=2.; x["prior_low"]=0.; x["prior_high"]=2.; x.loc[x.index[4::5],"close"]=[1.03 if i%2 else .97 for i in range(len(x.index[4::5]))]
+    p4h=x.high.shift(1).rolling(4,min_periods=4).max(); p4l=x.low.shift(1).rolling(4,min_periods=4).min(); up=x.close>p4h; down=x.close<p4l
+    active=[]; bu=[]; bd=[]
+    for i in range(len(x)):
+        for ob in active[:]:
+            if (ob[0]==1 and x.close.iloc[i]<ob[2]) or (ob[0]==-1 and x.close.iloc[i]>ob[1]):
+                (bd if ob[0]==1 else bu).append(i); active.remove(ob)
+        direction=1 if up.iloc[i] else (-1 if down.iloc[i] else 0)
+        if direction and i>=4:
+            c=[j for j in range(i-4,i) if (x.close.iloc[j]<x.open.iloc[j] if direction==1 else x.close.iloc[j]>x.open.iloc[j])]
+            if c:
+                j=c[-1]; active.append((direction,x.high.iloc[j],x.low.iloc[j]))
+    got=m.primitives(x); assert list(got["breaker_up"][got["breaker_up"]].index)==list(x.index[bu]) and list(got["breaker_down"][got["breaker_down"]].index)==list(x.index[bd])
+
 def test_ote_geometry_is_bounded():
     a,b=1.,2.; zone=(b-.79*(b-a),b-.62*(b-a)); assert zone==(1.21,1.38)
 
