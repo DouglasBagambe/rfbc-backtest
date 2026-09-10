@@ -29,6 +29,7 @@ SCREEN_GATE = {
     "validation_profit_factor": 1.10,
     "minimum_combined_trades": 120,
 }
+TRADE_COLUMNS = ("hypothesis", "family", "pair", "signal_dt", "entry_dt", "exit_dt", "side", "r", "reason", "ambiguous_stop_first")
 
 
 @dataclass(frozen=True)
@@ -83,7 +84,10 @@ def load_pair(data_root: Path, pair: str) -> pd.DataFrame:
     if not bid.index.equals(ask.index):
         raise RuntimeError(f"{pair}: BID/ASK M15 indexes are not aligned")
     out = bid.add_prefix("bid_").join(ask.add_prefix("ask_"), how="inner")
-    out = out.rename(columns={"bid_open": "open", "bid_high": "high", "bid_low": "low", "bid_close": "close"})
+    # Keep explicit execution-side prices as well as BID aliases for signal
+    # construction. Long exits must inspect BID; short exits must inspect ASK.
+    for column in ("open", "high", "low", "close"):
+        out[column] = out[f"bid_{column}"]
     out["atr15"] = atr(out, 14)
     out["ema20"] = out.close.ewm(span=20, adjust=False).mean()
     out["ema50"] = out.close.ewm(span=50, adjust=False).mean()
@@ -154,22 +158,38 @@ def signals(f: pd.DataFrame, family: str) -> np.ndarray:
 
 def run_pair(f: pd.DataFrame, pair: str, spec: Spec) -> pd.DataFrame:
     sig = signals(f, spec.family); slip = SLIPPAGE_PIPS * pip_size(pair); trades=[]; next_ok=pd.Timestamp.min.tz_localize("UTC")
+    # Pull execution fields into NumPy once. This is a performance-only change:
+    # it avoids repeated Pandas scalar lookup inside the same deterministic loop.
+    index = f.index
+    atr_values = f["atr15"].to_numpy()
+    bid_open, ask_open = f["bid_open"].to_numpy(), f["ask_open"].to_numpy()
+    bid_high, bid_low, bid_close = f["bid_high"].to_numpy(), f["bid_low"].to_numpy(), f["bid_close"].to_numpy()
+    ask_high, ask_low, ask_close = f["ask_high"].to_numpy(), f["ask_low"].to_numpy(), f["ask_close"].to_numpy()
+    friday_cutoff = (index.weekday == 4) & (index.hour >= 16)
     for i in np.flatnonzero(sig):
-        if i + 1 >= len(f) or f.index[i] >= VALIDATION_END or f.index[i] < pd.Timestamp("2013-01-01", tz="UTC") or f.index[i] < next_ok or not np.isfinite(f.atr15.iat[i]): continue
-        side=int(sig[i]); entry=float(f.ask_open.iat[i+1] + slip) if side == 1 else float(f.open.iat[i+1] - slip)
-        risk=spec.stop_atr * float(f.atr15.iat[i]); stop=entry-side*risk; target=entry+side*spec.reward_risk*risk
+        if i + 1 >= len(f) or index[i] >= VALIDATION_END or index[i] < pd.Timestamp("2013-01-01", tz="UTC") or index[i] < next_ok or not np.isfinite(atr_values[i]): continue
+        side=int(sig[i]); entry=float(ask_open[i+1] + slip) if side == 1 else float(bid_open[i+1] - slip)
+        risk=spec.stop_atr * float(atr_values[i]); stop=entry-side*risk; target=entry+side*spec.reward_risk*risk
         reason="TIME"; exit_idx=min(i+spec.max_bars, len(f)-1); exit_px=None; ambiguous=False
         for j in range(i+1, min(i+spec.max_bars+1, len(f))):
-            if f.index[j].weekday() == 4 and f.index[j].hour >= 16:
+            if friday_cutoff[j]:
                 exit_idx=j; reason="FRIDAY"; break
-            hi=float(f.bid_high.iat[j] if side == 1 else f.ask_high.iat[j]); lo=float(f.bid_low.iat[j] if side == 1 else f.ask_low.iat[j])
+            hi=float(bid_high[j] if side == 1 else ask_high[j]); lo=float(bid_low[j] if side == 1 else ask_low[j])
             stop_hit=lo <= stop if side == 1 else hi >= stop; target_hit=hi >= target if side == 1 else lo <= target
             if stop_hit or target_hit:
                 exit_idx=j; ambiguous=bool(stop_hit and target_hit); reason="SL" if stop_hit else "TP"; exit_px=stop if stop_hit else target; break
-        if exit_px is None: exit_px=float(f.bid_close.iat[exit_idx] - slip) if side == 1 else float(f.ask_close.iat[exit_idx] + slip)
-        trades.append({"hypothesis":spec.hypothesis,"family":spec.family,"pair":pair,"signal_dt":f.index[i],"entry_dt":f.index[i+1],"exit_dt":f.index[exit_idx],"side":side,"r":side*(exit_px-entry)/risk,"reason":reason,"ambiguous_stop_first":ambiguous})
-        next_ok=f.index[exit_idx]
-    return pd.DataFrame(trades)
+        if exit_px is None: exit_px=float(bid_close[exit_idx] - slip) if side == 1 else float(ask_close[exit_idx] + slip)
+        trades.append({"hypothesis":spec.hypothesis,"family":spec.family,"pair":pair,"signal_dt":index[i],"entry_dt":index[i+1],"exit_dt":index[exit_idx],"side":side,"r":side*(exit_px-entry)/risk,"reason":reason,"ambiguous_stop_first":ambiguous})
+        next_ok=index[exit_idx]
+    return pd.DataFrame(trades, columns=TRADE_COLUMNS)
+
+
+def valid_checkpoint(path: Path) -> bool:
+    """Only reuse a fully written per-pair/hypothesis checkpoint."""
+    try:
+        return set(TRADE_COLUMNS).issubset(pd.read_csv(path, nrows=1).columns)
+    except Exception:
+        return False
 
 
 def metrics(t: pd.DataFrame, risk: float=.005) -> dict:
@@ -188,7 +208,8 @@ def main() -> None:
         frame = load_pair(Path(args.data), pair)
         for spec in SPECS:
             checkpoint = out / f"checkpoint_{pair}_{spec.hypothesis}.csv"
-            run_pair(frame, pair, spec).to_csv(checkpoint, index=False)
+            if not valid_checkpoint(checkpoint):
+                run_pair(frame, pair, spec).to_csv(checkpoint, index=False)
         del frame
         gc.collect()
     for spec in SPECS:
