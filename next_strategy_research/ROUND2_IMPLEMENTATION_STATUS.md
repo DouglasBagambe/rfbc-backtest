@@ -2,7 +2,7 @@
 
 **Date:** 10 September 2026  
 **Branch:** `strategy2-round2-wip`  
-**Status:** FIDELITY-CORRECTED; FRESH INTERNAL SCREEN REQUIRED
+**Status:** REJECTED; implementation retained as archived evidence
 
 ## Completed
 
@@ -15,7 +15,7 @@
 - Grouped chronology hardening prevents the final M15 state from one UTC day/week from bleeding into the first row of the next day/week.
 - Synthetic invariant suite added at `next_strategy_research/test_round2_engine.py`.
 
-## Required before any heavy screen
+## Archived verification command
 
 Run from the repository root:
 
@@ -30,12 +30,13 @@ Expected success line:
 PASS: 19 deterministic Round 2 tests
 ```
 
-Do **not** start the full 15-pair Round 2 screen unless this passes. The earlier
-screen is retained only as diagnostic runtime evidence and cannot be used for
-promotion; it predates the fidelity corrections. GitHub Actions was attempted
-but the repository workflow failed before any runner steps were allocated, so
-it was removed rather than leaving a misleading red CI signal.
+Round 2 is closed. Do **not** rerun, retune, or promote it. The existing screen
+output is preserved as rejected evidence in `results_next_strategy/round2/`;
+the retained implementation and tests exist for reproducibility only.
 
-## After the fast test passes
+## Historical screen outputs
 
-Run the full internal screen only against the already-built Dukascopy M15/H1/D1 BID/ASK dataset. The runner itself excludes all rows from 2021 onward. Produce `results_next_strategy/round2/trades.csv`, `screen.csv`, checkpoint CSVs and `gate.json`. No holdout or HistData external validation is permitted until a hypothesis passes the frozen preliminary gate.
+The archived screen used the already-built Dukascopy M15/H1/D1 BID/ASK dataset
+and excludes all rows from 2021 onward. It produced `trades.csv`, `screen.csv`,
+checkpoint CSVs and `gate.json`. No holdout or HistData external validation was
+performed.

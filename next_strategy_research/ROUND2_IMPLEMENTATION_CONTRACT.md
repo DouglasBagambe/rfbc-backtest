@@ -1,10 +1,13 @@
 # Strategy 2 — Round 2 deterministic implementation contract
 
-**Status:** FROZEN — fidelity-corrected implementation pending screen rerun
+**Status:** REJECTED — implementation retained for archival reproducibility
 **Date:** 10 September 2026
 **Scope:** S2R2-01 to S2R2-12; internal Dukascopy BID/ASK data from 2013 through 2020 only. RFBC v1.0 is unchanged.
 
-> **DECISION:** The previously completed screen is retained as diagnostic runtime evidence only. It is not promotion evidence because this contract identified pre-screen implementation deviations. No threshold, gate, universe, date split or strategy mechanism was selected from those results.
+> **DECISION:** Round 2 is closed as rejected. The completed screen is retained
+> as immutable archival evidence and the fidelity-corrected implementation is
+> retained for reproducibility. No threshold, gate, universe, date split or
+> strategy mechanism was selected from its results.
 
 ---
 
