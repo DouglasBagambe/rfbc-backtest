@@ -209,7 +209,11 @@ def valid_checkpoint(out,unit):
     try:
         data=json.loads(meta.read_text(encoding="utf-8"))
         if not data.get("complete") or data.get("sha256")!=_sha(csv) or data.get("columns")!=ROW_COLUMNS: return False
-        return sum(1 for _ in open(csv,encoding="utf-8"))-1==int(data["rows"])
+        # The digest covers every byte including the header and all rows.  A
+        # second Python line-count pass is therefore redundant and made
+        # low-RAM finalization unnecessarily I/O-bound on multi-gigabyte
+        # checkpoints.
+        return int(data["rows"])>=0
     except (OSError,ValueError,KeyError): return False
 
 def _keys(paths,groups):

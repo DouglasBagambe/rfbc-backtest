@@ -116,6 +116,12 @@ def test_corrupt_checkpoint_is_rejected():
         out=Path(td); m.write_checkpoint(out,"pair_A",checkpoint_rows()); csv,_=m.checkpoint_paths(out,"pair_A"); csv.write_text("broken",encoding="utf-8")
         assert not m.valid_checkpoint(out,"pair_A")
 
+def test_truncated_checkpoint_is_rejected_by_manifest_digest():
+    with tempfile.TemporaryDirectory() as td:
+        out=Path(td); rows=pd.concat([checkpoint_rows(),checkpoint_rows("GBPUSD")],ignore_index=True); m.write_checkpoint(out,"pair_A",rows)
+        csv,_=m.checkpoint_paths(out,"pair_A"); csv.write_bytes(csv.read_bytes()[:-8])
+        assert not m.valid_checkpoint(out,"pair_A")
+
 def test_partial_checkpoint_set_cannot_create_final_outputs():
     with tempfile.TemporaryDirectory() as td:
         out=Path(td); m.write_checkpoint(out,"pair_A",checkpoint_rows())
