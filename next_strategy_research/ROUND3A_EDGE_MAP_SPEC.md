@@ -42,3 +42,11 @@
 - Missing synchronized members invalidate cross-pair timestamp.
 - No forward labels, future session extrema, future pivots, or global sample statistics in event definitions.
 - The tool is resumable by output file only after a complete run; partial outputs are not conclusions.
+
+## Discovery nomination criteria — frozen before output
+
+An observed effect may be nominated for a separate Round 3B hypothesis only when all applicable conditions hold: aggregate N >=300; same-sign effect in at least 4 of the 5 development years; same sign in at least 8 of 15 pairs for universe-wide effects; fixed-peer/cross-sectional effects in at least 2 of 3 peer groups; absolute mean >=0.05 ATR at a useful horizon; absolute t-statistic >=2.0; and a coherent neighboring-horizon profile rather than one isolated spike. These are discovery criteria, not a trading promotion gate. Any Round 3B rule must still pass untouched 2018–2020 validation under the existing frozen trading gate.
+
+## Multiple-testing control — frozen before output
+
+Every predeclared event, including null and adverse results, is reported. Definitions, buckets, horizons and sequence completion window are fixed before the first output; no event is added after results are viewed. Multiple horizons remain one mechanism, and Round 3B may select at most 5–8 distinct mechanisms.
