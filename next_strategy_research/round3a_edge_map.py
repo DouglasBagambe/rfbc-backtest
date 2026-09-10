@@ -19,6 +19,13 @@ def trailing_percentile(s,window=252):
     """Rank current value against exactly the preceding completed values."""
     return s.rolling(window+1,min_periods=window+1).apply(lambda x: np.mean(x[:-1] <= x[-1]),raw=True)
 
+def dispersion_regime(percentile):
+    return pd.Series(np.select([percentile<=.20,percentile>=.80],["low","high"],default="normal"),index=percentile.index)
+
+def select_extremes(x):
+    """Column-name ordering makes equal normalized returns deterministic."""
+    y=x.reindex(sorted(x.columns),axis=1); return y.idxmax(axis=1),y.idxmin(axis=1)
+
 def read(path):
     rows=[]
     for x in pd.read_csv(path,usecols=["dt","open","high","low","close","volume"],parse_dates=["dt"],chunksize=40000,dtype={k:"float32" for k in ("open","high","low","close","volume")}):
@@ -99,25 +106,29 @@ def event_rows(f,pair):
         direction=-1 if name.endswith(("_down","_high")) else 1
         for h in HORIZONS:
             future,exists=exact_forward(f,h); z=(future-f.close)/f.atr15; valid=mask&exists&f.atr15.gt(0)&z.notna()
-            for t,v in z[valid].items(): rows.append((name,pair,t,f.year.loc[t],h,float(v),float(direction*v)))
-    return pd.DataFrame(rows,columns=["event","pair","dt","year","horizon","forward_atr_return","continuation_atr_return"]),e
+            for t,v in z[valid].items(): rows.append((name,pair,t,f.year.loc[t],h,float(v),float(direction*v),np.nan,np.nan,"not_applicable"))
+    return pd.DataFrame(rows,columns=["event","pair","dt","year","horizon","forward_atr_return","continuation_atr_return","dispersion_level","dispersion_percentile","dispersion_regime"]),e
 
 def cross_rows(root):
     h={p:h1_state(read(root/p/f"{p}_bid_h1.csv")) for p in PAIRS}; norm={p:h[p].h1_norm_return.rename(p) for p in PAIRS}; rows=[]
     for members,name,sign in ((USD_DIRECT+USD_INVERSE,"usd",{**{p:-1 for p in USD_DIRECT},**{p:1 for p in USD_INVERSE}}),(JPY,"jpy",{p:-1 for p in JPY})):
-        x=pd.concat([norm[p]*sign[p] for p in members],axis=1,join="inner").dropna(); med=x.median(axis=1); pos=(x>0).sum(axis=1); neg=(x<0).sum(axis=1); strong=x.idxmax(axis=1); weak=x.idxmin(axis=1)
+        x=pd.concat([norm[p]*sign[p] for p in members],axis=1,join="inner").dropna(); med=x.median(axis=1); pos=(x>0).sum(axis=1); neg=(x<0).sum(axis=1); strong,weak=select_extremes(x)
+        dispersion=x.std(axis=1,ddof=0); disp_pct=trailing_percentile(dispersion); regime=dispersion_regime(disp_pct)
         for k in HORIZONS:
             for t in x.index:
                 target=t+pd.Timedelta(minutes=15*k)
                 # H1 labels require exact future H1 availability: only k=4/8/16 is valid.
-                if k%4 or target not in x.index: continue
+                if k%4 or target not in x.index or not np.isfinite(disp_pct.loc[t]): continue
+                context=(float(dispersion.loc[t]),float(disp_pct.loc[t]),regime.loc[t])
                 for label,p in (("strongest",strong.loc[t]),("weakest",weak.loc[t])):
-                    v=x.loc[target,p]; rows.append((f"{name}_{label}",p,t,t.year,k,float(v),float(np.sign(x.loc[t,p])*v)))
+                    v=x.loc[target,p]; rows.append((f"{name}_{label}",p,t,t.year,k,float(v),float(np.sign(x.loc[t,p])*v),*context))
+                spread_change=(x.loc[target,strong.loc[t]]-x.loc[target,weak.loc[t]])-(x.loc[t,strong.loc[t]]-x.loc[t,weak.loc[t]])
+                rows.append((f"{name}_strong_minus_weak_change",name,t,t.year,k,float(spread_change),np.nan,*context))
                 for p in members:
                     residual=x.loc[t,p]-med.loc[t]
-                    if abs(residual)>=RESIDUAL_BUCKET: rows.append((f"{name}_residual_{'positive' if residual>0 else 'negative'}",p,t,t.year,k,float(x.loc[target,p]),float(np.sign(residual)*x.loc[target,p])))
-                rows.append((f"{name}_basket_persistence",name,t,t.year,k,float(med.loc[target]),float(np.sign(med.loc[t])*med.loc[target])))
-        for t in x.index: rows.append((f"{name}_breadth_pos_minus_neg",name,t,t.year,0,float(pos.loc[t]-neg.loc[t]),np.nan))
+                    if abs(residual)>=RESIDUAL_BUCKET: rows.append((f"{name}_residual_{'positive' if residual>0 else 'negative'}",p,t,t.year,k,float(x.loc[target,p]),float(np.sign(residual)*x.loc[target,p]),*context))
+                rows.append((f"{name}_basket_persistence",name,t,t.year,k,float(med.loc[target]),float(np.sign(med.loc[t])*med.loc[target]),*context))
+        for t in x.index: rows.append((f"{name}_breadth_pos_minus_neg",name,t,t.year,0,float(pos.loc[t]-neg.loc[t]),np.nan,float(dispersion.loc[t]),float(disp_pct.loc[t]),regime.loc[t]))
     for a,b in (("EURUSD","GBPUSD"),("AUDUSD","NZDUSD"),("EURJPY","GBPJPY")):
         x=pd.concat((norm[a],norm[b]),axis=1,join="inner").dropna(); diff=x[a]-x[b]
         for k in HORIZONS:
@@ -125,8 +136,8 @@ def cross_rows(root):
                 target=t+pd.Timedelta(minutes=15*k)
                 if k%4 or target not in x.index: continue
                 lead=a if diff.loc[t]>=0 else b; lag=b if lead==a else a; change=diff.loc[target]-diff.loc[t]
-                rows += [(f"divergence_{a}_{b}_convergence",a,t,t.year,k,float(-np.sign(diff.loc[t])*change),np.nan),(f"divergence_{a}_{b}_leader",lead,t,t.year,k,float(x.loc[target,lead]),float(np.sign(x.loc[t,lead])*x.loc[target,lead])),(f"divergence_{a}_{b}_laggard",lag,t,t.year,k,float(x.loc[target,lag]),float(np.sign(x.loc[t,lag])*x.loc[target,lag]))]
-    return pd.DataFrame(rows,columns=["event","pair","dt","year","horizon","forward_atr_return","continuation_atr_return"])
+                rows += [(f"divergence_{a}_{b}_convergence",a,t,t.year,k,float(-np.sign(diff.loc[t])*change),np.nan,np.nan,np.nan,"not_applicable"),(f"divergence_{a}_{b}_leader",lead,t,t.year,k,float(x.loc[target,lead]),float(np.sign(x.loc[t,lead])*x.loc[target,lead]),np.nan,np.nan,"not_applicable"),(f"divergence_{a}_{b}_laggard",lag,t,t.year,k,float(x.loc[target,lag]),float(np.sign(x.loc[t,lag])*x.loc[target,lag]),np.nan,np.nan,"not_applicable")]
+    return pd.DataFrame(rows,columns=["event","pair","dt","year","horizon","forward_atr_return","continuation_atr_return","dispersion_level","dispersion_percentile","dispersion_regime"])
 
 def summarize(x,groups):
     def s(g):
@@ -137,15 +148,16 @@ def summarize(x,groups):
 def breadth(by_pair,by_year):
     def count(g):
         direction=np.sign(g.mean_forward_return.mean()); return int((np.sign(g.mean_forward_return)==direction).sum())
-    p=by_pair.groupby(["event","horizon"]).apply(count,include_groups=False).rename("pair_breadth_same_sign").reset_index()
-    y=by_year.groupby(["event","horizon"]).apply(count,include_groups=False).rename("year_breadth_same_sign").reset_index(); return p,y
+    group=["event","horizon","dispersion_regime"] if "dispersion_regime" in by_pair else ["event","horizon"]
+    p=by_pair.groupby(group).apply(count,include_groups=False).rename("pair_breadth_same_sign").reset_index()
+    y=by_year.groupby(group).apply(count,include_groups=False).rename("year_breadth_same_sign").reset_index(); return p,y
 
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument("--data",default=str(ROOT/"data_independent/derived_m15")); ap.add_argument("--out",default=str(ROOT/"results_next_strategy/round3a")); ap.add_argument("--pairs",nargs="+",default=list(PAIRS)); a=ap.parse_args(); root=Path(a.data); chunks=[]; counts=[]
     for pair in a.pairs:
         x,e=event_rows(attach_h1(read(root/pair/f"{pair}_bid_m15.csv"),h1_state(read(root/pair/f"{pair}_bid_h1.csv"))),pair); chunks.append(x); counts += [(n,pair,int(v.sum())) for n,v in e.items()]
-    chunks.append(cross_rows(root)); x=pd.concat(chunks,ignore_index=True); edge=summarize(x,["event","horizon"]); bp=summarize(x,["event","horizon","pair"]); by=summarize(x,["event","horizon","year"]); pb,yb=breadth(bp,by)
-    edge=edge.merge(pb,on=["event","horizon"],how="left").merge(yb,on=["event","horizon"],how="left"); out=Path(a.out); out.mkdir(parents=True,exist_ok=True)
+    chunks.append(cross_rows(root)); x=pd.concat(chunks,ignore_index=True); edge=summarize(x,["event","horizon","dispersion_regime"]); bp=summarize(x,["event","horizon","dispersion_regime","pair"]); by=summarize(x,["event","horizon","dispersion_regime","year"]); pb,yb=breadth(bp,by)
+    edge=edge.merge(pb,on=["event","horizon","dispersion_regime"],how="left").merge(yb,on=["event","horizon","dispersion_regime"],how="left"); out=Path(a.out); out.mkdir(parents=True,exist_ok=True)
     edge.to_csv(out/"edge_map.csv",index=False); bp.to_csv(out/"by_pair.csv",index=False); by.to_csv(out/"by_year.csv",index=False); pd.DataFrame(counts,columns=["event","pair","event_count"]).to_csv(out/"event_counts.csv",index=False)
     (ROOT/"ROUND3A_EDGE_MAP_REPORT.md").write_text("# Round 3A Edge Map Report\n\nDevelopment-only descriptive output. No P&L or strategy promotion is implied.\n",encoding="utf-8")
 

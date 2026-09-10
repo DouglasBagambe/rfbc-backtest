@@ -63,6 +63,24 @@ def test_pair_and_year_breadth_are_separate():
     bp=pd.DataFrame({"event":["x","x"],"horizon":[1,1],"pair":["A","B"],"mean_forward_return":[.1,.2]}); by=pd.DataFrame({"event":["x","x"],"horizon":[1,1],"year":[2013,2014],"mean_forward_return":[.1,-.2]}); p,y=m.breadth(bp,by)
     assert p.pair_breadth_same_sign.iloc[0]==2 and y.year_breadth_same_sign.iloc[0]==1
 
+def test_current_dispersion_excluded_from_percentile_reference():
+    s=pd.Series([10.]*252+[0.]); assert m.trailing_percentile(s).iloc[-1]==0.0
+
+def test_missing_synchronized_member_removes_dispersion_timestamp():
+    ix=pd.date_range("2017-01-01",periods=3,freq="1h",tz="UTC"); a=pd.Series([1.,2.,3.],index=ix); b=pd.Series([1.,3.],index=ix.delete(1))
+    synced=pd.concat((a,b),axis=1,join="inner"); assert len(synced)==2 and ix[1] not in synced.index
+
+def test_strongest_weakest_ties_are_deterministic():
+    x=pd.DataFrame({"EURUSD":[2.],"GBPUSD":[2.],"AUDUSD":[-2.]}); strong,weak=m.select_extremes(x); assert strong.iloc[0]=="EURUSD" and weak.iloc[0]=="AUDUSD"
+
+def test_dispersion_regime_boundaries_are_exact():
+    p=pd.Series([.20,.2001,.7999,.80]); assert list(m.dispersion_regime(p))==["low","normal","normal","high"]
+
+def test_forward_labels_do_not_influence_dispersion_or_regime():
+    x=pd.DataFrame({"A":[1.,2.,3.],"B":[2.,1.,0.]}); d=x.std(axis=1,ddof=0); base=m.trailing_percentile(pd.concat((pd.Series([1.]*252),d),ignore_index=True))
+    future=x.copy(); future.iloc[-1]=[999.,-999.]; changed=m.trailing_percentile(pd.concat((pd.Series([1.]*252),future.std(axis=1,ddof=0)),ignore_index=True))
+    assert d.iloc[-2]==future.std(axis=1,ddof=0).iloc[-2] and base.iloc[-2]==changed.iloc[-2]
+
 if __name__=="__main__":
     tests=[v for k,v in sorted(globals().items()) if k.startswith("test_")]
     for test in tests: test()

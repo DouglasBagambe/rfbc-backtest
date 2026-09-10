@@ -22,7 +22,7 @@
 1. Session state: session high/low sweep-reclaims, opening-range close breaks, and 1.5 ATR extreme session moves.
 2. Volatility: M15/H1 trailing-ATR percentile regimes: compression `<=20`, normal `20–80`, expansion `>=80`; and forward signed/absolute behavior.
 3. Shocks: completed M15/H1 close changes in ATR units: 0.5–1.0, 1.0–1.5, 1.5–2.0, >2.0, separated by sign; forward continuation/reversion is descriptive only.
-4. Currency maps: fixed USD and JPY basket median/breadth, strongest/weakest members and residual direction. Synchronization is strict inner join, with no fill.
+4. Currency maps: fixed USD and JPY basket median/breadth, strongest/weakest members and residual direction. Synchronization is strict inner join, with no fill. At each synchronized H1 timestamp, cross-sectional dispersion is the population standard deviation of oriented member returns. Its current value is ranked only against preceding 252 synchronized observations: low `<=20th`, normal `>20th and <80th`, high `>=80th`. These exact regimes condition strongest/weakest behavior, strongest-minus-weakest spread change, residual behavior and basket persistence; raw level, percentile and regime counts are retained.
 5. Fixed-pair divergence: EURUSD/GBPUSD, AUDUSD/NZDUSD and EURJPY/GBPJPY normalized-return spread and later convergence/persistence.
 6. ICT primitives independently: FVG formation, four-bar MSS, Asia and prior-D1 sweep/reclaim, order-block candidate, breaker invalidation, OTE-zone occurrence, and fixed-pair SMT divergence.
 7. Limited interactions only: session×volatility, shock×available H1 trend, sweep×MSS, FVG×H1 trend, divergence×session.
@@ -40,6 +40,7 @@
 - UTC-aware timestamps, completed-only features, and strict source ordering.
 - H1 availability delayed one full hour.
 - Missing synchronized members invalidate cross-pair timestamp.
+- Dispersion has no additional buckets or post-output threshold changes.
 - No forward labels, future session extrema, future pivots, or global sample statistics in event definitions.
 - The tool is resumable by output file only after a complete run; partial outputs are not conclusions.
 
