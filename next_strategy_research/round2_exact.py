@@ -44,7 +44,9 @@ def tr(f):
     p=f.close.shift()
     return pd.concat((f.high-f.low,(f.high-p).abs(),(f.low-p).abs()),axis=1).max(axis=1)
 
-def atr(f,n=14): return tr(f).rolling(n,min_periods=n).mean()
+def atr(f,n=14):
+    """Wilder ATR(14), with no value before 14 completed bars exist."""
+    return tr(f).ewm(alpha=1 / n, adjust=False, min_periods=n).mean()
 
 def read(path):
     parts=[]
@@ -57,7 +59,10 @@ def read(path):
 
 def h1_state(h):
     x=h.copy(); x["h1_atr"]=atr(x); e20=x.close.ewm(span=20,adjust=False).mean(); e50=x.close.ewm(span=50,adjust=False).mean()
-    x["h1_trend"]=np.select([(x.close>e20)&(e20>e50),(x.close<e20)&(e20<e50)],[1,-1],default=0)
+    # The frozen trend definition is EMA-to-EMA only.  The declared neutral
+    # band takes precedence where the two EMAs are too close to distinguish.
+    neutral=(e20-e50).abs() <= .20*x.h1_atr
+    x["h1_trend"]=np.select([neutral,e20>e50,e20<e50],[0,1,-1],default=0)
     x["h1_body"]=(x.close-x.open).abs(); rng=(x.high-x.low).replace(0,np.nan)
     upper=x.high-x[["open","close"]].max(axis=1); lower=x[["open","close"]].min(axis=1)-x.low
     x["h1_wick_share"]=pd.concat((upper,lower),axis=1).max(axis=1)/rng
@@ -131,7 +136,7 @@ def prepare(root,pair):
     f["london_hi_prev"]=f.high.where(london).groupby(f.date).transform(lambda s:s.expanding().max()).shift(1); f["london_lo_prev"]=f.low.where(london).groupby(f.date).transform(lambda s:s.expanding().min()).shift(1)
     f["asia_volume_med20"]=fixed_window_baseline(f,0,7,"volume"); f["london_0709_range_med20"]=fixed_window_baseline(f,7,9,"range")
 
-    wk=f.index.to_period("W-SUN"); f["week_hi_prev"]=f.high.groupby(wk).transform(lambda s:s.expanding().max()).shift(1); f["week_lo_prev"]=f.low.groupby(wk).transform(lambda s:s.expanding().min()).shift(1)
+    wk=f.index.normalize()-pd.to_timedelta(f.index.weekday,unit="D"); f["week_hi_prev"]=f.high.groupby(wk).transform(lambda s:s.expanding().max()).shift(1); f["week_lo_prev"]=f.low.groupby(wk).transform(lambda s:s.expanding().min()).shift(1)
     f["new_week_extreme"]=(f.high>f.week_hi_prev)|(f.low<f.week_lo_prev)
     return _freeze_expansion(f)
 
@@ -177,28 +182,78 @@ def _first_true_per_group(mask,group):
 def sig(f,pair,fam):
     h,m=f.hour,f.minute; bull=f.close>f.open; bear=f.close<f.open; neutral=f.h1_h1_trend.eq(0)
     if fam=="prior_day_value":
-        w=(h==5)|(h==6); ext=.75*f.atr15
-        return sided(w&neutral&(f.low<f.prior_day_close-ext)&(f.close>=f.prior_day_close-ext)&bull,w&neutral&(f.high>f.prior_day_close+ext)&(f.close<=f.prior_day_close+ext)&bear)
+        w=(h==5)|((h==6)&(m<=45)); prev=f.close.shift(1); ext=.75*f.atr15.shift(1)
+        # The preceding completed close, not a wick, must be extended.  The
+        # signal close must then reverse through that preceding close toward
+        # the prior D1 close.
+        return sided(w&neutral&(prev<=f.prior_day_close-ext)&(f.close>prev),w&neutral&(prev>=f.prior_day_close+ext)&(f.close<prev))
     if fam=="late_london_exhaustion":
-        w=(h==14)|(h==15); e=f.day_range_prev>=1.25*f.range_med20
-        return sided(w&e&(f.low<f.london_lo_prev)&(f.close>f.london_lo_prev),w&e&(f.high>f.london_hi_prev)&(f.close<f.london_hi_prev))
+        w=(h==14)|((h==15)&(m<=45)); e=f.day_range_prev>=1.25*f.range_med20
+        return sided(w&e&(f.low<f.london_lo_prev)&(f.close>=f.london_lo_prev),w&e&(f.high>f.london_hi_prev)&(f.close<=f.london_hi_prev))
     if fam=="ny_opening_drive":
-        same_day=f.ny13_ny_date.eq(f.date); d=np.sign(f.ny13_close-f.ny13_open); valid=same_day&(f.ny13_h1_body>=.9*f.ny13_h1_atr)&(f.ny13_h1_wick_share<=.25)&(d==f.ny13_h1_trend)&((h==14)|(h==15)); impulse=(f.ny13_close-f.ny13_open).abs()
-        retr=np.where(d>0,(f.ny13_close-f.close)/impulse,np.where(d<0,(f.close-f.ny13_close)/impulse,np.nan)); pull=valid&(retr>=.25)&(retr<=.50)
-        armed=pull.groupby(f.date).transform(lambda s:s.shift(1).cummax().fillna(False)); raw_long=armed&(d>0)&(f.close>f.ny13_high); raw_short=armed&(d<0)&(f.close<f.ny13_low)
-        return sided(_first_true_per_group(raw_long,f.date),_first_true_per_group(raw_short,f.date))
+        out=np.zeros(len(f),dtype=int)
+        for _,loc in f.groupby("date").groups.items():
+            pos=f.index.get_indexer(loc); armed=0; armed_at=None; cancelled=False
+            for j in pos:
+                if f.index[j].hour<14 or cancelled or armed:
+                    continue
+                d=int(np.sign(f.ny13_close.iloc[j]-f.ny13_open.iloc[j]))
+                valid=(f.ny13_ny_date.iloc[j]==f.date.iloc[j] and d!=0 and
+                    f.ny13_h1_body.iloc[j]>=.9*f.ny13_h1_atr.iloc[j] and
+                    f.ny13_h1_wick_share.iloc[j]<=.25 and d==f.ny13_h1_trend.iloc[j])
+                if not valid: continue
+                impulse=abs(float(f.ny13_close.iloc[j]-f.ny13_open.iloc[j]))
+                if not np.isfinite(impulse) or impulse==0: continue
+                retr=((f.ny13_close.iloc[j]-f.close.iloc[j])/impulse if d>0 else
+                       (f.close.iloc[j]-f.ny13_close.iloc[j])/impulse)
+                if .25<=retr<=.50:
+                    armed=d; armed_at=j
+                elif (d>0 and f.close.iloc[j]>f.ny13_high.iloc[j]) or (d<0 and f.close.iloc[j]<f.ny13_low.iloc[j]):
+                    cancelled=True
+            if armed:
+                # A later completed M15 break of the prior M15 high/low is the
+                # entry trigger; an impulse-extreme close cancels first.
+                for j in pos:
+                    if j<=armed_at: continue
+                    prev=j-1
+                    if armed>0 and f.close.iloc[j]>f.ny13_high.iloc[j]: break
+                    if armed<0 and f.close.iloc[j]<f.ny13_low.iloc[j]: break
+                    if armed>0 and f.close.iloc[j]>f.high.iloc[prev]: out[j]=1; break
+                    if armed<0 and f.close.iloc[j]<f.low.iloc[prev]: out[j]=-1; break
+        return out
     if fam=="post_overlap_drift":
-        w=((h==14)|(h==15))&~((h==15)&(m>30)); side=np.sign(f.close.shift(1)-f.prior_day_close); ls=side.rolling(8,min_periods=8).apply(lambda x:1 if np.all(x>0) else (-1 if np.all(x<0) else 0)); ns=side.rolling(4,min_periods=4).apply(lambda x:1 if np.all(x>0) else (-1 if np.all(x<0) else 0)); d=np.where((ls==ns)&(ls!=0),ls,0)
-        return sided(w&(d==1)&(f.close>f.high.shift(1).rolling(4).max()),w&(d==-1)&(f.close<f.low.shift(1).rolling(4).min()))
+        w=(h==14)|((h==15)&(m<=30)); above=f.close>f.prior_day_close; below=f.close<f.prior_day_close
+        def all_since(value,start):
+            mask=h>=start; out=pd.Series(False,index=f.index)
+            out.loc[mask]=value.loc[mask].groupby(f.date.loc[mask]).cummin()
+            return out
+        london_above=all_since(above,7); london_below=all_since(below,7)
+        ny_above=all_since(above,12); ny_below=all_since(below,12)
+        prev_hi=f.high.groupby(f.date).transform(lambda s:s.shift(1).rolling(4,min_periods=4).max())
+        prev_lo=f.low.groupby(f.date).transform(lambda s:s.shift(1).rolling(4,min_periods=4).min())
+        return sided(w&london_above&ny_above&(f.close>prev_hi),w&london_below&ny_below&(f.close<prev_lo))
     if fam=="two_hour_fade":
-        mask=(h>=7)&(h<9); orh=f.high.where(mask).groupby(f.date).transform("max"); orl=f.low.where(mask).groupby(f.date).transform("min"); narrow=(orh-orl)<=.8*f.london_0709_range_med20; w=(h==9)|(h==10); up=(f.high>orh).astype(int); dn=(f.low<orl).astype(int); pu=up.groupby(f.date).cumsum().shift(1).fillna(0)>=1; pdn=dn.groupby(f.date).cumsum().shift(1).fillna(0)>=1
-        return sided(w&narrow&pdn&(f.low<orl)&(f.close>orl),w&narrow&pu&(f.high>orh)&(f.close<orh))
+        out=np.zeros(len(f),dtype=int)
+        for _,loc in f.groupby("date").groups.items():
+            pos=f.index.get_indexer(loc); rng=[j for j in pos if 7<=f.index[j].hour<9]
+            if not rng: continue
+            hi=max(float(f.high.iloc[j]) for j in rng); lo=min(float(f.low.iloc[j]) for j in rng)
+            baseline=f.london_0709_range_med20.iloc[rng[-1]]
+            if not np.isfinite(baseline) or hi-lo>.8*baseline: continue
+            armed_hi=armed_lo=False
+            for j in pos:
+                hh,mm=f.index[j].hour,f.index[j].minute
+                if not ((hh==9) or (hh==10 and mm<=45)): continue
+                up=f.high.iloc[j]>hi and f.close.iloc[j]<=hi; dn=f.low.iloc[j]<lo and f.close.iloc[j]>=lo
+                if up:
+                    if armed_hi: out[j]=-1; break
+                    armed_hi=True
+                if dn:
+                    if armed_lo: out[j]=1; break
+                    armed_lo=True
+        return out
     if fam=="daily_expansion":
         w=(h>=10)&(h<=12); quiet=f.day_range_prev<=.55*f.range_med20; long=w&quiet&(f.close>f.prior_day_high)&f.h1_h1_trend.eq(1); short=w&quiet&(f.close<f.prior_day_low)&f.h1_h1_trend.eq(-1)
-        if pair in USD_DIRECT: long&=f.usd_weak_count>=3; short&=f.usd_strong_count>=3
-        elif pair in USD_INVERSE: long&=f.usd_strong_count>=3; short&=f.usd_weak_count>=3
-        elif pair in JPY_BASKET: long&=f.jpy_weak_count>=3; short&=f.jpy_strong_count>=3
-        else: return np.zeros(len(f),dtype=int)
         return sided(long,short)
     if fam=="usd_basket":
         if pair not in USD_BASKET: return np.zeros(len(f),dtype=int)
@@ -216,7 +271,7 @@ def sig(f,pair,fam):
         lzone=w&after&f.r2_impulse_dir.eq(1)&ur.between(.382,.618); szone=w&after&f.r2_impulse_dir.eq(-1)&dr.between(.382,.618); lfirst=_first_true_per_group(lzone,f.date)&bull; sfirst=_first_true_per_group(szone,f.date)&bear
         return sided(lfirst,sfirst)
     if fam=="friday_fade":
-        w=f.weekday.eq(4)&(h>=13)&(h<=15); c1,c2,c3=f.close.shift(3),f.close.shift(2),f.close.shift(1); up=(c1<c2)&(c2<c3); dn=(c1>c2)&(c2>c3); noext=f.new_week_extreme.shift(1).rolling(3,min_periods=3).sum().eq(0); mid=(f.open.shift(1)+f.close.shift(1))/2
+        w=f.weekday.eq(4)&((h>=13)&((h<15)|((h==15)&(m<=45)))); c1,c2,c3=f.close.shift(3),f.close.shift(2),f.close.shift(1); up=(c1<c2)&(c2<c3); dn=(c1>c2)&(c2>c3); noext=f.new_week_extreme.shift(1).rolling(3,min_periods=3).sum().eq(0); mid=(f.open.shift(1)+f.close.shift(1))/2
         return sided(w&dn&noext&(f.close>mid),w&up&noext&(f.close<mid))
     raise ValueError(fam)
 
@@ -224,8 +279,11 @@ def sig(f,pair,fam):
 def execute(f,pair,spec):
     s=sig(f,pair,spec.family); slip=.10*pip(pair); out=[]; ok=pd.Timestamp.min.tz_localize("UTC"); ix=f.index; av=f.atr15.to_numpy(); bo,ao=f.bid_open.to_numpy(),f.ask_open.to_numpy(); bh,bl,bc=f.bid_high.to_numpy(),f.bid_low.to_numpy(),f.bid_close.to_numpy(); ah,al,ac=f.ask_high.to_numpy(),f.ask_low.to_numpy(),f.ask_close.to_numpy()
     for i in np.flatnonzero(s):
-        if i+1>=len(f) or ix[i]<DEV_START or ix[i]>=END or ix[i]<ok or not np.isfinite(av[i]): continue
-        side=int(s[i]); entry=float(ao[i+1]+slip if side==1 else bo[i+1]-slip); risk=1.25*float(av[i]); stop=entry-side*risk; target=entry+side*1.5*risk; px=None; reason="TIME"; amb=False; jend=min(i+24,len(f)-1)
+        if i+1>=len(f) or ix[i]<DEV_START or ix[i]>=END or ix[i]<ok or not np.isfinite(av[i]) or av[i] <= 0: continue
+        if ix[i].weekday()==4 and (ix[i].hour>15 or (ix[i].hour==15 and ix[i].minute>45)): continue
+        side=int(s[i]); entry=float(ao[i+1]+slip if side==1 else bo[i+1]-slip); risk=1.25*float(av[i])
+        if not np.isfinite(risk) or risk <= 0: continue
+        stop=entry-side*risk; target=entry+side*1.5*risk; px=None; reason="TIME"; amb=False; jend=min(i+24,len(f)-1)
         for j in range(i+1,jend+1):
             if ix[j].weekday()==4 and ix[j].hour>=16: jend=j; reason="FRIDAY"; break
             hi=float(bh[j] if side==1 else ah[j]); lo=float(bl[j] if side==1 else al[j]); sh=lo<=stop if side==1 else hi>=stop; th=hi>=target if side==1 else lo<=target

@@ -2,11 +2,12 @@
 
 **Date:** 10 September 2026  
 **Branch:** `strategy2-round2-wip`  
-**Status:** IMPLEMENTED; LOCAL FAST TEST REQUIRED BEFORE FULL SCREEN
+**Status:** FIDELITY-CORRECTED; FRESH INTERNAL SCREEN REQUIRED
 
 ## Completed
 
-- Frozen deterministic implementation contract added.
+- Frozen deterministic implementation contract fidelity-corrected against the
+  pre-data rules; see `ROUND2_FIDELITY_AUDIT.md`.
 - S2R2-01 through S2R2-12 are implemented; S2R2-07/08/09 are no longer placeholders.
 - Holdout guard remains hard-coded at `< 2021-01-01` in the reader.
 - BID/ASK execution, 0.10-pip slippage, 1.25 ATR stop, 1.50R target, 24-M15 maximum hold, Friday 16:00 UTC close and stop-first ambiguity are preserved.
@@ -26,10 +27,14 @@ python test_round2_engine.py
 Expected success line:
 
 ```text
-PASS: 9 deterministic Round 2 tests
+PASS: 19 deterministic Round 2 tests
 ```
 
-Do **not** start the full 15-pair Round 2 screen unless this passes. GitHub Actions was attempted but the repository workflow failed before any runner steps were allocated, so it was removed rather than leaving a misleading red CI signal. This was an infrastructure-level failure, not evidence that the Python tests passed or failed.
+Do **not** start the full 15-pair Round 2 screen unless this passes. The earlier
+screen is retained only as diagnostic runtime evidence and cannot be used for
+promotion; it predates the fidelity corrections. GitHub Actions was attempted
+but the repository workflow failed before any runner steps were allocated, so
+it was removed rather than leaving a misleading red CI signal.
 
 ## After the fast test passes
 

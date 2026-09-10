@@ -23,7 +23,8 @@ def freeze_expansion_strict(f: pd.DataFrame) -> pd.DataFrame:
     f["london_hi_prev"] = f.high.where(london).groupby(f.date).transform(lambda s: s.expanding().max().shift(1))
     f["london_lo_prev"] = f.low.where(london).groupby(f.date).transform(lambda s: s.expanding().min().shift(1))
 
-    week = f.index.to_period("W-SUN")
+    # UTC-aware Monday key; unlike Period conversion this does not discard tz.
+    week = f.index.normalize() - pd.to_timedelta(f.index.weekday, unit="D")
     f["week_hi_prev"] = f.high.groupby(week).transform(lambda s: s.expanding().max().shift(1))
     f["week_lo_prev"] = f.low.groupby(week).transform(lambda s: s.expanding().min().shift(1))
     f["new_week_extreme"] = (f.high > f.week_hi_prev) | (f.low < f.week_lo_prev)
@@ -81,13 +82,22 @@ def build_cross_maps_strict(root):
         u[p] = -usd[p]
     for p in core.USD_INVERSE:
         u[p] = usd[p]
-    u["median"] = u[list(core.USD_BASKET)].median(axis=1)
-    u["strong_count"] = (u[list(core.USD_BASKET)] > 0).sum(axis=1)
-    u["weak_count"] = (u[list(core.USD_BASKET)] < 0).sum(axis=1)
-    u["candidate"] = u[list(core.USD_BASKET)].abs().idxmax(axis=1)
+    members=list(core.USD_BASKET)
+    u["median"] = u[members].median(axis=1)
+    u["strong_count"] = (u[members] > 0).sum(axis=1)
+    u["weak_count"] = (u[members] < 0).sum(axis=1)
     u["direction"] = np.where(u["median"] >= 1.0, 1, np.where(u["median"] <= -1.0, -1, 0))
     u.loc[(u.direction == 1) & (u.strong_count < 3), "direction"] = 0
     u.loc[(u.direction == -1) & (u.weak_count < 3), "direction"] = 0
+    # The candidate is selected only from members agreeing with the approved
+    # basket sign.  Sorting the tied candidates makes the declared lexical
+    # tiebreak explicit rather than relying on DataFrame column order.
+    def usd_candidate(row):
+        direction=int(row["direction"])
+        if direction==0: return np.nan
+        choices=sorted(p for p in members if (row[p] > 0 if direction>0 else row[p] < 0))
+        return sorted(choices,key=lambda p:(-abs(float(row[p])),p))[0] if choices else np.nan
+    u["candidate"] = u.apply(usd_candidate,axis=1)
     u["source_h1"] = u.index
     u["available"] = u.index + pd.Timedelta(hours=1)
 
@@ -95,14 +105,18 @@ def build_cross_maps_strict(root):
     jj = pd.DataFrame(index=j.index)
     for p in core.JPY_BASKET:
         jj[p] = j[p]
-    jj["median"] = jj[list(core.JPY_BASKET)].median(axis=1)
-    jj["neg_count"] = (jj[list(core.JPY_BASKET)] < 0).sum(axis=1)
-    jj["pos_count"] = (jj[list(core.JPY_BASKET)] > 0).sum(axis=1)
-    jj["candidate"] = jj[list(core.JPY_BASKET)].abs().idxmax(axis=1)
-    # Pair return < 0 means JPY strength; > 0 means JPY weakness.
-    jj["direction"] = np.where(jj["median"] <= -0.75, -1, np.where(jj["median"] >= 0.75, 1, 0))
+    jmembers=list(core.JPY_BASKET)
+    jj["median"] = jj[jmembers].median(axis=1)
+    jj["neg_count"] = (jj[jmembers] < 0).sum(axis=1)
+    # The pre-data register freezes the risk-off/J PY-strength side only:
+    # return <= -0.75 ATR, at least three crosses negative, then short.
+    jj["direction"] = np.where(jj["median"] <= -0.75, -1, 0)
     jj.loc[(jj.direction == -1) & (jj.neg_count < 3), "direction"] = 0
-    jj.loc[(jj.direction == 1) & (jj.pos_count < 3), "direction"] = 0
+    def jpy_candidate(row):
+        if int(row["direction"]) != -1: return np.nan
+        choices=sorted(p for p in jmembers if row[p] < 0)
+        return sorted(choices,key=lambda p:(-abs(float(row[p])),p))[0] if choices else np.nan
+    jj["candidate"] = jj.apply(jpy_candidate,axis=1)
     jj["source_h1"] = jj.index
     jj["available"] = jj.index + pd.Timedelta(hours=1)
 
@@ -148,15 +162,21 @@ def sig_strict(f, pair, fam):
     if fam == "jpy_basket":
         if pair not in core.JPY_BASKET:
             return np.zeros(len(f), dtype=int)
-        active = f.jpy_candidate.eq(pair) & f.minute.eq(0)
-        # Negative basket direction = JPY strength = short XXXJPY.
-        return core.sided(active & (f.jpy_direction == 1), active & (f.jpy_direction == -1))
+        # The register freezes a continuation break: the first completed M15
+        # close below its immediately preceding M15 low while the same H1
+        # basket timestamp remains active.  One candidate was preselected.
+        fresh=(f.index.to_series().eq(f.jpy_source_h1 + pd.Timedelta(hours=1)))
+        active=f.jpy_candidate.eq(pair)&f.jpy_direction.eq(-1)&fresh
+        armed_source=f.jpy_source_h1.where(active).ffill()
+        raw=(armed_source.notna()&armed_source.eq(f.jpy_source_h1)&(f.close<f.low.shift(1)))
+        first=raw & (raw.groupby(f.jpy_source_h1).cumsum()==1)
+        return np.where(first,-1,0)
 
     if fam == "correlation_dislocation":
         if pair not in ("EURUSD", "GBPUSD", "AUDUSD", "NZDUSD"):
             return np.zeros(len(f), dtype=int)
         mid = (f.h1_open + f.h1_close) / 2
-        first = f.minute.eq(0)
+        first=f.index.to_series().eq(f.dis_source_h1 + pd.Timedelta(hours=1))
         return core.sided(first & (f.dis_residual <= -1.5) & (f.close >= mid), first & (f.dis_residual >= 1.5) & (f.close <= mid))
 
     return _original_sig(f, pair, fam)
