@@ -1,0 +1,9 @@
+[
+  {
+    "development_expectancy_r":0.1,
+    "development_profit_factor":1.15,
+    "validation_expectancy_r":0.05,
+    "validation_profit_factor":1.1,
+    "minimum_combined_trades":120
+  }
+]
