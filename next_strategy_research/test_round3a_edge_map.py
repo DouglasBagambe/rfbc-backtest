@@ -128,6 +128,12 @@ def test_truncated_checkpoint_is_rejected_by_manifest_digest():
         csv,_=m.checkpoint_paths(out,"pair_A"); csv.write_bytes(csv.read_bytes()[:-8])
         assert not m.valid_checkpoint(out,"pair_A")
 
+def test_prior_checkpoint_version_is_rejected():
+    with tempfile.TemporaryDirectory() as td:
+        out=Path(td); m.write_checkpoint(out,"pair_A",checkpoint_rows()); _,meta=m.checkpoint_paths(out,"pair_A")
+        d=json.loads(meta.read_text(encoding="utf-8")); d["version"]=m.CHECKPOINT_VERSION-1; meta.write_text(json.dumps(d),encoding="utf-8")
+        assert not m.valid_checkpoint(out,"pair_A")
+
 def test_partial_checkpoint_set_cannot_create_final_outputs():
     with tempfile.TemporaryDirectory() as td:
         out=Path(td); m.write_checkpoint(out,"pair_A",checkpoint_rows())

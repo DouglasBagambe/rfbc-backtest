@@ -15,6 +15,7 @@ ROOT=Path(__file__).resolve().parents[1]; START=pd.Timestamp("2013-01-01",tz="UT
 PAIRS=("EURUSD","GBPUSD","USDJPY","AUDUSD","NZDUSD","USDCAD","USDCHF","EURJPY","GBPJPY","AUDJPY","CADJPY","CHFJPY","EURGBP","EURAUD","GBPAUD")
 USD_DIRECT=("EURUSD","GBPUSD","AUDUSD","NZDUSD"); USD_INVERSE=("USDJPY","USDCAD","USDCHF"); JPY=("EURJPY","GBPJPY","AUDJPY","CADJPY","CHFJPY")
 HORIZONS=(1,2,4,8,16); SEQUENCE_BARS=8; RESIDUAL_BUCKET=1.0
+CHECKPOINT_VERSION=2  # v2 excludes zero-tick market-closed padding.
 
 def atr(f,n=14):
     p=f.close.shift(); tr=pd.concat((f.high-f.low,(f.high-p).abs(),(f.low-p).abs()),axis=1).max(axis=1)
@@ -206,14 +207,14 @@ def write_checkpoint(out,unit,rows):
     """Atomically publish a complete, checksummed unit checkpoint."""
     csv,meta=checkpoint_paths(out,unit); csv.parent.mkdir(parents=True,exist_ok=True); tmp=csv.with_suffix(".csv.tmp")
     rows.to_csv(tmp,index=False); os.replace(tmp,csv)
-    payload={"unit":unit,"complete":True,"rows":len(rows),"sha256":_sha(csv),"columns":list(rows.columns)}; mtmp=meta.with_suffix(".json.tmp")
+    payload={"unit":unit,"version":CHECKPOINT_VERSION,"complete":True,"rows":len(rows),"sha256":_sha(csv),"columns":list(rows.columns)}; mtmp=meta.with_suffix(".json.tmp")
     mtmp.write_text(json.dumps(payload,sort_keys=True),encoding="utf-8"); os.replace(mtmp,meta)
 
 def valid_checkpoint(out,unit):
     csv,meta=checkpoint_paths(out,unit)
     try:
         data=json.loads(meta.read_text(encoding="utf-8"))
-        if not data.get("complete") or data.get("sha256")!=_sha(csv) or data.get("columns")!=ROW_COLUMNS: return False
+        if data.get("version")!=CHECKPOINT_VERSION or not data.get("complete") or data.get("sha256")!=_sha(csv) or data.get("columns")!=ROW_COLUMNS: return False
         # The digest covers every byte including the header and all rows.  A
         # second Python line-count pass is therefore redundant and made
         # low-RAM finalization unnecessarily I/O-bound on multi-gigabyte
