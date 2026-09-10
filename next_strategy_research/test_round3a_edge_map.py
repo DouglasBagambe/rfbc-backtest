@@ -122,6 +122,30 @@ def test_partial_checkpoint_set_cannot_create_final_outputs():
         try: m.finalize(out,["pair_A","cross"]); assert False
         except RuntimeError: assert not (out/"edge_map.csv").exists()
 
+def test_streaming_aggregation_matches_reference_exactly():
+    """The low-memory partitioner must retain the old summary semantics."""
+    rows=pd.DataFrame([
+        ("a","EURUSD","2017-01-01T00:00:00Z",2017,1,.1,.1,np.nan,np.nan,"not_applicable"),
+        ("a","GBPUSD","2017-01-01T00:15:00Z",2017,1,-.2,.2,np.nan,np.nan,"not_applicable"),
+        ("a","EURUSD","2017-01-01T00:30:00Z",2017,2,.3,.3,np.nan,np.nan,"not_applicable"),
+        ("b","EURUSD","2016-01-01T00:00:00Z",2016,1,.4,-.4,.2,.8,"high"),
+        ("b","GBPUSD","2017-01-01T00:00:00Z",2017,1,.5,-.5,.2,.8,"high"),
+    ],columns=m.ROW_COLUMNS)
+    with tempfile.TemporaryDirectory() as td:
+        out=Path(td); m.write_checkpoint(out,"pair_A",rows.iloc[:3]); m.write_checkpoint(out,"cross",rows.iloc[3:])
+        paths=[m.checkpoint_paths(out,u)[0] for u in ("pair_A","cross")]
+        groups=["event","horizon","dispersion_regime"]
+        expected_edge=m.stream_summary(paths,groups).sort_values(groups).reset_index(drop=True)
+        expected_pair=m.stream_summary(paths,groups+["pair"]).sort_values(groups+["pair"]).reset_index(drop=True)
+        expected_year=m.stream_summary(paths,groups+["year"]).sort_values(groups+["year"]).reset_index(drop=True)
+        m.finalize(out,["pair_A","cross"])
+        got_edge=pd.read_csv(out/"edge_map.csv").sort_values(groups).reset_index(drop=True)
+        got_pair=pd.read_csv(out/"by_pair.csv").sort_values(groups+["pair"]).reset_index(drop=True)
+        got_year=pd.read_csv(out/"by_year.csv").sort_values(groups+["year"]).reset_index(drop=True)
+        pd.testing.assert_frame_equal(got_edge[expected_edge.columns],expected_edge,check_dtype=False,check_exact=False,rtol=1e-12,atol=1e-12)
+        pd.testing.assert_frame_equal(got_pair,expected_pair,check_dtype=False,check_exact=False,rtol=1e-12,atol=1e-12)
+        pd.testing.assert_frame_equal(got_year,expected_year,check_dtype=False,check_exact=False,rtol=1e-12,atol=1e-12)
+
 def test_vectorized_event_rows_match_reference_and_are_faster():
     x=bars(420); x.loc[x.index[::17],"close"]+=.02; h=bars(420,"1h"); prepared=m.attach_h1(x,m.h1_state(h))
     t=time.perf_counter(); old,old_events=m.event_rows_reference(prepared.copy(),"EURUSD"); old_time=time.perf_counter()-t

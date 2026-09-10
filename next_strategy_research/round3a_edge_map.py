@@ -6,6 +6,7 @@ import hashlib
 import heapq
 import json
 import os
+import shutil
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -218,7 +219,7 @@ def _keys(paths,groups):
     return pd.concat(found,ignore_index=True).drop_duplicates().sort_values(groups)
 
 def stream_summary(paths,groups):
-    """Exact medians/quantiles while holding only one statistical group at once."""
+    """Reference-only exact implementation retained for synthetic equivalence tests."""
     result=[]; keys=_keys(paths,groups)
     needed=list(dict.fromkeys(groups+["forward_atr_return","continuation_atr_return"]))
     for key in keys.itertuples(index=False,name=None):
@@ -231,19 +232,60 @@ def stream_summary(paths,groups):
         result.append(summarize(pd.concat(pieces,ignore_index=True),groups).iloc[0].to_dict())
     return pd.DataFrame(result)
 
+def _stats(x):
+    """The numerical body of summarize(), without retaining a full checkpoint set."""
+    v=x.forward_atr_return.dropna(); n=len(v); mean=v.mean(); se=v.std(ddof=1)/np.sqrt(n) if n>1 else np.nan
+    return {"event_count":n,"mean_forward_return":mean,"median_forward_return":v.median(),"standard_error":se,"t_statistic":mean/se if np.isfinite(se) and se else np.nan,"directional_probability":(x.continuation_atr_return.dropna()>0).mean(),"p25":v.quantile(.25),"p50":v.quantile(.5),"p75":v.quantile(.75)}
+
+def _partition_token(key):
+    """Stable filesystem-safe identity for one edge-level statistical group."""
+    return hashlib.sha256(json.dumps([str(v) for v in key],separators=(",",":")).encode()).hexdigest()
+
+def _partition_checkpoints(paths,tmp):
+    """Read each checkpoint once and spool each edge group to its own small file."""
+    groups=["event","horizon","dispersion_regime"]
+    cols=groups+["pair","year","forward_atr_return","continuation_atr_return"]
+    tmp.mkdir(parents=True,exist_ok=True); key_map={}
+    for path in paths:
+        for chunk in pd.read_csv(path,usecols=cols,chunksize=250000):
+            for key,part in chunk.groupby(groups,dropna=False,sort=False):
+                key=key if isinstance(key,tuple) else (key,); token=_partition_token(key); key_map[token]=key
+                target=tmp/f"{token}.csv"; part.to_csv(target,index=False,mode="a",header=not target.exists())
+    (tmp/"complete.json").write_text(json.dumps({"groups":{k:list(v) for k,v in key_map.items()}},sort_keys=True),encoding="utf-8")
+    return key_map
+
+def aggregate_streaming(paths,out):
+    """Exact checkpoint aggregation with bounded RAM and no group-by-group rescans.
+
+    A single pass partitions raw rows by the edge-level group. Each resulting
+    file is then loaded independently to calculate the edge, pair and year
+    summaries. Final CSVs are atomically published only after all partitions
+    have completed.
+    """
+    out=Path(out); tmp=out/".aggregation_tmp"
+    if tmp.exists(): shutil.rmtree(tmp)
+    key_map=_partition_checkpoints(paths,tmp)
+    edge_rows=[]; pair_rows=[]; year_rows=[]; count_rows=[]
+    groups=["event","horizon","dispersion_regime"]
+    for token,key in sorted(key_map.items(),key=lambda item:item[1]):
+        part=pd.read_csv(tmp/f"{token}.csv")
+        base=dict(zip(groups,key)); edge_rows.append({**base,**_stats(part)})
+        for pair,g in part.groupby("pair",dropna=False,sort=True): pair_rows.append({**base,"pair":pair,**_stats(g)})
+        for year,g in part.groupby("year",dropna=False,sort=True): year_rows.append({**base,"year":year,**_stats(g)})
+        count_rows.extend({"event":event,"pair":pair,"event_count":int(n)} for (event,pair),n in part.groupby(["event","pair"],dropna=False).size().items())
+    edge=pd.DataFrame(edge_rows); bp=pd.DataFrame(pair_rows); by=pd.DataFrame(year_rows)
+    pb,yb=breadth(bp,by); edge=edge.merge(pb,on=groups,how="left").merge(yb,on=groups,how="left")
+    counts=pd.DataFrame(count_rows).groupby(["event","pair"],as_index=False).event_count.sum()
+    for name,frame in (("edge_map.csv",edge),("by_pair.csv",bp),("by_year.csv",by),("event_counts.csv",counts)):
+        target=out/name; staged=target.with_suffix(target.suffix+".tmp"); frame.to_csv(staged,index=False); os.replace(staged,target)
+    shutil.rmtree(tmp)
+
 def finalize(out,units):
     """Refuse final output until every expected unit has a valid manifest."""
     if not all(valid_checkpoint(out,u) for u in units):
         raise RuntimeError("incomplete or invalid Round 3A checkpoint set; final outputs withheld")
     paths=[checkpoint_paths(out,u)[0] for u in units]
-    edge=stream_summary(paths,["event","horizon","dispersion_regime"])
-    bp=stream_summary(paths,["event","horizon","dispersion_regime","pair"])
-    by=stream_summary(paths,["event","horizon","dispersion_regime","year"])
-    pb,yb=breadth(bp,by); edge=edge.merge(pb,on=["event","horizon","dispersion_regime"],how="left").merge(yb,on=["event","horizon","dispersion_regime"],how="left")
-    counts=[]
-    for path in paths:
-        for chunk in pd.read_csv(path,usecols=["event","pair"],chunksize=100000): counts.append(chunk.value_counts().rename("event_count").reset_index())
-    out=Path(out); edge.to_csv(out/"edge_map.csv",index=False); bp.to_csv(out/"by_pair.csv",index=False); by.to_csv(out/"by_year.csv",index=False); pd.concat(counts,ignore_index=True).groupby(["event","pair"],as_index=False).event_count.sum().to_csv(out/"event_counts.csv",index=False)
+    aggregate_streaming(paths,out)
 
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument("--data",default=str(ROOT/"data_independent/derived_m15")); ap.add_argument("--out",default=str(ROOT/"results_next_strategy/round3a")); ap.add_argument("--pairs",nargs="+",default=list(PAIRS)); a=ap.parse_args(); root=Path(a.data); out=Path(a.out); units=[f"pair_{p}" for p in a.pairs]+["cross"]
