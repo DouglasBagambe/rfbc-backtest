@@ -1,0 +1,22 @@
+name: Strategy 2 Round 2 invariants
+
+on:
+  push:
+    branches: [strategy2-round2-wip]
+    paths:
+      - 'next_strategy_research/round2_*.py'
+      - 'next_strategy_research/test_round2_engine.py'
+      - '.github/workflows/strategy2-round2-tests.yml'
+  workflow_dispatch:
+
+jobs:
+  fast-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check numpy pandas
+      - run: cd next_strategy_research && python test_round2_engine.py
