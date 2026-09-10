@@ -31,7 +31,9 @@ def freeze_expansion_strict(f: pd.DataFrame) -> pd.DataFrame:
     f["r2_impulse_dir"] = 0
     f["r2_impulse_open"] = np.nan
     f["r2_impulse_extreme"] = np.nan
-    f["r2_impulse_time"] = pd.NaT
+    # The source index is UTC-aware; preserve that dtype for frozen impulse
+    # timestamps so assignments cannot coerce chronology to naive time.
+    f["r2_impulse_time"] = pd.Series(pd.NaT, index=f.index, dtype="datetime64[ns, UTC]")
 
     for day, labels in f.groupby("date").groups.items():
         pos = f.index.get_indexer(labels)
@@ -169,3 +171,6 @@ DEV_START=core.DEV_START; DEV_END=core.DEV_END; END=core.END; GATE=core.GATE; CO
 pip=core.pip; tr=core.tr; atr=core.atr; read=core.read; h1_state=core.h1_state; fixed_window_baseline=core.fixed_window_baseline
 prepare=core.prepare; synchronized_norm=core.synchronized_norm; build_cross_maps=core.build_cross_maps; attach_cross=core.attach_cross
 sided=core.sided; sig=core.sig; execute=core.execute; pf=core.pf; summarize=core.summarize; main=core.main
+
+if __name__ == "__main__":
+    main()
