@@ -43,6 +43,7 @@
 - Dispersion has no additional buckets or post-output threshold changes.
 - No forward labels, future session extrema, future pivots, or global sample statistics in event definitions.
 - The tool is resumable by output file only after a complete run; partial outputs are not conclusions.
+- Each pair and the cross-sectional block publish an atomic CSV plus a checksummed completion manifest. A restart skips only valid manifests; corrupted or partial files are rebuilt. Final CSVs are withheld until every expected unit is valid, then exact statistics are streamed one group at a time rather than retaining all event rows in RAM.
 
 ## Discovery nomination criteria — frozen before output
 

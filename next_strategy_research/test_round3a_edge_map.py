@@ -81,6 +81,31 @@ def test_forward_labels_do_not_influence_dispersion_or_regime():
     future=x.copy(); future.iloc[-1]=[999.,-999.]; changed=m.trailing_percentile(pd.concat((pd.Series([1.]*252),future.std(axis=1,ddof=0)),ignore_index=True))
     assert d.iloc[-2]==future.std(axis=1,ddof=0).iloc[-2] and base.iloc[-2]==changed.iloc[-2]
 
+def checkpoint_rows(pair="EURUSD"):
+    return pd.DataFrame([("synthetic",pair,"2017-01-01T00:00:00Z",2017,1,.1,.1,np.nan,np.nan,"not_applicable")],columns=m.ROW_COLUMNS)
+
+def test_resume_equals_clean_uninterrupted_synthetic_run():
+    with tempfile.TemporaryDirectory() as td:
+        clean=Path(td)/"clean"; resumed=Path(td)/"resumed"; rows=checkpoint_rows(); m.write_checkpoint(clean,"pair_A",rows); m.write_checkpoint(clean,"cross",rows); m.finalize(clean,["pair_A","cross"])
+        m.write_checkpoint(resumed,"pair_A",rows); assert m.valid_checkpoint(resumed,"pair_A"); m.write_checkpoint(resumed,"cross",rows); m.finalize(resumed,["pair_A","cross"])
+        assert (clean/"edge_map.csv").read_text()==(resumed/"edge_map.csv").read_text()
+
+def test_duplicate_checkpoint_is_not_double_counted():
+    with tempfile.TemporaryDirectory() as td:
+        out=Path(td); rows=checkpoint_rows(); m.write_checkpoint(out,"pair_A",rows); m.write_checkpoint(out,"pair_A",rows); m.write_checkpoint(out,"cross",rows); m.finalize(out,["pair_A","cross"])
+        assert pd.read_csv(out/"edge_map.csv").event_count.iloc[0]==2
+
+def test_corrupt_checkpoint_is_rejected():
+    with tempfile.TemporaryDirectory() as td:
+        out=Path(td); m.write_checkpoint(out,"pair_A",checkpoint_rows()); csv,_=m.checkpoint_paths(out,"pair_A"); csv.write_text("broken",encoding="utf-8")
+        assert not m.valid_checkpoint(out,"pair_A")
+
+def test_partial_checkpoint_set_cannot_create_final_outputs():
+    with tempfile.TemporaryDirectory() as td:
+        out=Path(td); m.write_checkpoint(out,"pair_A",checkpoint_rows())
+        try: m.finalize(out,["pair_A","cross"]); assert False
+        except RuntimeError: assert not (out/"edge_map.csv").exists()
+
 if __name__=="__main__":
     tests=[v for k,v in sorted(globals().items()) if k.startswith("test_")]
     for test in tests: test()

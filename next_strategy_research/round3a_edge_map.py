@@ -2,6 +2,9 @@
 """Round 3A development-only descriptive edge map.  It never simulates orders."""
 from __future__ import annotations
 import argparse
+import hashlib
+import json
+import os
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -152,13 +155,74 @@ def breadth(by_pair,by_year):
     p=by_pair.groupby(group).apply(count,include_groups=False).rename("pair_breadth_same_sign").reset_index()
     y=by_year.groupby(group).apply(count,include_groups=False).rename("year_breadth_same_sign").reset_index(); return p,y
 
+ROW_COLUMNS=["event","pair","dt","year","horizon","forward_atr_return","continuation_atr_return","dispersion_level","dispersion_percentile","dispersion_regime"]
+
+def _sha(path):
+    h=hashlib.sha256()
+    with open(path,"rb") as f:
+        for block in iter(lambda:f.read(1024*1024),b""): h.update(block)
+    return h.hexdigest()
+
+def checkpoint_paths(out,unit):
+    d=Path(out)/"checkpoints"; return d/f"{unit}.csv",d/f"{unit}.json"
+
+def write_checkpoint(out,unit,rows):
+    """Atomically publish a complete, checksummed unit checkpoint."""
+    csv,meta=checkpoint_paths(out,unit); csv.parent.mkdir(parents=True,exist_ok=True); tmp=csv.with_suffix(".csv.tmp")
+    rows.to_csv(tmp,index=False); os.replace(tmp,csv)
+    payload={"unit":unit,"complete":True,"rows":len(rows),"sha256":_sha(csv),"columns":list(rows.columns)}; mtmp=meta.with_suffix(".json.tmp")
+    mtmp.write_text(json.dumps(payload,sort_keys=True),encoding="utf-8"); os.replace(mtmp,meta)
+
+def valid_checkpoint(out,unit):
+    csv,meta=checkpoint_paths(out,unit)
+    try:
+        data=json.loads(meta.read_text(encoding="utf-8"))
+        if not data.get("complete") or data.get("sha256")!=_sha(csv) or data.get("columns")!=ROW_COLUMNS: return False
+        return sum(1 for _ in open(csv,encoding="utf-8"))-1==int(data["rows"])
+    except (OSError,ValueError,KeyError): return False
+
+def _keys(paths,groups):
+    found=[]
+    for path in paths:
+        found.append(pd.read_csv(path,usecols=groups).reindex(columns=groups).drop_duplicates())
+    return pd.concat(found,ignore_index=True).drop_duplicates().sort_values(groups)
+
+def stream_summary(paths,groups):
+    """Exact medians/quantiles while holding only one statistical group at once."""
+    result=[]; keys=_keys(paths,groups)
+    needed=list(dict.fromkeys(groups+["forward_atr_return","continuation_atr_return"]))
+    for key in keys.itertuples(index=False,name=None):
+        pieces=[]
+        for path in paths:
+            for chunk in pd.read_csv(path,usecols=needed,chunksize=100000):
+                mask=np.ones(len(chunk),dtype=bool)
+                for col,value in zip(groups,key): mask &= chunk[col].eq(value)
+                if mask.any(): pieces.append(chunk.loc[mask])
+        result.append(summarize(pd.concat(pieces,ignore_index=True),groups).iloc[0].to_dict())
+    return pd.DataFrame(result)
+
+def finalize(out,units):
+    """Refuse final output until every expected unit has a valid manifest."""
+    if not all(valid_checkpoint(out,u) for u in units):
+        raise RuntimeError("incomplete or invalid Round 3A checkpoint set; final outputs withheld")
+    paths=[checkpoint_paths(out,u)[0] for u in units]
+    edge=stream_summary(paths,["event","horizon","dispersion_regime"])
+    bp=stream_summary(paths,["event","horizon","dispersion_regime","pair"])
+    by=stream_summary(paths,["event","horizon","dispersion_regime","year"])
+    pb,yb=breadth(bp,by); edge=edge.merge(pb,on=["event","horizon","dispersion_regime"],how="left").merge(yb,on=["event","horizon","dispersion_regime"],how="left")
+    counts=[]
+    for path in paths:
+        for chunk in pd.read_csv(path,usecols=["event","pair"],chunksize=100000): counts.append(chunk.value_counts().rename("event_count").reset_index())
+    out=Path(out); edge.to_csv(out/"edge_map.csv",index=False); bp.to_csv(out/"by_pair.csv",index=False); by.to_csv(out/"by_year.csv",index=False); pd.concat(counts,ignore_index=True).groupby(["event","pair"],as_index=False).event_count.sum().to_csv(out/"event_counts.csv",index=False)
+
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument("--data",default=str(ROOT/"data_independent/derived_m15")); ap.add_argument("--out",default=str(ROOT/"results_next_strategy/round3a")); ap.add_argument("--pairs",nargs="+",default=list(PAIRS)); a=ap.parse_args(); root=Path(a.data); chunks=[]; counts=[]
+    ap=argparse.ArgumentParser(); ap.add_argument("--data",default=str(ROOT/"data_independent/derived_m15")); ap.add_argument("--out",default=str(ROOT/"results_next_strategy/round3a")); ap.add_argument("--pairs",nargs="+",default=list(PAIRS)); a=ap.parse_args(); root=Path(a.data); out=Path(a.out); units=[f"pair_{p}" for p in a.pairs]+["cross"]
     for pair in a.pairs:
-        x,e=event_rows(attach_h1(read(root/pair/f"{pair}_bid_m15.csv"),h1_state(read(root/pair/f"{pair}_bid_h1.csv"))),pair); chunks.append(x); counts += [(n,pair,int(v.sum())) for n,v in e.items()]
-    chunks.append(cross_rows(root)); x=pd.concat(chunks,ignore_index=True); edge=summarize(x,["event","horizon","dispersion_regime"]); bp=summarize(x,["event","horizon","dispersion_regime","pair"]); by=summarize(x,["event","horizon","dispersion_regime","year"]); pb,yb=breadth(bp,by)
-    edge=edge.merge(pb,on=["event","horizon","dispersion_regime"],how="left").merge(yb,on=["event","horizon","dispersion_regime"],how="left"); out=Path(a.out); out.mkdir(parents=True,exist_ok=True)
-    edge.to_csv(out/"edge_map.csv",index=False); bp.to_csv(out/"by_pair.csv",index=False); by.to_csv(out/"by_year.csv",index=False); pd.DataFrame(counts,columns=["event","pair","event_count"]).to_csv(out/"event_counts.csv",index=False)
+        unit=f"pair_{pair}"
+        if valid_checkpoint(out,unit): continue
+        rows,_=event_rows(attach_h1(read(root/pair/f"{pair}_bid_m15.csv"),h1_state(read(root/pair/f"{pair}_bid_h1.csv"))),pair); write_checkpoint(out,unit,rows); del rows
+    if not valid_checkpoint(out,"cross"): write_checkpoint(out,"cross",cross_rows(root))
+    finalize(out,units)
     (ROOT/"ROUND3A_EDGE_MAP_REPORT.md").write_text("# Round 3A Edge Map Report\n\nDevelopment-only descriptive output. No P&L or strategy promotion is implied.\n",encoding="utf-8")
 
 if __name__=="__main__": main()
