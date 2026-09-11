@@ -202,5 +202,9 @@ def check():
 
 
 if __name__ == "__main__":
+    webhook_url=os.getenv("TELEGRAM_WEBHOOK_URL","").strip()
+    if webhook_url:
+        ok,status=fx101.register_telegram_webhook(webhook_url)
+        fx101.log("telegram_webhook_registration", ok=ok, status=status)
     threading.Thread(target=fx101_worker.main, name="fx101-worker", daemon=True).start()
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "10000")), threaded=True)
