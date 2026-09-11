@@ -41,9 +41,14 @@ def db() -> sqlite3.Connection:
         c.row_factory = sqlite3.Row
     except AttributeError:
         pass
-    for statement in SCHEMA.split(";"):
-        if statement.strip(): c.execute(statement)
-    c.commit()
+    try:
+        for statement in SCHEMA.split(";"):
+            if statement.strip(): c.execute(statement)
+        c.commit()
+    except Exception as exc:
+        if remote_url:
+            log("turso_db_unavailable", error=type(exc).__name__)
+        raise
     return c
 def row(x: sqlite3.Row) -> dict[str, Any]:
     d=dict(x); d["context"]=json.loads(d["context"]); return d
