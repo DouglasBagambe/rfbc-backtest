@@ -162,6 +162,12 @@ def request_desk_analysis() -> tuple[bool, str]:
             response=r.json() if r.content else {"decisions": []}
         ok, status, _ = ingest_desk_response(response)
         return ok, status
+    except requests.HTTPError as exc:
+        response=exc.response
+        status=response.status_code if response is not None else "unknown"
+        body=(response.text if response is not None else "")[:500].replace("\\n"," ").replace("\\r"," ")
+        log("desk_provider_http_error", provider="twelve_data_or_openai", http_status=status, response_body=body)
+        return False,f"adapter_http_{status}"
     except requests.RequestException as exc: return False,f"adapter_error:{type(exc).__name__}"
 
 def ingest_desk_response(body: dict[str, Any]) -> tuple[bool, str, list[dict[str, Any]]]:
