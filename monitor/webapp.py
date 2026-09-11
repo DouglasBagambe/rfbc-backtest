@@ -101,6 +101,13 @@ def health():
     })
 
 
+@app.post("/analyze")
+def analyze():
+    """Request a live G_DESK analysis and return its explicit TRADE/NO_TRADE result."""
+    ok, status = fx101.request_desk_analysis()
+    return jsonify({"ok": ok, "status": status}), (200 if ok else 503)
+
+
 @app.post("/desk/analyze")
 def desk_analyze():
     """Accept externally-produced G_DESK decisions; never invent analysis here."""
