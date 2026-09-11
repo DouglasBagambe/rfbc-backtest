@@ -20,3 +20,5 @@ class Fx101Tests(unittest.TestCase):
     def test_price_manager_marks_target(self):
         ok,_,t=self.m.persist_decision(self.decision()); self.m.transition(t["trade_id"],"PLACED")
         changed=self.m.manage_prices({"EURUSDc":1.12}); self.assertEqual(changed[0]["state"],"WON")
+    def test_empty_adapter_response_is_no_trade(self):
+        ok,status,accepted=self.m.ingest_desk_response({"decisions":[]}); self.assertTrue(ok); self.assertEqual(status,"NO_TRADE"); self.assertEqual(accepted,[])

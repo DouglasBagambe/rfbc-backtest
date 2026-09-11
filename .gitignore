@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 data/
+.env.fx101
+monitor/fx101.sqlite3
 data_independent/
 results_next_strategy/round3a/checkpoints/
 results_next_strategy/round3a/.aggregation_tmp/

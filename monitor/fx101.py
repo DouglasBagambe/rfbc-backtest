@@ -27,6 +27,7 @@ CREATE INDEX IF NOT EXISTS trades_state_idx ON trades(state);
 """
 
 def now() -> str: return datetime.now(timezone.utc).isoformat()
+def log(event: str, **fields: Any) -> None: LOG.info(json.dumps({"event":event,"at":now(),**fields}, sort_keys=True))
 def db() -> sqlite3.Connection:
     DB_PATH.parent.mkdir(parents=True, exist_ok=True); c = sqlite3.connect(DB_PATH); c.row_factory = sqlite3.Row; c.executescript(SCHEMA); return c
 def row(x: sqlite3.Row) -> dict[str, Any]:
@@ -115,8 +116,29 @@ def request_desk_analysis() -> tuple[bool, str]:
     c=db(); c.execute("INSERT INTO scans VALUES (?,?,?,?,?)",(str(uuid.uuid4()),"G_DESK",payload["requested_at"],"REQUESTED",json.dumps(payload))); c.commit()
     if not url: return False,"g_desk_adapter_not_configured"
     try:
-        r=requests.post(url,json=payload,timeout=20); return r.ok, f"adapter_http_{r.status_code}"
+        r=requests.post(url,json=payload,timeout=30); log("desk_request", status=r.status_code)
+        if not r.ok: return False, f"adapter_http_{r.status_code}"
+        response=r.json() if r.content else {"decisions": []}
+        ok, status, _ = ingest_desk_response(response)
+        return ok, status
     except requests.RequestException as exc: return False,f"adapter_error:{type(exc).__name__}"
+
+def ingest_desk_response(body: dict[str, Any]) -> tuple[bool, str, list[dict[str, Any]]]:
+    """Validate the GPT adapter response and announce an explicit NO TRADE."""
+    decisions=body.get("decisions", [])
+    if not isinstance(decisions, list): return False,"adapter_decisions_must_be_list",[]
+    accepted=[]; rejected=[]
+    for decision in decisions:
+        ok,status,trade=persist_decision({**decision,"source":"G_DESK"})
+        if ok:
+            accepted.append(trade)
+            if status == "signalled": send_signal(trade)
+        else: rejected.append(status)
+    c=db(); result="TRADE" if accepted else "NO_TRADE" if not rejected else "REJECTED"
+    c.execute("INSERT INTO scans VALUES (?,?,?,?,?)",(str(uuid.uuid4()),"G_DESK",now(),result,json.dumps(body))); c.commit()
+    if not accepted and not rejected: telegram_send("G_DESK NO TRADE — no qualified setup across EURUSDc, GBPUSDc, GBPJPYc, USDCADc, EURJPYc.")
+    log("desk_result", result=result, accepted=len(accepted), rejected=rejected)
+    return not rejected,result,accepted
 
 def list_trades(where: str="", args: tuple=()) -> list[dict[str,Any]]:
     c=db(); return [row(x) for x in c.execute("SELECT * FROM trades "+where,args)]

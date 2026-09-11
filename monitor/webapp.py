@@ -105,17 +105,8 @@ def health():
 def desk_analyze():
     """Accept externally-produced G_DESK decisions; never invent analysis here."""
     body = request.get_json(silent=True) or {}
-    decisions = body.get("decisions", [])
-    if not isinstance(decisions, list):
-        return jsonify({"ok": False, "error": "decisions_must_be_list"}), 400
-    accepted, rejected = [], []
-    for decision in decisions:
-        decision = {**decision, "source": "G_DESK"}
-        ok, status, trade = fx101.persist_decision(decision)
-        (accepted if ok else rejected).append({"status": status, "trade": trade})
-        if ok and status == "signalled": fx101.send_signal(trade)
-    c = fx101.db(); c.execute("INSERT INTO scans VALUES (?,?,?,?,?)", (str(__import__('uuid').uuid4()), "G_DESK", datetime.now(timezone.utc).isoformat(), "TRADE" if accepted else "NO_TRADE", __import__('json').dumps(body))); c.commit()
-    return jsonify({"ok": not rejected, "accepted": accepted, "rejected": rejected})
+    ok, status, accepted = fx101.ingest_desk_response(body)
+    return jsonify({"ok": ok, "status": status, "accepted": accepted}), (200 if ok else 400)
 
 
 @app.post("/telegram/webhook")
@@ -130,6 +121,13 @@ def telegram_webhook():
 
 @app.get("/fx101/open")
 def fx101_open(): return jsonify(fx101.list_trades("WHERE state IN ('PLACED','OPEN')"))
+
+@app.get("/fx101/health")
+def fx101_health():
+    try:
+        fx101.db().execute("SELECT 1").fetchone()
+        return jsonify({"ok":True,"service":"fx101","open_trades":len(fx101.list_trades("WHERE state IN ('PLACED','OPEN')")),"telegram_configured":bool(__import__('os').environ.get('TELEGRAM_BOT_TOKEN'))})
+    except Exception as exc: return jsonify({"ok":False,"error":type(exc).__name__}),503
 
 
 @app.post("/fx101/prices")

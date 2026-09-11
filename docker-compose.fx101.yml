@@ -1,0 +1,16 @@
+services:
+  api:
+    build: .
+    command: python monitor/webapp.py
+    restart: unless-stopped
+    ports: ["10000:10000"]
+    env_file: .env.fx101
+    volumes: ["fx101-data:/var/lib/fx101"]
+  worker:
+    build: .
+    command: python monitor/fx101_worker.py
+    restart: unless-stopped
+    env_file: .env.fx101
+    volumes: ["fx101-data:/var/lib/fx101"]
+volumes:
+  fx101-data:
