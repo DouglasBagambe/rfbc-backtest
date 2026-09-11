@@ -8,6 +8,7 @@ results_next_strategy/round3a/checkpoints/
 results_next_strategy/round3a/.aggregation_tmp/
 results_next_strategy/round3a_pre_zero_volume_validity/checkpoints/
 results_next_strategy/round3a_stale_manifest_diagnostic/checkpoints/
+results_next_strategy/round3c/trades.csv
 
 # Local broker observations and non-shareable broker captures
 broker_validation/local_data/
