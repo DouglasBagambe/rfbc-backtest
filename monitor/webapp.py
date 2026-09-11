@@ -20,8 +20,6 @@ SELFTEST = selftest.run()
 print(f"RFBC_OPERATIONAL_SELFTEST {SELFTEST}", flush=True)
 
 app = Flask(__name__)
-
-# Best-effort duplicate suppression for repeated checks while this process lives.
 _last_alert_keys: set[str] = set()
 
 
@@ -60,21 +58,16 @@ def flatten_result(pair_result: dict, checked_at: str) -> dict:
 
 
 def alert_key(result: dict) -> str:
-    return "|".join(
-        str(result.get(k, ""))
-        for k in ("action", "symbol", "signal_dt", "entry_dt", "last_h4_close", "reason")
-    )
+    return "|".join(str(result.get(k, "")) for k in ("action", "symbol", "signal_dt", "entry_dt", "last_h4_close", "reason"))
 
 
 def maybe_send_alert(result: dict) -> dict:
     action = result.get("action", "NONE")
     if action in ("NONE", "OPEN_TRADE"):
         return {"telegram_configured": tg.configured(), "telegram_sent": False, "telegram_status": "not_needed"}
-
     key = alert_key(result)
     if key in _last_alert_keys:
         return {"telegram_configured": tg.configured(), "telegram_sent": False, "telegram_status": "duplicate_suppressed"}
-
     ok, status = tg.send_action(result)
     if ok:
         _last_alert_keys.add(key)
@@ -83,12 +76,7 @@ def maybe_send_alert(result: dict) -> dict:
 
 @app.get("/")
 def root():
-    return jsonify({
-        "ok": True,
-        "service": "rfbc-two-pair-monitor",
-        "pairs": [cfg.symbol for cfg in m.PAIR_CONFIGS.values()],
-        "logic": "frozen_rfbc_v1_exact",
-    })
+    return jsonify({"ok": True,"service": "rfbc-two-pair-monitor","pairs": [cfg.symbol for cfg in m.PAIR_CONFIGS.values()],"logic": "frozen_rfbc_v1_exact"})
 
 
 @app.get("/health")
@@ -98,7 +86,7 @@ def health():
         "service": "rfbc-two-pair-monitor",
         "pairs": [cfg.symbol for cfg in m.PAIR_CONFIGS.values()],
         "logic": "frozen_rfbc_v1_exact",
-        "equity_usd": float(__import__("os").environ.get("RFBC_EQUITY_USD", "10.01")),
+        "equity_usd": float(os.environ.get("RFBC_EQUITY_USD", "10.01")),
         "risk_cap_pct": m.RISK_CAP_PCT,
         "aggregate_risk_cap_pct": m.AGGREGATE_RISK_CAP_PCT,
         "telegram_configured": tg.configured(),
@@ -108,12 +96,30 @@ def health():
 
 @app.get("/gdesk/health")
 def gdesk_health():
-    return jsonify({"ok":True,"service":"g-desk-adapter","openai_configured":bool(os.getenv("OPENAI_API_KEY")),"twelve_data_configured":bool(os.getenv("TWELVE_DATA_API_KEY"))})
+    return jsonify({
+        "ok":True,
+        "service":"g-desk-adapter",
+        "market_context_provider":"dukascopy",
+        "analysis_mode":os.getenv("G_DESK_RUNTIME_MODE","api"),
+        "openai_api_required":os.getenv("G_DESK_RUNTIME_MODE","api") != "chatgpt_subscription",
+    })
+
+
+@app.get("/gdesk/context")
+def gdesk_context():
+    """Public read-only market context consumed by ChatGPT subscription automation."""
+    try:
+        return jsonify(g_desk_adapter.context_payload())
+    except (RuntimeError,ValueError) as exc:
+        fx101.log("gdesk_context_error", error=type(exc).__name__, detail=str(exc)[:200])
+        return jsonify({"ok":False,"error":str(exc)}),503
 
 
 @app.post("/gdesk/analyze")
 def gdesk_analyze():
-    """Expose the real adapter without placing it on a separate paid service."""
+    """Legacy paid-API adapter path; not used in chatgpt_subscription mode."""
+    if os.getenv("G_DESK_RUNTIME_MODE","").strip() == "chatgpt_subscription":
+        return jsonify({"ok":False,"error":"analysis_owned_by_chatgpt_subscription"}),409
     try:
         return jsonify(g_desk_adapter.analyze_payload(request.get_json(silent=True) or {}))
     except requests.RequestException as exc:
@@ -124,7 +130,9 @@ def gdesk_analyze():
 
 @app.post("/analyze")
 def analyze():
-    """Request a live G_DESK analysis and return its explicit TRADE/NO_TRADE result."""
+    """Legacy paid-API trigger; disabled when ChatGPT subscription owns analysis."""
+    if os.getenv("G_DESK_RUNTIME_MODE","").strip() == "chatgpt_subscription":
+        return jsonify({"ok":False,"status":"analysis_owned_by_chatgpt_subscription"}),409
     ok, status = fx101.request_desk_analysis()
     return jsonify({"ok": ok, "status": status}), (200 if ok else 503)
 
@@ -148,15 +156,21 @@ def telegram_webhook():
 
 
 @app.get("/fx101/open")
-def fx101_open(): return jsonify(fx101.list_trades("WHERE state IN ('PLACED','OPEN')"))
+def fx101_open():
+    return jsonify(fx101.list_trades("WHERE state IN ('PLACED','OPEN')"))
+
 
 @app.get("/fx101/health")
 def fx101_health():
     try:
-        # Use the same Turso query path exercised by the live worker; the serverless
-        # driver does not provide sqlite's cursor.fetchone() semantics.
         open_trades = len(fx101.list_trades("WHERE state IN ('PLACED','OPEN')"))
-        return jsonify({"ok":True,"service":"fx101","open_trades":open_trades,"telegram_configured":bool(__import__('os').environ.get('TELEGRAM_BOT_TOKEN'))})
+        return jsonify({
+            "ok":True,
+            "service":"fx101",
+            "open_trades":open_trades,
+            "telegram_configured":bool(os.environ.get('TELEGRAM_BOT_TOKEN')),
+            "gdesk_analysis_mode":os.getenv("G_DESK_RUNTIME_MODE","api"),
+        })
     except Exception as exc:
         fx101.log("fx101_health_db_error", error=type(exc).__name__, detail=str(exc)[:200])
         return jsonify({"ok":False,"error":type(exc).__name__}),503
@@ -164,11 +178,11 @@ def fx101_health():
 
 @app.post("/fx101/prices")
 def fx101_prices():
-    """Authenticated deployment proxy should supply a fresh price snapshot here."""
     body=request.get_json(silent=True) or {}; prices=body.get("prices", {})
     if not isinstance(prices, dict): return jsonify({"ok":False,"error":"prices_must_be_object"}),400
     changed=fx101.manage_prices(prices)
-    for trade in changed: fx101.telegram_send(f"{trade['trade_id']} {trade['state']} at {trade['result_price']} ({trade.get('result_r')}R)")
+    for trade in changed:
+        fx101.telegram_send(f"{trade['trade_id']} {trade['state']} at {trade['result_price']} ({trade.get('result_r')}R)")
     return jsonify({"ok":True,"changed":changed})
 
 
@@ -183,24 +197,10 @@ def check():
             result = flatten_result(item, checked_at)
             result.update(maybe_send_alert(result))
             results.append(result)
-
         actionable = [r for r in results if r["action"] not in ("NONE", "OPEN_TRADE")]
-        return jsonify({
-            "ok": True,
-            "service": "rfbc-two-pair-monitor",
-            "checked_at": checked_at,
-            "results": results,
-            "actionable": actionable,
-        })
+        return jsonify({"ok": True,"service": "rfbc-two-pair-monitor","checked_at": checked_at,"results": results,"actionable": actionable})
     except Exception as exc:
-        result = {
-            "ok": False,
-            "action": "ERROR",
-            "error_type": type(exc).__name__,
-            "error": str(exc),
-            "checked_at": checked_at,
-            "symbol": "PORTFOLIO",
-        }
+        result = {"ok": False,"action": "ERROR","error_type": type(exc).__name__,"error": str(exc),"checked_at": checked_at,"symbol": "PORTFOLIO"}
         result.update(maybe_send_alert(result))
         return jsonify(result), 500
 
