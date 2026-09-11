@@ -4,11 +4,12 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 import pandas as pd
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 import rfbc_monitor_live as m
 import selftest
 import telegram_notify as tg
+import fx101
 
 SELFTEST = selftest.run()
 print(f"RFBC_OPERATIONAL_SELFTEST {SELFTEST}", flush=True)
@@ -98,6 +99,37 @@ def health():
         "telegram_configured": tg.configured(),
         "selftest": SELFTEST,
     })
+
+
+@app.post("/desk/analyze")
+def desk_analyze():
+    """Accept externally-produced G_DESK decisions; never invent analysis here."""
+    body = request.get_json(silent=True) or {}
+    decisions = body.get("decisions", [])
+    if not isinstance(decisions, list):
+        return jsonify({"ok": False, "error": "decisions_must_be_list"}), 400
+    accepted, rejected = [], []
+    for decision in decisions:
+        decision = {**decision, "source": "G_DESK"}
+        ok, status, trade = fx101.persist_decision(decision)
+        (accepted if ok else rejected).append({"status": status, "trade": trade})
+        if ok and status == "signalled": fx101.send_signal(trade)
+    c = fx101.db(); c.execute("INSERT INTO scans VALUES (?,?,?,?,?)", (str(__import__('uuid').uuid4()), "G_DESK", datetime.now(timezone.utc).isoformat(), "TRADE" if accepted else "NO_TRADE", __import__('json').dumps(body))); c.commit()
+    return jsonify({"ok": not rejected, "accepted": accepted, "rejected": rejected})
+
+
+@app.post("/telegram/webhook")
+def telegram_webhook():
+    update = request.get_json(silent=True) or {}
+    try:
+        return jsonify({"ok": True, "status": fx101.receive_update(update)})
+    except Exception as exc:
+        app.logger.exception("fx101_telegram_update_failed")
+        return jsonify({"ok": False, "error": type(exc).__name__}), 200
+
+
+@app.get("/fx101/open")
+def fx101_open(): return jsonify(fx101.list_trades("WHERE state IN ('PLACED','OPEN')"))
 
 
 @app.get("/check")
