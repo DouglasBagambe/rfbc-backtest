@@ -48,7 +48,7 @@ def _td_context(symbols: list[str]) -> dict:
     key=os.getenv("TWELVE_DATA_API_KEY","").strip()
     if not key: raise RuntimeError("TWELVE_DATA_API_KEY is required")
     pairs=[f"{symbol[:3]}/{symbol[3:6]}" for symbol in symbols]
-    r=requests.get(f"{TD}/time_series",params={"symbol":",".join(pairs),"interval":"1h","outputsize":120,"apikey":key},timeout=25)
+    r=requests.get(f"{TD}/time_series",params={"symbol":",".join(pairs),"interval":"1h","outputsize":60,"apikey":key},timeout=25)
     r.raise_for_status(); data=r.json()
     result={}
     for symbol,pair in zip(symbols,pairs):
