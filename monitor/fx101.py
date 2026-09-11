@@ -116,7 +116,7 @@ def request_desk_analysis() -> tuple[bool, str]:
     c=db(); c.execute("INSERT INTO scans VALUES (?,?,?,?,?)",(str(uuid.uuid4()),"G_DESK",payload["requested_at"],"REQUESTED",json.dumps(payload))); c.commit()
     if not url: return False,"g_desk_adapter_not_configured"
     try:
-        r=requests.post(url,json=payload,timeout=30); log("desk_request", status=r.status_code)
+        token=os.getenv("G_DESK_ADAPTER_TOKEN", "").strip()\n        headers={"X-G-Desk-Token": token} if token else {}\n        r=requests.post(url,json=payload,headers=headers,timeout=30); log("desk_request", status=r.status_code)
         if not r.ok: return False, f"adapter_http_{r.status_code}"
         response=r.json() if r.content else {"decisions": []}
         ok, status, _ = ingest_desk_response(response)
