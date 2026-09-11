@@ -81,6 +81,13 @@ def _decision(symbols: list[str], requested_at: str, context: dict) -> dict:
     if not output: raise RuntimeError("openai_empty_output")
     return json.loads(output)
 
+def analyze_payload(body: dict) -> dict:
+    """Execute the real live-data/OpenAI analysis path for an internal or HTTP caller."""
+    symbols=body.get("symbols")
+    if not isinstance(symbols,list) or not symbols: raise ValueError("symbols_required")
+    context=_td_context(symbols)
+    return _decision(symbols,str(body.get("requested_at") or datetime.now(timezone.utc).isoformat()),context)
+
 @app.get("/health")
 def health():
     return jsonify({"ok":True,"service":"g-desk-adapter","openai_configured":bool(os.getenv("OPENAI_API_KEY")),"twelve_data_configured":bool(os.getenv("TWELVE_DATA_API_KEY"))})
@@ -89,15 +96,12 @@ def health():
 def analyze():
     if not _secret_ok(): return jsonify({"ok":False,"error":"unauthorized"}),401
     body=request.get_json(silent=True) or {}
-    symbols=body.get("symbols")
-    if not isinstance(symbols,list) or not symbols: return jsonify({"ok":False,"error":"symbols_required"}),400
     try:
-        context=_td_context(symbols)
-        return jsonify(_decision(symbols,str(body.get("requested_at") or datetime.now(timezone.utc).isoformat()),context))
+        return jsonify(analyze_payload(body))
     except requests.RequestException as exc:
         app.logger.exception("g_desk_provider_error")
         return jsonify({"ok":False,"error":f"provider_error:{type(exc).__name__}"}),502
-    except (RuntimeError,json.JSONDecodeError) as exc:
+    except (RuntimeError,ValueError,json.JSONDecodeError) as exc:
         app.logger.exception("g_desk_analysis_error")
         return jsonify({"ok":False,"error":str(exc)}),503
 
