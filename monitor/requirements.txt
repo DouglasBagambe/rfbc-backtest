@@ -3,3 +3,4 @@ numpy>=1.26
 requests>=2.31
 dukascopy-python>=4.0
 flask>=3.0
+turso_serverless>=0.1
