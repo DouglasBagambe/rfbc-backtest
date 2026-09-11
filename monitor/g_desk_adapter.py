@@ -50,10 +50,10 @@ def _td_context(symbols: list[str]) -> dict:
     pairs=[f"{symbol[:3]}/{symbol[3:6]}" for symbol in symbols]
     result={}
     # Twelve Data charges 12 credits for this five-pair bundle on the configured
-    # free account. Three single-pair requests fit below the documented 8-credit
-    # minute limit; wait for the next provider window before the final two.
+    # free account. The provider confirms three single-pair requests cost nine
+    # credits, so issue 2+2+1 pairs across separate provider-minute windows.
     for index,(symbol,pair) in enumerate(zip(symbols,pairs)):
-        if index == 3:
+        if index in (2, 4):
             time.sleep(61)
         r=requests.get(f"{TD}/time_series",params={"symbol":pair,"interval":"1h","outputsize":60,"apikey":key},timeout=25)
         r.raise_for_status(); payload=r.json()
