@@ -29,7 +29,22 @@ CREATE INDEX IF NOT EXISTS trades_state_idx ON trades(state);
 def now() -> str: return datetime.now(timezone.utc).isoformat()
 def log(event: str, **fields: Any) -> None: LOG.info(json.dumps({"event":event,"at":now(),**fields}, sort_keys=True))
 def db() -> sqlite3.Connection:
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True); c = sqlite3.connect(DB_PATH); c.row_factory = sqlite3.Row; c.executescript(SCHEMA); return c
+    """Open local SQLite for development or the shared Turso database in production."""
+    remote_url = os.getenv("TURSO_DATABASE_URL", "").strip()
+    if remote_url:
+        import turso_serverless
+        c = turso_serverless.connect(remote_url, auth_token=os.environ["TURSO_AUTH_TOKEN"])
+    else:
+        DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+        c = sqlite3.connect(DB_PATH)
+    try:
+        c.row_factory = sqlite3.Row
+    except AttributeError:
+        pass
+    for statement in SCHEMA.split(";"):
+        if statement.strip(): c.execute(statement)
+    c.commit()
+    return c
 def row(x: sqlite3.Row) -> dict[str, Any]:
     d=dict(x); d["context"]=json.loads(d["context"]); return d
 
@@ -116,11 +131,16 @@ def request_desk_analysis() -> tuple[bool, str]:
     c=db(); c.execute("INSERT INTO scans VALUES (?,?,?,?,?)",(str(uuid.uuid4()),"G_DESK",payload["requested_at"],"REQUESTED",json.dumps(payload))); c.commit()
     if not url: return False,"g_desk_adapter_not_configured"
     try:
-        token=os.getenv("G_DESK_ADAPTER_TOKEN", "").strip()
-        headers={"X-G-Desk-Token": token} if token else {}
-        r=requests.post(url,json=payload,headers=headers,timeout=30); log("desk_request", status=r.status_code)
-        if not r.ok: return False, f"adapter_http_{r.status_code}"
-        response=r.json() if r.content else {"decisions": []}
+        if url == "internal://gdesk":
+            from g_desk_adapter import analyze_payload
+            response=analyze_payload(payload)
+            log("desk_request", status="internal")
+        else:
+            token=os.getenv("G_DESK_ADAPTER_TOKEN", "").strip()
+            headers={"X-G-Desk-Token": token} if token else {}
+            r=requests.post(url,json=payload,headers=headers,timeout=30); log("desk_request", status=r.status_code)
+            if not r.ok: return False, f"adapter_http_{r.status_code}"
+            response=r.json() if r.content else {"decisions": []}
         ok, status, _ = ingest_desk_response(response)
         return ok, status
     except requests.RequestException as exc: return False,f"adapter_error:{type(exc).__name__}"
