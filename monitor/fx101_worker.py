@@ -5,6 +5,8 @@ import json, logging, os, signal, sys, time
 from datetime import datetime, timezone
 import requests
 import fx101
+import rfbc_monitor_live as rfbc
+import telegram_notify as telegram
 
 logging.basicConfig(level=os.getenv("LOG_LEVEL","INFO"), format="%(message)s")
 RUNNING=True
@@ -24,8 +26,19 @@ def prices() -> dict[str,float]:
     if not out: raise RuntimeError(f"price_provider_empty:{data}")
     return out
 
+def scan_rfbc() -> None:
+    """Run the frozen RFBC evaluator unchanged and alert only on actionable events."""
+    now=datetime.now(timezone.utc)
+    for item in rfbc.evaluate_all(now):
+        action=item.get("action") or {"kind":"none"}
+        kind=str(action.get("kind","none")).upper()
+        if kind in {"NONE","OPEN_TRADE"}: continue
+        telegram.send_action({"action":kind,"symbol":item["symbol"],"checked_at":now.isoformat(),**action})
+    fx101.log("rfbc_scan", checked_at=now.isoformat())
+
 def main() -> None:
-    poll=max(10,int(os.getenv("FX101_PRICE_POLL_SECONDS","30"))); last_hour=None; failures=0
+    poll=max(10,int(os.getenv("FX101_PRICE_POLL_SECONDS","30"))); last_hour=None; last_rfbc=0.0; failures=0
+    rfbc_every=max(60,int(os.getenv("FX101_RFBC_SCAN_SECONDS","300")))
     fx101.db(); fx101.log("worker_started", poll_seconds=poll)
     while RUNNING:
         try:
@@ -34,6 +47,8 @@ def main() -> None:
             hour=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H")
             if hour != last_hour:
                 last_hour=hour; ok,status=fx101.request_desk_analysis(); fx101.log("hourly_desk_scan", ok=ok,status=status)
+            if time.monotonic()-last_rfbc >= rfbc_every:
+                scan_rfbc(); last_rfbc=time.monotonic()
             failures=0
         except Exception as exc:
             failures+=1; fx101.log("worker_failure", error=type(exc).__name__, detail=str(exc), failures=failures)
