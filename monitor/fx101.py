@@ -1,7 +1,7 @@
 """Persistent Fx 101 v2 Phase 1 operations layer; no broker execution."""
 from __future__ import annotations
 
-import hashlib, json, logging, os, sqlite3, uuid
+import hashlib, json, logging, os, sqlite3, threading, uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -13,6 +13,8 @@ RFBC_SYMBOLS = {"USDJPYc", "AUDJPYc"}
 ALL_SYMBOLS = DESK_SYMBOLS | RFBC_SYMBOLS
 DB_PATH = Path(os.getenv("FX101_DB_PATH", "monitor/fx101.sqlite3"))
 LOG = logging.getLogger("fx101")
+_SCHEMA_LOCK = threading.Lock()
+_SCHEMA_READY = False
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS scans (id TEXT PRIMARY KEY, source TEXT NOT NULL, scanned_at TEXT NOT NULL, result TEXT NOT NULL, payload TEXT NOT NULL);
@@ -41,14 +43,19 @@ def db() -> sqlite3.Connection:
         c.row_factory = sqlite3.Row
     except AttributeError:
         pass
-    try:
-        for statement in SCHEMA.split(";"):
-            if statement.strip(): c.execute(statement)
-        c.commit()
-    except Exception as exc:
-        if remote_url:
-            log("turso_db_unavailable", error=type(exc).__name__)
-        raise
+    global _SCHEMA_READY
+    if not _SCHEMA_READY:
+        with _SCHEMA_LOCK:
+            if not _SCHEMA_READY:
+                try:
+                    for statement in SCHEMA.split(";"):
+                        if statement.strip(): c.execute(statement)
+                    c.commit()
+                    _SCHEMA_READY = True
+                except Exception as exc:
+                    if remote_url:
+                        log("turso_db_unavailable", error=type(exc).__name__)
+                    raise
     return c
 def row(x: sqlite3.Row) -> dict[str, Any]:
     d=dict(x); d["context"]=json.loads(d["context"]); return d
