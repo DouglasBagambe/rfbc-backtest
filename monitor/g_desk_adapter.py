@@ -2,7 +2,7 @@
 """G_DESK live-analysis adapter. It never synthesizes a trade locally."""
 from __future__ import annotations
 
-import json, os
+import json, os, time
 from datetime import datetime, timedelta, timezone
 
 import requests
@@ -44,18 +44,22 @@ def _secret_ok() -> bool:
     return bool(expected) and request.headers.get("X-G-Desk-Token","") == expected
 
 def _td_context(symbols: list[str]) -> dict:
-    """Fetch all desk pairs in one Twelve Data request to stay within the free rate limit."""
+    """Fetch every desk pair from Twelve Data within the free eight-credit/minute limit."""
     key=os.getenv("TWELVE_DATA_API_KEY","").strip()
     if not key: raise RuntimeError("TWELVE_DATA_API_KEY is required")
     pairs=[f"{symbol[:3]}/{symbol[3:6]}" for symbol in symbols]
-    r=requests.get(f"{TD}/time_series",params={"symbol":",".join(pairs),"interval":"1h","outputsize":60,"apikey":key},timeout=25)
-    r.raise_for_status(); data=r.json()
     result={}
-    for symbol,pair in zip(symbols,pairs):
-        payload=data if len(symbols)==1 else data.get(pair,{})
+    # Twelve Data charges 12 credits for this five-pair bundle on the configured
+    # free account. Three single-pair requests fit below the documented 8-credit
+    # minute limit; wait for the next provider window before the final two.
+    for index,(symbol,pair) in enumerate(zip(symbols,pairs)):
+        if index == 3:
+            time.sleep(61)
+        r=requests.get(f"{TD}/time_series",params={"symbol":pair,"interval":"1h","outputsize":60,"apikey":key},timeout=25)
+        r.raise_for_status(); payload=r.json()
         values=payload.get("values") if isinstance(payload,dict) else None
         if not isinstance(values,list) or len(values)<60: raise RuntimeError(f"insufficient_live_data:{pair}")
-        result[symbol]=[{"datetime":x["datetime"],"open":float(x["open"]),"high":float(x["high"]),"low":float(x["low"]),"close":float(x["close"])} for x in values[:120]]
+        result[symbol]=[{"datetime":x["datetime"],"open":float(x["open"]),"high":float(x["high"]),"low":float(x["low"]),"close":float(x["close"])} for x in values[:60]]
     return result
 
 def _decision(symbols: list[str], requested_at: str, context: dict) -> dict:
