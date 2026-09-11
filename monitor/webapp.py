@@ -153,9 +153,13 @@ def fx101_open(): return jsonify(fx101.list_trades("WHERE state IN ('PLACED','OP
 @app.get("/fx101/health")
 def fx101_health():
     try:
-        fx101.db().execute("SELECT 1").fetchone()
-        return jsonify({"ok":True,"service":"fx101","open_trades":len(fx101.list_trades("WHERE state IN ('PLACED','OPEN')")),"telegram_configured":bool(__import__('os').environ.get('TELEGRAM_BOT_TOKEN'))})
-    except Exception as exc: return jsonify({"ok":False,"error":type(exc).__name__}),503
+        # Use the same Turso query path exercised by the live worker; the serverless
+        # driver does not provide sqlite's cursor.fetchone() semantics.
+        open_trades = len(fx101.list_trades("WHERE state IN ('PLACED','OPEN')"))
+        return jsonify({"ok":True,"service":"fx101","open_trades":open_trades,"telegram_configured":bool(__import__('os').environ.get('TELEGRAM_BOT_TOKEN'))})
+    except Exception as exc:
+        fx101.log("fx101_health_db_error", error=type(exc).__name__, detail=str(exc)[:200])
+        return jsonify({"ok":False,"error":type(exc).__name__}),503
 
 
 @app.post("/fx101/prices")
