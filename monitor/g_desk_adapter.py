@@ -44,14 +44,16 @@ def _secret_ok() -> bool:
     return bool(expected) and request.headers.get("X-G-Desk-Token","") == expected
 
 def _td_context(symbols: list[str]) -> dict:
+    """Fetch all desk pairs in one Twelve Data request to stay within the free rate limit."""
     key=os.getenv("TWELVE_DATA_API_KEY","").strip()
     if not key: raise RuntimeError("TWELVE_DATA_API_KEY is required")
+    pairs=[f"{symbol[:3]}/{symbol[3:6]}" for symbol in symbols]
+    r=requests.get(f"{TD}/time_series",params={"symbol":",".join(pairs),"interval":"1h","outputsize":120,"apikey":key},timeout=25)
+    r.raise_for_status(); data=r.json()
     result={}
-    for symbol in symbols:
-        pair=f"{symbol[:3]}/{symbol[3:6]}"
-        r=requests.get(f"{TD}/time_series",params={"symbol":pair,"interval":"1h","outputsize":120,"apikey":key},timeout=25)
-        r.raise_for_status(); data=r.json()
-        values=data.get("values")
+    for symbol,pair in zip(symbols,pairs):
+        payload=data if len(symbols)==1 else data.get(pair,{})
+        values=payload.get("values") if isinstance(payload,dict) else None
         if not isinstance(values,list) or len(values)<60: raise RuntimeError(f"insufficient_live_data:{pair}")
         result[symbol]=[{"datetime":x["datetime"],"open":float(x["open"]),"high":float(x["high"]),"low":float(x["low"]),"close":float(x["close"])} for x in values[:120]]
     return result
