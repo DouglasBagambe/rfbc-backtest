@@ -1,0 +1,39 @@
+services:
+  - type: web
+    name: gs-fx-101
+    runtime: python
+    plan: free
+    buildCommand: pip install -r monitor/requirements.txt
+    startCommand: python monitor/webapp.py
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHONPATH
+        value: /opt/render/project/src/monitor
+      - key: G_DESK_ANALYZE_URL
+        value: internal://gdesk
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+      - key: TWELVE_DATA_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: RFBC_EQUITY_USD
+        value: "10.01"
+      - key: FX101_MAX_TOTAL_RISK_PCT
+        value: "1.0"
+      - key: FX101_MAX_POSITIONS
+        value: "1"
+      - key: FX101_PRICE_POLL_SECONDS
+        value: "30"
+      - key: FX101_STALE_SECONDS
+        value: "120"
+      - key: FX101_RFBC_SCAN_SECONDS
+        value: "300"
+      - key: LOG_LEVEL
+        value: INFO
