@@ -129,6 +129,13 @@ def telegram_send(text: str, keyboard: list[list[dict[str,str]]]|None=None) -> t
 
 def send_signal(t: dict[str, Any]) -> tuple[bool,str]: return telegram_send(card(t), [[{"text":"PLACED","callback_data":f"placed:{t['trade_id']}"},{"text":"SKIPPED","callback_data":f"skipped:{t['trade_id']}"}],[{"text":"WHY?","callback_data":f"why:{t['trade_id']}"},{"text":"CANCEL","callback_data":f"cancel:{t['trade_id']}"}]])
 
+def register_telegram_webhook(webhook_url: str) -> tuple[bool, str]:
+    """Best-effort production webhook registration; never logs token material."""
+    token=os.getenv("TELEGRAM_BOT_TOKEN","").strip()
+    if not token or not webhook_url: return False,"telegram_or_webhook_not_configured"
+    r=requests.post(f"https://api.telegram.org/bot{token}/setWebhook",json={"url":webhook_url,"allowed_updates":["message","callback_query"]},timeout=15)
+    return r.ok,str(r.status_code)
+
 def request_desk_analysis() -> tuple[bool, str]:
     """Request analysis from the configured ChatGPT/G_DESK adapter, never emulate it."""
     url=os.getenv("G_DESK_ANALYZE_URL", "").strip()
