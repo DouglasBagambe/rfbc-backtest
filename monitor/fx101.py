@@ -30,7 +30,7 @@ def now() -> str: return datetime.now(timezone.utc).isoformat()
 def log(event: str, **fields: Any) -> None: LOG.info(json.dumps({"event":event,"at":now(),**fields}, sort_keys=True))
 def db() -> sqlite3.Connection:
     """Open local SQLite for development or the shared Turso database in production."""
-    remote_url = os.getenv("TURSO_DATABASE_URL", "").strip()
+    remote_url = (os.getenv("TURSO_DATABASE_URL") or os.getenv("TURSO_DB_URL") or "").strip()
     if remote_url:
         import turso_serverless
         c = turso_serverless.connect(remote_url, auth_token=os.environ["TURSO_AUTH_TOKEN"])
