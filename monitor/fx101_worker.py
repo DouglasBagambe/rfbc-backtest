@@ -37,7 +37,7 @@ def scan_rfbc() -> None:
     fx101.log("rfbc_scan", checked_at=now.isoformat())
 
 def main() -> None:
-    poll=max(10,int(os.getenv("FX101_PRICE_POLL_SECONDS","30"))); last_hour=None; last_rfbc=0.0; failures=0
+    poll=max(10,int(os.getenv("FX101_PRICE_POLL_SECONDS","300"))); last_hour=None; last_rfbc=0.0; failures=0
     rfbc_every=max(60,int(os.getenv("FX101_RFBC_SCAN_SECONDS","300")))
     fx101.db(); fx101.log("worker_started", poll_seconds=poll)
     while RUNNING:
@@ -51,7 +51,7 @@ def main() -> None:
                 scan_rfbc(); last_rfbc=time.monotonic()
             failures=0
         except Exception as exc:
-            failures+=1; fx101.log("worker_failure", error=type(exc).__name__, detail=str(exc), failures=failures)
+            failures+=1; fx101.log("worker_failure", error=type(exc).__name__, failures=failures)
             if failures in (1,5,20): fx101.telegram_send(f"Fx101 worker warning: {type(exc).__name__}; retrying safely.")
         time.sleep(poll)
     fx101.log("worker_stopped")
