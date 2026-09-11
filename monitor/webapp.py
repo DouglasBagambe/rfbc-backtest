@@ -2,14 +2,19 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import os
+import threading
 
 import pandas as pd
+import requests
 from flask import Flask, jsonify, request
 
 import rfbc_monitor_live as m
 import selftest
 import telegram_notify as tg
 import fx101
+import fx101_worker
+import g_desk_adapter
 
 SELFTEST = selftest.run()
 print(f"RFBC_OPERATIONAL_SELFTEST {SELFTEST}", flush=True)
@@ -101,6 +106,22 @@ def health():
     })
 
 
+@app.get("/gdesk/health")
+def gdesk_health():
+    return jsonify({"ok":True,"service":"g-desk-adapter","openai_configured":bool(os.getenv("OPENAI_API_KEY")),"twelve_data_configured":bool(os.getenv("TWELVE_DATA_API_KEY"))})
+
+
+@app.post("/gdesk/analyze")
+def gdesk_analyze():
+    """Expose the real adapter without placing it on a separate paid service."""
+    try:
+        return jsonify(g_desk_adapter.analyze_payload(request.get_json(silent=True) or {}))
+    except requests.RequestException as exc:
+        return jsonify({"ok":False,"error":f"provider_error:{type(exc).__name__}"}),502
+    except (RuntimeError,ValueError) as exc:
+        return jsonify({"ok":False,"error":str(exc)}),503
+
+
 @app.post("/analyze")
 def analyze():
     """Request a live G_DESK analysis and return its explicit TRADE/NO_TRADE result."""
@@ -181,4 +202,5 @@ def check():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    threading.Thread(target=fx101_worker.main, name="fx101-worker", daemon=True).start()
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", "10000")), threaded=True)
