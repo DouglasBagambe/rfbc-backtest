@@ -121,6 +121,23 @@ def request_desk_analysis() -> tuple[bool, str]:
 def list_trades(where: str="", args: tuple=()) -> list[dict[str,Any]]:
     c=db(); return [row(x) for x in c.execute("SELECT * FROM trades "+where,args)]
 
+def manage_prices(prices: dict[str, float]) -> list[dict[str, Any]]:
+    """Feed-neutral deterministic management; caller supplies fresh executable prices."""
+    changed=[]; instant=datetime.now(timezone.utc)
+    for t in list_trades("WHERE state IN ('PLACED','OPEN')"):
+        price=prices.get(t["symbol"])
+        if price is None: continue
+        price=float(price)
+        if t["state"] == "PLACED":
+            t=transition(t["id"], "OPEN", price, "price_snapshot_open")
+        if t["side"] == "BUY": outcome="LOST" if price <= t["stop"] else "WON" if price >= t["target"] else None
+        else: outcome="LOST" if price >= t["stop"] else "WON" if price <= t["target"] else None
+        if outcome: changed.append(transition(t["id"], outcome, price, f"{outcome.lower()}_price_hit"))
+        elif instant >= datetime.fromisoformat(t["valid_until"].replace("Z","+00:00")): changed.append(transition(t["id"], "EXPIRED", price, "valid_until"))
+        else:
+            c=db(); c.execute("UPDATE trades SET last_price=? WHERE id=?",(price,t["id"])); c.commit()
+    return changed
+
 def receive_update(update: dict[str,Any]) -> str:
     uid=str(update.get("update_id","")); c=db()
     if not uid or c.execute("SELECT 1 FROM updates WHERE update_id=?",(uid,)).fetchone(): return "duplicate"

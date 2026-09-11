@@ -132,6 +132,16 @@ def telegram_webhook():
 def fx101_open(): return jsonify(fx101.list_trades("WHERE state IN ('PLACED','OPEN')"))
 
 
+@app.post("/fx101/prices")
+def fx101_prices():
+    """Authenticated deployment proxy should supply a fresh price snapshot here."""
+    body=request.get_json(silent=True) or {}; prices=body.get("prices", {})
+    if not isinstance(prices, dict): return jsonify({"ok":False,"error":"prices_must_be_object"}),400
+    changed=fx101.manage_prices(prices)
+    for trade in changed: fx101.telegram_send(f"{trade['trade_id']} {trade['state']} at {trade['result_price']} ({trade.get('result_r')}R)")
+    return jsonify({"ok":True,"changed":changed})
+
+
 @app.get("/check")
 def check():
     now = datetime.now(timezone.utc)

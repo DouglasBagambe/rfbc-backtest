@@ -7,3 +7,8 @@ set the Telegram webhook to `/telegram/webhook`. ChatGPT/G_DESK must call
 `POST /desk/analyze` with a `decisions` list matching the fields validated in
 `monitor/fx101.py`; an empty list records a no-trade scan. Do not expose the
 endpoint publicly without an upstream authenticated proxy in production.
+
+Point a scheduled price-feed adapter at `POST /fx101/prices` with
+`{"prices":{"EURUSDc":1.12345}}`. This deterministic manager opens placed
+manual trades on their first snapshot, then records TP, SL, or expiry and sends
+only lifecycle notifications. It does not place broker orders.
