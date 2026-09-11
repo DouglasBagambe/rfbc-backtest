@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""G_DESK live-analysis adapter. It never synthesizes a trade locally."""
+"""G_DESK live-analysis adapter and read-only market-context provider."""
 from __future__ import annotations
 
 import json, os, time
@@ -13,8 +13,8 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-# Keep Twelve Data available to the wider Fx101 worker for lightweight quote
-# polling, but G_DESK OHLC context no longer depends on Twelve Data credits.
+# Twelve Data can remain available to the wider Fx101 worker for lightweight
+# quote polling, but G_DESK OHLC context is sourced from Dukascopy for free.
 PAIR_TO_DUKASCOPY = {
     "EURUSD": instruments.INSTRUMENT_FX_MAJORS_EUR_USD,
     "GBPUSD": instruments.INSTRUMENT_FX_MAJORS_GBP_USD,
@@ -22,6 +22,7 @@ PAIR_TO_DUKASCOPY = {
     "USDCAD": instruments.INSTRUMENT_FX_MAJORS_USD_CAD,
     "EURJPY": instruments.INSTRUMENT_FX_CROSSES_EUR_JPY,
 }
+DESK_SYMBOLS = ["EURUSDc","GBPUSDc","GBPJPYc","USDCADc","EURJPYc"]
 _DUKA_CACHE: dict[str, tuple[float, list[dict]]] = {}
 _DUKA_CACHE_SECONDS = 300
 
@@ -38,7 +39,7 @@ DECISION_SCHEMA = {
                 "additionalProperties": False,
                 "required": ["symbol","side","entry","stop","target","volume","risk_pct","valid_until","cancel_condition","confidence","setup_name","regime","session","news_proximity","exposure_note","reasoning","context"],
                 "properties": {
-                    "symbol":{"type":"string","enum":["EURUSDc","GBPUSDc","GBPJPYc","USDCADc","EURJPYc"]},
+                    "symbol":{"type":"string","enum":DESK_SYMBOLS},
                     "side":{"type":"string","enum":["BUY","SELL"]},
                     "entry":{"type":"number"},"stop":{"type":"number"},"target":{"type":"number"},
                     "volume":{"type":"number","minimum":0.01},"risk_pct":{"type":"number","minimum":0.01,"maximum":1},
@@ -69,8 +70,6 @@ def _normalise_duka_frame(frame) -> pd.DataFrame:
             out[col]=pd.to_numeric(out[col],errors="coerce")
     out=out.dropna(subset=["dt","open","high","low","close"])
     if "volume" in out.columns:
-        # Zero-volume padding is not tradable market data and must not enter
-        # the live analysis context.
         out=out[out["volume"].fillna(0)>0]
     return out.sort_values("dt").drop_duplicates("dt")
 
@@ -102,16 +101,9 @@ def _fetch_duka_side(pair: str, side: str, start: pd.Timestamp, end: pd.Timestam
 
 
 def _dukascopy_context(symbols: list[str]) -> dict:
-    """Return recent completed H1 BID/ASK context without a paid market-data quota.
-
-    Dukascopy is already the repository's independent FX data source. We fetch
-    both sides, align timestamps strictly, exclude zero-volume padding/current
-    incomplete H1, and expose mid OHLC plus the contemporaneous BID/ASK close.
-    """
+    """Return recent completed H1 BID/ASK context from Dukascopy."""
     now=pd.Timestamp.now(tz="UTC")
     cutoff=now.floor("h")
-    # 96h covers the weekend while still keeping live requests small. We retain
-    # only the latest 24 completed tradable H1 bars.
     start=cutoff-pd.Timedelta(hours=96)
     result={}
     for symbol in symbols:
@@ -133,8 +125,6 @@ def _dukascopy_context(symbols: list[str]) -> dict:
             raise RuntimeError(f"insufficient_live_data:{pair}:{len(merged)}")
 
         latest=pd.Timestamp(merged.iloc[-1]["dt"])
-        # During a normal weekday session, context older than 3 completed hours
-        # is an infrastructure/data failure, not a NO_TRADE decision.
         if cutoff.weekday()<5 and (cutoff-latest)>pd.Timedelta(hours=3):
             raise RuntimeError(f"stale_dukascopy_data:{pair}:{latest.isoformat()}")
 
@@ -153,6 +143,24 @@ def _dukascopy_context(symbols: list[str]) -> dict:
         _DUKA_CACHE[symbol]=(time.time(),bars)
         result[symbol]=bars
     return result
+
+
+def context_payload(symbols: list[str] | None = None) -> dict:
+    """Public, read-only payload for ChatGPT-side G_DESK analysis."""
+    requested=list(symbols or DESK_SYMBOLS)
+    context=_dukascopy_context(requested)
+    latest={s:(bars[-1]["datetime"] if bars else None) for s,bars in context.items()}
+    return {
+        "ok":True,
+        "source":"Dukascopy BID/ASK",
+        "timeframe":"H1 completed bars",
+        "generated_at":datetime.now(timezone.utc).isoformat(),
+        "symbols":requested,
+        "latest_completed_bar":latest,
+        "bars":context,
+        "analysis_owner":"ChatGPT subscription automation",
+        "execution":"manual",
+    }
 
 
 def _decision(symbols: list[str], requested_at: str, context: dict) -> dict:
@@ -183,7 +191,6 @@ def _decision(symbols: list[str], requested_at: str, context: dict) -> dict:
 
 
 def analyze_payload(body: dict) -> dict:
-    """Execute the real live-data/OpenAI analysis path for an internal or HTTP caller."""
     symbols=body.get("symbols")
     if not isinstance(symbols,list) or not symbols: raise ValueError("symbols_required")
     context=_dukascopy_context(symbols)
@@ -196,8 +203,16 @@ def health():
         "service":"g-desk-adapter",
         "openai_configured":bool(os.getenv("OPENAI_API_KEY")),
         "market_context_provider":"dukascopy",
+        "analysis_mode":os.getenv("G_DESK_RUNTIME_MODE","api"),
         "twelve_data_configured":bool(os.getenv("TWELVE_DATA_API_KEY")),
     })
+
+@app.get("/context")
+def context():
+    try:
+        return jsonify(context_payload())
+    except (RuntimeError,ValueError) as exc:
+        return jsonify({"ok":False,"error":str(exc)}),503
 
 @app.post("/analyze")
 def analyze():
