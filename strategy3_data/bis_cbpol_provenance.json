@@ -1,0 +1,68 @@
+{
+  "source_url": "https://data.bis.org/static/bulk/WS_CBPOL_csv_col.zip",
+  "archive_sha256": "eef383071fe15fa2efdf9235f0123dde77cb2b2b3e56219e6a8d97d4572658cc",
+  "archive_bytes": 284035,
+  "retained_date_range": [
+    "2013-01-01",
+    "2017-12-31"
+  ],
+  "series_mappings": {
+    "AUD": {
+      "bis_ref_area": "AU",
+      "frequency": "D",
+      "compilation": "",
+      "source": "Reserve Bank of Australia",
+      "breaks": "This rate can be considered the official policy rate as from 23 Jan 1990. Australia had a managed exchange rate regime prior to 1983, in an environment of capital controls. The RBA did not have an explicit target interest rate prior to 23 Jan 1990. The BIS publishes a representative rate for that period. Between  23 Jan 1990 and 31 Jul the middle of the cash rate target corridor is used."
+    },
+    "CAD": {
+      "bis_ref_area": "CA",
+      "frequency": "D",
+      "compilation": "",
+      "source": "Bank of Canada",
+      "breaks": "In Jun 1994 the Bank of Canada (BoC) began shifting emphasis from the bank rate to the target for the overnight rate as its key monetary policy instrument. In Feb 1999 the target for the overnight rate was defined as the midpoint of the band, or 25 basis points below the bank rate. In May 2001 the BoC began emphasizing the target as its key interest rate in its communications with the public."
+    },
+    "CHF": {
+      "bis_ref_area": "CH",
+      "frequency": "D",
+      "compilation": "",
+      "source": "Swiss National Bank",
+      "breaks": ""
+    },
+    "GBP": {
+      "bis_ref_area": "GB",
+      "frequency": "D",
+      "compilation": "",
+      "source": "Bank of England",
+      "breaks": ""
+    },
+    "JPY": {
+      "bis_ref_area": "JP",
+      "frequency": "D",
+      "compilation": "",
+      "source": "Bank of Japan",
+      "breaks": "For details see: http://www.bis.org/statistics/cbpol/cbpol_doc.pdf  ; https://www.boj.or.jp/en/mopo/mpmdeci/mpr_1998/k980909c.htm ; https://www.boj.or.jp/en/mopo/mpmdeci/mpr_1999/k990212c.htm ; https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2000/k000811.htm ; https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2001/k010228a.htm ; https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2006/k060309.htm ; https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2006/k060714.pdf ; https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2007/k070221.pdf ; https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2008/k081031.pdf ; https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2008/k081219.pdf ; https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2010/k101005.pdf ; https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2016/k160921a.pdf ; https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2024/k240319a.pdf ; https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2024/mpr240731c.pdf ; https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2025/mpr250124a.pdf ; https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2025/k251219a.pdf ; https://www.boj.or.jp/en/mopo/mpmdeci/mpr_2026/k260616a.pdf"
+    },
+    "NZD": {
+      "bis_ref_area": "NZ",
+      "frequency": "D",
+      "compilation": "",
+      "source": "Reserve Bank of New Zealand",
+      "breaks": "This rate can be considered the official policy rate as from 17 Mar 1999. "
+    },
+    "USD": {
+      "bis_ref_area": "US",
+      "frequency": "D",
+      "compilation": "",
+      "source": "US Federal Reserve System",
+      "breaks": ""
+    },
+    "EUR": {
+      "bis_ref_area": "XM",
+      "frequency": "D",
+      "compilation": "",
+      "source": "European Central Bank",
+      "breaks": ""
+    }
+  },
+  "rows_retained": 14608
+}
