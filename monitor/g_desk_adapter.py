@@ -46,7 +46,7 @@ DECISION_SCHEMA = {
                     "confidence":{"type":"string"},"setup_name":{"type":"string"},"regime":{"type":"string"},
                     "session":{"type":"string"},"news_proximity":{"type":"string"},
                     "exposure_note":{"type":"string"},"reasoning":{"type":"string"},
-                    "context":{"type":"object","additionalProperties":True}
+                    "context":{"type":"object","additionalProperties":False,"properties":{},"required":[]}
                 }
             }
         }
@@ -166,6 +166,7 @@ def _decision(symbols: list[str], requested_at: str, context: dict) -> dict:
         "Never invent missing market, spread, news, or account information. If news context is unavailable, state that rather than guessing. "
         "At most one decision. If trading, geometry must be valid: BUY stop < entry < target; SELL target < entry < stop. "
         "Set volume conservatively to 0.01 and risk_pct <= 0.5. valid_until must be no later than "+valid_until+". "
+        "Return context as an empty object; the backend owns audit context. "
         "This is analysis and alerting only, never execution."
     )
     payload={
