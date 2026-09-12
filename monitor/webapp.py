@@ -8,6 +8,7 @@ import threading
 import pandas as pd
 import requests
 from flask import Flask, jsonify, request
+from waitress import serve
 
 import rfbc_monitor_live as m
 import selftest
@@ -21,6 +22,11 @@ print(f"RFBC_OPERATIONAL_SELFTEST {SELFTEST}", flush=True)
 
 app = Flask(__name__)
 _last_alert_keys: set[str] = set()
+
+
+def _internal_ok() -> bool:
+    token = os.getenv("G_DESK_ADAPTER_TOKEN", "").strip()
+    return bool(token) and request.headers.get("X-G-Desk-Token", "") == token
 
 
 def serialise(value):
@@ -63,8 +69,6 @@ def alert_key(result: dict) -> str:
 
 def maybe_send_alert(result: dict) -> dict:
     action = result.get("action", "NONE")
-    # STALE is a health/status condition, not a trading instruction. It is
-    # expected during closed/weekend sessions and belongs in health/logs only.
     if action in ("NONE", "OPEN_TRADE", "STALE"):
         return {"telegram_configured": tg.configured(), "telegram_sent": False, "telegram_status": "not_needed"}
     key = alert_key(result)
@@ -78,7 +82,12 @@ def maybe_send_alert(result: dict) -> dict:
 
 @app.get("/")
 def root():
-    return jsonify({"ok": True,"service": "rfbc-two-pair-monitor","pairs": [cfg.symbol for cfg in m.PAIR_CONFIGS.values()],"logic": "frozen_rfbc_v1_exact"})
+    return jsonify({
+        "ok": True,
+        "service": "rfbc-two-pair-monitor",
+        "pairs": [cfg.symbol for cfg in m.PAIR_CONFIGS.values()],
+        "logic": "frozen_rfbc_v1_exact",
+    })
 
 
 @app.get("/health")
@@ -98,12 +107,14 @@ def health():
 
 @app.get("/gdesk/health")
 def gdesk_health():
+    mode = os.getenv("G_DESK_RUNTIME_MODE", "api")
     return jsonify({
-        "ok":True,
-        "service":"g-desk-adapter",
-        "market_context_provider":"dukascopy",
-        "analysis_mode":os.getenv("G_DESK_RUNTIME_MODE","api"),
-        "openai_api_required":os.getenv("G_DESK_RUNTIME_MODE","api") != "chatgpt_subscription",
+        "ok": True,
+        "service": "g-desk-adapter",
+        "market_context_provider": "dukascopy",
+        "analysis_mode": mode,
+        "openai_api_required": mode != "chatgpt_subscription",
+        "execution": "manual",
     })
 
 
@@ -112,36 +123,42 @@ def gdesk_context():
     """Public read-only market context consumed by ChatGPT subscription automation."""
     try:
         return jsonify(g_desk_adapter.context_payload())
-    except (RuntimeError,ValueError) as exc:
+    except (RuntimeError, ValueError) as exc:
         fx101.log("gdesk_context_error", error=type(exc).__name__, detail=str(exc)[:200])
-        return jsonify({"ok":False,"error":str(exc)}),503
+        return jsonify({"ok": False, "error": str(exc)}), 503
 
 
 @app.post("/gdesk/analyze")
 def gdesk_analyze():
-    """Legacy paid-API adapter path; not used in chatgpt_subscription mode."""
-    if os.getenv("G_DESK_RUNTIME_MODE","").strip() == "chatgpt_subscription":
-        return jsonify({"ok":False,"error":"analysis_owned_by_chatgpt_subscription"}),409
+    """Legacy paid-API path; disabled while ChatGPT subscription owns analysis."""
+    if os.getenv("G_DESK_RUNTIME_MODE", "").strip() == "chatgpt_subscription":
+        return jsonify({"ok": False, "error": "analysis_owned_by_chatgpt_subscription"}), 409
+    if not _internal_ok():
+        return jsonify({"ok": False, "error": "unauthorized"}), 401
     try:
         return jsonify(g_desk_adapter.analyze_payload(request.get_json(silent=True) or {}))
     except requests.RequestException as exc:
-        return jsonify({"ok":False,"error":f"provider_error:{type(exc).__name__}"}),502
-    except (RuntimeError,ValueError) as exc:
-        return jsonify({"ok":False,"error":str(exc)}),503
+        return jsonify({"ok": False, "error": f"provider_error:{type(exc).__name__}"}), 502
+    except (RuntimeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 503
 
 
 @app.post("/analyze")
 def analyze():
-    """Legacy paid-API trigger; disabled when ChatGPT subscription owns analysis."""
-    if os.getenv("G_DESK_RUNTIME_MODE","").strip() == "chatgpt_subscription":
-        return jsonify({"ok":False,"status":"analysis_owned_by_chatgpt_subscription"}),409
+    """Paid-API trigger is intentionally unavailable in zero-cost subscription mode."""
+    if os.getenv("G_DESK_RUNTIME_MODE", "").strip() == "chatgpt_subscription":
+        return jsonify({"ok": False, "status": "analysis_owned_by_chatgpt_subscription"}), 409
+    if not _internal_ok():
+        return jsonify({"ok": False, "error": "unauthorized"}), 401
     ok, status = fx101.request_desk_analysis()
     return jsonify({"ok": ok, "status": status}), (200 if ok else 503)
 
 
 @app.post("/desk/analyze")
 def desk_analyze():
-    """Accept externally-produced G_DESK decisions; never invent analysis here."""
+    """Authenticated external-decision ingest; never invent analysis here."""
+    if not _internal_ok():
+        return jsonify({"ok": False, "error": "unauthorized"}), 401
     body = request.get_json(silent=True) or {}
     ok, status, accepted = fx101.ingest_desk_response(body)
     return jsonify({"ok": ok, "status": status, "accepted": accepted}), (200 if ok else 400)
@@ -167,25 +184,33 @@ def fx101_health():
     try:
         open_trades = len(fx101.list_trades("WHERE state IN ('PLACED','OPEN')"))
         return jsonify({
-            "ok":True,
-            "service":"fx101",
-            "open_trades":open_trades,
-            "telegram_configured":bool(os.environ.get('TELEGRAM_BOT_TOKEN')),
-            "gdesk_analysis_mode":os.getenv("G_DESK_RUNTIME_MODE","api"),
+            "ok": True,
+            "service": "fx101",
+            "open_trades": open_trades,
+            "telegram_configured": bool(os.environ.get("TELEGRAM_BOT_TOKEN")),
+            "gdesk_analysis_mode": os.getenv("G_DESK_RUNTIME_MODE", "api"),
+            "gdesk_market_data": "dukascopy_h1_bid_ask",
+            "lifecycle_price_data": "dukascopy_m1_bid_ask",
+            "execution": "manual",
         })
     except Exception as exc:
         fx101.log("fx101_health_db_error", error=type(exc).__name__, detail=str(exc)[:200])
-        return jsonify({"ok":False,"error":type(exc).__name__}),503
+        return jsonify({"ok": False, "error": type(exc).__name__}), 503
 
 
 @app.post("/fx101/prices")
 def fx101_prices():
-    body=request.get_json(silent=True) or {}; prices=body.get("prices", {})
-    if not isinstance(prices, dict): return jsonify({"ok":False,"error":"prices_must_be_object"}),400
-    changed=fx101.manage_prices(prices)
+    """Authenticated deterministic lifecycle test/feed endpoint."""
+    if not _internal_ok():
+        return jsonify({"ok": False, "error": "unauthorized"}), 401
+    body = request.get_json(silent=True) or {}
+    prices = body.get("prices", {})
+    if not isinstance(prices, dict):
+        return jsonify({"ok": False, "error": "prices_must_be_object"}), 400
+    changed = fx101.manage_prices(prices)
     for trade in changed:
         fx101.telegram_send(f"{trade['trade_id']} {trade['state']} at {trade['result_price']} ({trade.get('result_r')}R)")
-    return jsonify({"ok":True,"changed":changed})
+    return jsonify({"ok": True, "changed": changed})
 
 
 @app.get("/check")
@@ -200,17 +225,30 @@ def check():
             result.update(maybe_send_alert(result))
             results.append(result)
         actionable = [r for r in results if r["action"] not in ("NONE", "OPEN_TRADE", "STALE")]
-        return jsonify({"ok": True,"service": "rfbc-two-pair-monitor","checked_at": checked_at,"results": results,"actionable": actionable})
+        return jsonify({
+            "ok": True,
+            "service": "rfbc-two-pair-monitor",
+            "checked_at": checked_at,
+            "results": results,
+            "actionable": actionable,
+        })
     except Exception as exc:
-        result = {"ok": False,"action": "ERROR","error_type": type(exc).__name__,"error": str(exc),"checked_at": checked_at,"symbol": "PORTFOLIO"}
+        result = {
+            "ok": False,
+            "action": "ERROR",
+            "error_type": type(exc).__name__,
+            "error": str(exc),
+            "checked_at": checked_at,
+            "symbol": "PORTFOLIO",
+        }
         result.update(maybe_send_alert(result))
         return jsonify(result), 500
 
 
 if __name__ == "__main__":
-    webhook_url=os.getenv("TELEGRAM_WEBHOOK_URL","").strip()
+    webhook_url = os.getenv("TELEGRAM_WEBHOOK_URL", "").strip()
     if webhook_url:
-        ok,status=fx101.register_telegram_webhook(webhook_url)
+        ok, status = fx101.register_telegram_webhook(webhook_url)
         fx101.log("telegram_webhook_registration", ok=ok, status=status)
     threading.Thread(target=fx101_worker.main, name="fx101-worker", daemon=True).start()
-    app.run(host="0.0.0.0", port=int(os.getenv("PORT", "10000")), threaded=True)
+    serve(app, host="0.0.0.0", port=int(os.getenv("PORT", "10000")), threads=6, channel_timeout=90)
