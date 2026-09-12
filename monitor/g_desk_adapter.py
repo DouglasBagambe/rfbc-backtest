@@ -150,6 +150,7 @@ def context_payload(symbols: list[str] | None = None) -> dict:
     requested=list(symbols or DESK_SYMBOLS)
     context=_dukascopy_context(requested)
     latest={s:(bars[-1]["datetime"] if bars else None) for s,bars in context.items()}
+    market_closed=datetime.now(timezone.utc).weekday() >= 5
     return {
         "ok":True,
         "source":"Dukascopy BID/ASK",
@@ -158,12 +159,16 @@ def context_payload(symbols: list[str] | None = None) -> dict:
         "symbols":requested,
         "latest_completed_bar":latest,
         "bars":context,
+        "market_state":"MARKET_CLOSED" if market_closed else "MARKET_OPEN",
+        "freshness":"MARKET_CLOSED" if market_closed else "FRESH",
         "analysis_owner":"ChatGPT subscription automation",
         "execution":"manual",
     }
 
 
 def _decision(symbols: list[str], requested_at: str, context: dict) -> dict:
+    if os.getenv("G_DESK_RUNTIME_MODE", "").strip() == "chatgpt_subscription":
+        raise RuntimeError("analysis_owned_by_chatgpt_subscription")
     key=os.getenv("OPENAI_API_KEY","").strip()
     if not key: raise RuntimeError("OPENAI_API_KEY is required")
     model=os.getenv("G_DESK_MODEL","gpt-5-mini")

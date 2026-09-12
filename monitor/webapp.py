@@ -171,6 +171,27 @@ def desk_analyze():
     return jsonify({"ok": ok, "status": status, "accepted": accepted}), (200 if ok else 400)
 
 
+@app.post("/fx101/accounts")
+def create_fx101_account():
+    if not _internal_ok():
+        return jsonify({"ok": False, "error": "unauthorized"}), 401
+    try:
+        return jsonify({"ok": True, "account": fx101.create_account(request.get_json(silent=True) or {})}), 201
+    except (KeyError, TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
+@app.post("/fx101/accounts/<account_id>/reconcile")
+def reconcile_fx101_account(account_id):
+    if not _internal_ok():
+        return jsonify({"ok": False, "error": "unauthorized"}), 401
+    body=request.get_json(silent=True) or {}
+    try:
+        return jsonify({"ok": True, "reconciliation": fx101.reconcile_account(account_id, float(body["reported_balance"]), str(body.get("note", "")) )})
+    except (KeyError, TypeError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+
+
 @app.post("/telegram/webhook")
 def telegram_webhook():
     if not _telegram_webhook_ok():
