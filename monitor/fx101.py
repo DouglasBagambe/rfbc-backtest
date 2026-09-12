@@ -194,6 +194,8 @@ def telegram_callback_ack(callback_id: str, text: str) -> None:
 
 def home() -> str:
     return "G’s Fx 101\n\nTrading desk online\n\nG DESK • RFBC • Market Data • Journal\n\nAnalyze Now  |  Open Trades\nToday  |  Stats\nG Desk  |  RFBC\nAccounts  |  Health\nHelp"
+def home_keyboard() -> list[list[dict[str,str]]]:
+    return [[{"text":"Analyze Now","callback_data":"menu:analyze"},{"text":"Open Trades","callback_data":"menu:open"}],[{"text":"Today","callback_data":"menu:today"},{"text":"Stats","callback_data":"menu:stats"}],[{"text":"G Desk","callback_data":"menu:gdesk"},{"text":"RFBC","callback_data":"menu:rfbc"}],[{"text":"Accounts","callback_data":"menu:accounts"},{"text":"Health","callback_data":"menu:health"}],[{"text":"Help","callback_data":"menu:help"}]]
 
 def stats_text() -> str:
     closed=list_trades("WHERE state IN ('WON','LOST','MANUAL_CLOSE')"); rs=[float(x['result_r']) for x in closed if x.get('result_r') is not None]
@@ -290,6 +292,9 @@ def receive_update(update: dict[str,Any]) -> str:
     cb=update.get("callback_query",{}); data=cb.get("data","")
     if data:
         action,tid=data.split(":",1); mapping={"placed":"PLACED","skipped":"SKIPPED","cancel":"CANCELLED"}
+        if action=="menu":
+            telegram_callback_ack(cb.get("id",""),"Opening")
+            return receive_update({"update_id":f"menu-{uid}","message":{"text":"/"+tid}})
         if action=="why":
             t=list_trades("WHERE id=?",(tid,))[0]; telegram_callback_ack(cb.get("id",""),"Stored reasoning"); telegram_send("WHY • "+tid+"\n\n"+(t.get("reasoning") or "No reasoning snapshot.")); return "why"
         if action not in mapping: telegram_callback_ack(cb.get("id",""),"Unknown action"); return "unknown_callback"
@@ -297,7 +302,7 @@ def receive_update(update: dict[str,Any]) -> str:
         except ValueError: telegram_callback_ack(cb.get("id",""),"Already processed.")
         return action
     text=update.get("message",{}).get("text","").strip()
-    if text.startswith(("/start","/menu")): telegram_send(home())
+    if text.startswith(("/start","/menu")): telegram_send(home(), home_keyboard())
     elif text.startswith("/open"): telegram_send("OPEN TRADES\n\n"+"\n\n".join(card(t) for t in list_trades("WHERE state IN ('PLACED','OPEN')")) if list_trades("WHERE state IN ('PLACED','OPEN')") else "OPEN TRADES\n\nNo open trades.")
     elif text.startswith("/today"):
         items=list_trades("WHERE created_at >= ?", (datetime.now(timezone.utc).date().isoformat(),)); closed=[x for x in items if x['state'] in ('WON','LOST')]; net=sum(float(x['result_r'] or 0) for x in closed)
