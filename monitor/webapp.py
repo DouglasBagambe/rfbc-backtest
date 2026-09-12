@@ -87,6 +87,33 @@ def maybe_send_alert(result: dict) -> dict:
     return {"telegram_configured": tg.configured(), "telegram_sent": ok, "telegram_status": status}
 
 
+def _startup_smoke_test() -> None:
+    """One-shot, opt-in production smoke test. Never creates or mutates trades."""
+    if os.getenv("FX101_STARTUP_SMOKE_TEST", "").strip() != "1":
+        return
+    checks: list[str] = []
+    try:
+        fx101.list_trades("WHERE state IN ('PLACED','OPEN')")
+        checks.append("Database • PASS")
+    except Exception as exc:
+        checks.append(f"Database • FAIL ({type(exc).__name__})")
+    checks.append(f"RFBC self-test • {'PASS' if SELFTEST.get('ok') else 'FAIL'}")
+    try:
+        payload = g_desk_adapter.context_payload()
+        state = str(payload.get("market_state") or payload.get("freshness") or "available")
+        symbols = payload.get("symbols") or []
+        checks.append(f"G DESK context • {'PASS' if payload.get('ok') and len(symbols) == 5 else 'FAIL'}")
+        checks.append(f"Market state • {state}")
+    except Exception as exc:
+        checks.append(f"G DESK context • FAIL ({type(exc).__name__})")
+    checks.append(f"Telegram webhook secret • {'PASS' if os.getenv('TELEGRAM_WEBHOOK_SECRET') else 'FAIL'}")
+    text = "TEST • G’S FX 101 PRODUCTION SMOKE\n\n" + "\n".join(checks) + "\n\nNo trade was created or executed."
+    ok, status = fx101.telegram_send(text)
+    fx101.log("startup_smoke_test", telegram_ok=ok, telegram_status=status, checks=checks)
+    if ok:
+        fx101.telegram_send(fx101.home(), fx101.home_keyboard())
+
+
 @app.get("/")
 def root():
     return jsonify({
@@ -282,4 +309,5 @@ if __name__ == "__main__":
         ok, status = fx101.register_telegram_webhook(webhook_url)
         fx101.log("telegram_webhook_registration", ok=ok, status=status, secret_configured=bool(os.getenv("TELEGRAM_WEBHOOK_SECRET")))
     threading.Thread(target=fx101_worker.main, name="fx101-worker", daemon=True).start()
+    threading.Thread(target=_startup_smoke_test, name="fx101-startup-smoke", daemon=True).start()
     serve(app, host="0.0.0.0", port=int(os.getenv("PORT", "10000")), threads=6, channel_timeout=90)
