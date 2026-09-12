@@ -29,6 +29,13 @@ def _internal_ok() -> bool:
     return bool(token) and request.headers.get("X-G-Desk-Token", "") == token
 
 
+def _telegram_webhook_ok() -> bool:
+    secret = os.getenv("TELEGRAM_WEBHOOK_SECRET", "").strip()
+    if not secret:
+        return True
+    return request.headers.get("X-Telegram-Bot-Api-Secret-Token", "") == secret
+
+
 def serialise(value):
     if isinstance(value, pd.Timestamp):
         return value.isoformat()
@@ -166,6 +173,8 @@ def desk_analyze():
 
 @app.post("/telegram/webhook")
 def telegram_webhook():
+    if not _telegram_webhook_ok():
+        return jsonify({"ok": False, "error": "unauthorized"}), 403
     update = request.get_json(silent=True) or {}
     try:
         return jsonify({"ok": True, "status": fx101.receive_update(update)})
@@ -188,6 +197,7 @@ def fx101_health():
             "service": "fx101",
             "open_trades": open_trades,
             "telegram_configured": bool(os.environ.get("TELEGRAM_BOT_TOKEN")),
+            "telegram_webhook_secret_configured": bool(os.environ.get("TELEGRAM_WEBHOOK_SECRET")),
             "gdesk_analysis_mode": os.getenv("G_DESK_RUNTIME_MODE", "api"),
             "gdesk_market_data": "dukascopy_h1_bid_ask",
             "lifecycle_price_data": "dukascopy_m1_bid_ask",
@@ -249,6 +259,6 @@ if __name__ == "__main__":
     webhook_url = os.getenv("TELEGRAM_WEBHOOK_URL", "").strip()
     if webhook_url:
         ok, status = fx101.register_telegram_webhook(webhook_url)
-        fx101.log("telegram_webhook_registration", ok=ok, status=status)
+        fx101.log("telegram_webhook_registration", ok=ok, status=status, secret_configured=bool(os.getenv("TELEGRAM_WEBHOOK_SECRET")))
     threading.Thread(target=fx101_worker.main, name="fx101-worker", daemon=True).start()
     serve(app, host="0.0.0.0", port=int(os.getenv("PORT", "10000")), threads=6, channel_timeout=90)
