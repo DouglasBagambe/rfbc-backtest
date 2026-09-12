@@ -63,7 +63,9 @@ def alert_key(result: dict) -> str:
 
 def maybe_send_alert(result: dict) -> dict:
     action = result.get("action", "NONE")
-    if action in ("NONE", "OPEN_TRADE"):
+    # STALE is a health/status condition, not a trading instruction. It is
+    # expected during closed/weekend sessions and belongs in health/logs only.
+    if action in ("NONE", "OPEN_TRADE", "STALE"):
         return {"telegram_configured": tg.configured(), "telegram_sent": False, "telegram_status": "not_needed"}
     key = alert_key(result)
     if key in _last_alert_keys:
@@ -197,7 +199,7 @@ def check():
             result = flatten_result(item, checked_at)
             result.update(maybe_send_alert(result))
             results.append(result)
-        actionable = [r for r in results if r["action"] not in ("NONE", "OPEN_TRADE")]
+        actionable = [r for r in results if r["action"] not in ("NONE", "OPEN_TRADE", "STALE")]
         return jsonify({"ok": True,"service": "rfbc-two-pair-monitor","checked_at": checked_at,"results": results,"actionable": actionable})
     except Exception as exc:
         result = {"ok": False,"action": "ERROR","error_type": type(exc).__name__,"error": str(exc),"checked_at": checked_at,"symbol": "PORTFOLIO"}
