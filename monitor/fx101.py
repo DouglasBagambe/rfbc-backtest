@@ -57,6 +57,7 @@ def db() -> sqlite3.Connection:
                         log("turso_db_unavailable", error=type(exc).__name__)
                     raise
     return c
+
 def row(x: sqlite3.Row) -> dict[str, Any]:
     d=dict(x); d["context"]=json.loads(d["context"]); return d
 
@@ -137,14 +138,19 @@ def telegram_send(text: str, keyboard: list[list[dict[str,str]]]|None=None) -> t
 def send_signal(t: dict[str, Any]) -> tuple[bool,str]: return telegram_send(card(t), [[{"text":"PLACED","callback_data":f"placed:{t['trade_id']}"},{"text":"SKIPPED","callback_data":f"skipped:{t['trade_id']}"}],[{"text":"WHY?","callback_data":f"why:{t['trade_id']}"},{"text":"CANCEL","callback_data":f"cancel:{t['trade_id']}"}]])
 
 def register_telegram_webhook(webhook_url: str) -> tuple[bool, str]:
-    """Best-effort production webhook registration; never logs token material."""
+    """Register Telegram webhook with optional secret-token validation."""
     token=os.getenv("TELEGRAM_BOT_TOKEN","").strip()
     if not token or not webhook_url: return False,"telegram_or_webhook_not_configured"
-    r=requests.post(f"https://api.telegram.org/bot{token}/setWebhook",json={"url":webhook_url,"allowed_updates":["message","callback_query"]},timeout=15)
+    payload={"url":webhook_url,"allowed_updates":["message","callback_query"]}
+    secret=os.getenv("TELEGRAM_WEBHOOK_SECRET","").strip()
+    if secret: payload["secret_token"]=secret
+    r=requests.post(f"https://api.telegram.org/bot{token}/setWebhook",json=payload,timeout=15)
     return r.ok,str(r.status_code)
 
 def request_desk_analysis() -> tuple[bool, str]:
-    """Request analysis from the configured ChatGPT/G_DESK adapter, never emulate it."""
+    """Legacy API-backed analysis path; subscription mode delegates to ChatGPT automation."""
+    if os.getenv("G_DESK_RUNTIME_MODE","").strip()=="chatgpt_subscription":
+        return False,"analysis_owned_by_chatgpt_subscription"
     url=os.getenv("G_DESK_ANALYZE_URL", "").strip()
     payload={"source":"G_DESK","symbols":sorted(DESK_SYMBOLS),"requested_at":now()}
     c=db(); c.execute("INSERT INTO scans VALUES (?,?,?,?,?)",(str(uuid.uuid4()),"G_DESK",payload["requested_at"],"REQUESTED",json.dumps(payload))); c.commit()
@@ -165,13 +171,13 @@ def request_desk_analysis() -> tuple[bool, str]:
     except requests.HTTPError as exc:
         response=exc.response
         status=response.status_code if response is not None else "unknown"
-        body=(response.text if response is not None else "")[:500].replace("\\n"," ").replace("\\r"," ")
-        log("desk_provider_http_error", provider="twelve_data_or_openai", http_status=status, response_body=body)
+        body=(response.text if response is not None else "")[:500].replace("\n"," ").replace("\r"," ")
+        log("desk_provider_http_error", provider="legacy_ai_adapter", http_status=status, response_body=body)
         return False,f"adapter_http_{status}"
     except requests.RequestException as exc: return False,f"adapter_error:{type(exc).__name__}"
 
 def ingest_desk_response(body: dict[str, Any]) -> tuple[bool, str, list[dict[str, Any]]]:
-    """Validate the GPT adapter response and announce an explicit NO TRADE."""
+    """Validate externally produced G_DESK decisions and announce explicit NO TRADE."""
     decisions=body.get("decisions", [])
     if not isinstance(decisions, list): return False,"adapter_decisions_must_be_list",[]
     accepted=[]; rejected=[]
@@ -216,6 +222,7 @@ def receive_update(update: dict[str,Any]) -> str:
         action,tid=data.split(":",1); mapping={"placed":"PLACED","skipped":"SKIPPED","cancel":"CANCELLED"}
         if action=="why":
             t=list_trades("WHERE id=?",(tid,))[0]; telegram_send(t.get("reasoning") or "No reasoning snapshot."); return "why"
+        if action not in mapping: return "unknown_callback"
         transition(tid,mapping[action]); return action
     text=update.get("message",{}).get("text","").strip()
     if text.startswith("/open"): telegram_send("\n\n".join(card(t) for t in list_trades("WHERE state IN ('PLACED','OPEN')")) or "No open trades.")
@@ -226,6 +233,9 @@ def receive_update(update: dict[str,Any]) -> str:
     elif text.startswith("/why "):
         t=list_trades("WHERE id=?",(text.split(maxsplit=1)[1],)); telegram_send(t[0].get("reasoning", "No reasoning") if t else "Unknown trade ID")
     elif text.startswith("/analyze"):
-        ok,status=request_desk_analysis()
-        telegram_send("G_DESK scan requested for EURUSDc, GBPUSDc, GBPJPYc, USDCADc, EURJPYc." if ok else f"NO TRADE: analysis adapter unavailable ({status}).")
+        if os.getenv("G_DESK_RUNTIME_MODE","").strip()=="chatgpt_subscription":
+            telegram_send("G_DESK analysis is owned by ChatGPT subscription mode. The next scheduled scan will send TRADE or NO TRADE automatically; no paid OpenAI API is used.")
+        else:
+            ok,status=request_desk_analysis()
+            telegram_send("G_DESK scan requested for EURUSDc, GBPUSDc, GBPJPYc, USDCADc, EURJPYc." if ok else f"G_DESK SYSTEM ERROR: analysis adapter unavailable ({status}).")
     return "handled"
