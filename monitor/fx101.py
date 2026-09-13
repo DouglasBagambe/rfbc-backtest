@@ -45,6 +45,23 @@ CREATE TABLE IF NOT EXISTS app_metadata (key TEXT PRIMARY KEY, value TEXT NOT NU
 CREATE INDEX IF NOT EXISTS trades_state_idx ON trades(state);
 """
 
+class CompatRow(dict):
+    """Row mapping that supports both named and positional access for sqlite/Turso parity."""
+    def __init__(self, columns: list[str], values: Any):
+        self._values = tuple(values)
+        super().__init__(zip(columns, self._values))
+
+    def __getitem__(self, key: Any) -> Any:
+        if isinstance(key, int):
+            return self._values[key]
+        return super().__getitem__(key)
+
+
+def _turso_row_factory(cursor: Any, values: Any) -> CompatRow:
+    columns = [col[0] for col in (cursor.description or [])]
+    return CompatRow(columns, values)
+
+
 def now() -> str: return datetime.now(timezone.utc).isoformat()
 def log(event: str, **fields: Any) -> None: LOG.info(json.dumps({"event":event,"at":now(),**fields}, sort_keys=True))
 def db() -> sqlite3.Connection:
@@ -55,13 +72,11 @@ def db() -> sqlite3.Connection:
     if remote_url:
         import turso_serverless
         c = turso_serverless.connect(remote_url, auth_token=os.environ["TURSO_AUTH_TOKEN"])
+        c.row_factory = _turso_row_factory
     else:
         DB_PATH.parent.mkdir(parents=True, exist_ok=True)
         c = sqlite3.connect(DB_PATH)
-    try:
         c.row_factory = sqlite3.Row
-    except AttributeError:
-        pass
     global _SCHEMA_READY
     if not _SCHEMA_READY:
         with _SCHEMA_LOCK:
@@ -83,7 +98,7 @@ def close_db() -> None:
     if connection is not None:
         connection.close(); _CONNECTION_LOCAL.connection=None
 
-def row(x: sqlite3.Row) -> dict[str, Any]:
+def row(x: Any) -> dict[str, Any]:
     d=dict(x); d["context"]=json.loads(d["context"]); return d
 
 def trade_id(decision: dict[str, Any]) -> str:
