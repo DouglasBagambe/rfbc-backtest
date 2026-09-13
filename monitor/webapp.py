@@ -164,24 +164,14 @@ def gdesk_context():
 
 @app.post("/gdesk/analyze")
 def gdesk_analyze():
-    """Legacy paid-API path; disabled while ChatGPT subscription owns analysis."""
-    if os.getenv("G_DESK_RUNTIME_MODE", "").strip() == "chatgpt_subscription":
-        return jsonify({"ok": False, "error": "analysis_owned_by_chatgpt_subscription"}), 409
-    if not _internal_ok():
-        return jsonify({"ok": False, "error": "unauthorized"}), 401
-    try:
-        return jsonify(g_desk_adapter.analyze_payload(request.get_json(silent=True) or {}))
-    except requests.RequestException as exc:
-        return jsonify({"ok": False, "error": f"provider_error:{type(exc).__name__}"}), 502
-    except (RuntimeError, ValueError) as exc:
-        return jsonify({"ok": False, "error": str(exc)}), 503
+    return jsonify({"ok": False, "error": "gdesk_analysis_is_chatgpt_subscription_only"}), 410
 
 
 @app.post("/analyze")
 def analyze():
-    """Paid-API trigger is intentionally unavailable in zero-cost subscription mode."""
+    """Queue a truthful request; free subscription automation cannot be invoked synchronously."""
     if os.getenv("G_DESK_RUNTIME_MODE", "").strip() == "chatgpt_subscription":
-        return jsonify({"ok": False, "status": "analysis_owned_by_chatgpt_subscription"}), 409
+        return jsonify({"ok": True, "status": "QUEUED", "next_scan": fx101.next_gdesk_scan_eat(), "request_id":fx101.queue_gdesk_analysis()}), 202
     if not _internal_ok():
         return jsonify({"ok": False, "error": "unauthorized"}), 401
     ok, status = fx101.request_desk_analysis()
