@@ -16,6 +16,7 @@ DB_PATH = Path(os.getenv("FX101_DB_PATH", "monitor/fx101.sqlite3"))
 LOG = logging.getLogger("fx101")
 _SCHEMA_LOCK = threading.Lock()
 _SCHEMA_READY = False
+_CONNECTION_LOCAL = threading.local()
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS scans (id TEXT PRIMARY KEY, source TEXT NOT NULL, scanned_at TEXT NOT NULL, result TEXT NOT NULL, payload TEXT NOT NULL);
@@ -48,6 +49,8 @@ def now() -> str: return datetime.now(timezone.utc).isoformat()
 def log(event: str, **fields: Any) -> None: LOG.info(json.dumps({"event":event,"at":now(),**fields}, sort_keys=True))
 def db() -> sqlite3.Connection:
     """Open local SQLite for development or the shared Turso database in production."""
+    existing=getattr(_CONNECTION_LOCAL,"connection",None)
+    if existing is not None: return existing
     remote_url = (os.getenv("TURSO_DATABASE_URL") or os.getenv("TURSO_DB_URL") or "").strip()
     if remote_url:
         import turso_serverless
@@ -72,7 +75,13 @@ def db() -> sqlite3.Connection:
                     if remote_url:
                         log("turso_db_unavailable", error=type(exc).__name__)
                     raise
+    _CONNECTION_LOCAL.connection=c
     return c
+
+def close_db() -> None:
+    connection=getattr(_CONNECTION_LOCAL,"connection",None)
+    if connection is not None:
+        connection.close(); _CONNECTION_LOCAL.connection=None
 
 def row(x: sqlite3.Row) -> dict[str, Any]:
     d=dict(x); d["context"]=json.loads(d["context"]); return d
@@ -85,6 +94,15 @@ def trade_id(decision: dict[str, Any]) -> str:
 
 def risk_config() -> dict[str, float]:
     return {"max_total_risk_pct": float(os.getenv("FX101_MAX_TOTAL_RISK_PCT", "1.0")), "max_positions": int(os.getenv("FX101_MAX_POSITIONS", "1")), "daily_loss_lock_r": float(os.getenv("FX101_DAILY_LOSS_LOCK_R", "-2")), "weekly_loss_lock_r": float(os.getenv("FX101_WEEKLY_LOSS_LOCK_R", "-4")), "stale_seconds": int(os.getenv("FX101_STALE_SECONDS", "120"))}
+
+def next_gdesk_scan_eat() -> str:
+    instant=datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0) + __import__("datetime").timedelta(hours=1)
+    return instant.astimezone(EAT).strftime("%H:%M EAT")
+
+def queue_gdesk_analysis() -> str:
+    request_id=f"GDESK-REQUEST-{uuid.uuid4().hex[:16]}"
+    c=db(); c.execute("INSERT INTO scans VALUES (?,?,?,?,?)",(request_id,"G_DESK_REQUEST",now(),"QUEUED",json.dumps({"owner":"chatgpt_subscription"}))); c.commit()
+    return request_id
 
 def create_account(data: dict[str, Any]) -> dict[str, Any]:
     """Create only explicitly supplied tracked accounts; no broker balance is inferred."""
@@ -131,6 +149,12 @@ def validate(decision: dict[str, Any]) -> list[str]:
         if side == "SELL" and not(target < entry < stop): errors.append("invalid_sltp_geometry")
     except (KeyError, TypeError, ValueError): pass
     if not decision.get("valid_until") or not decision.get("cancel_condition"): errors.append("missing_validity_or_cancellation")
+    else:
+        try:
+            expiry=datetime.fromisoformat(str(decision["valid_until"]).replace("Z","+00:00")).astimezone(timezone.utc)
+            age=(expiry-datetime.now(timezone.utc)).total_seconds()
+            if age <= 0 or age > 24*3600: errors.append("invalid_valid_until")
+        except ValueError: errors.append("invalid_valid_until")
     return errors
 
 def correlated(a: str, b: str) -> bool:
@@ -320,7 +344,8 @@ def receive_update(update: dict[str,Any]) -> str:
         t=list_trades("WHERE id=?",(text.split(maxsplit=1)[1],)); telegram_send(t[0].get("reasoning", "No reasoning") if t else "Unknown trade ID")
     elif text.startswith("/analyze"):
         if os.getenv("G_DESK_RUNTIME_MODE","").strip()=="chatgpt_subscription":
-            telegram_send("G_DESK analysis is owned by ChatGPT subscription mode. The next scheduled scan will send TRADE or NO TRADE automatically; no paid OpenAI API is used.")
+            queue_gdesk_analysis()
+            telegram_send(f"G DESK\n\nAnalysis queued.\n\nNext ChatGPT desk scan: {next_gdesk_scan_eat()}\nStatus: Waiting for G\n\nChatGPT subscription automation owns discretionary analysis; no paid API is used.")
         else:
             ok,status=request_desk_analysis()
             telegram_send("G_DESK scan requested for EURUSDc, GBPUSDc, GBPJPYc, USDCADc, EURJPYc." if ok else f"G_DESK SYSTEM ERROR: analysis adapter unavailable ({status}).")

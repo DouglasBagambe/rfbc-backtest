@@ -6,9 +6,9 @@ RFBC remains frozen v1.0 for `USDJPYc` and `AUDJPYc`; manual MT5 placement is
 the only execution path. G_DESK remains separate for `EURUSDc`, `GBPUSDc`,
 `GBPJPYc`, `USDCADc`, and `EURJPYc`. It exposes completed Dukascopy H1 BID/ASK
 context at `/gdesk/context`; connected ChatGPT subscription automation decides
-TRADE, NO_TRADE, or SYSTEM FAILURE and posts its result to authenticated
-`/desk/analyze`. No OpenAI API key, paid model, or replacement AI provider is
-part of the Render blueprint.
+TRADE, NO_TRADE, or SYSTEM FAILURE through the isolated GitHub runtime mailbox.
+No OpenAI API key, paid model, TaskNotify, or replacement AI provider is part
+of the Render blueprint.
 
 ## Persistence and accounts
 

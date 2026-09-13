@@ -2,6 +2,7 @@
 """Always-on non-MT5 lifecycle-price, RFBC, and free G_DESK bridge worker."""
 from __future__ import annotations
 import json, logging, os, signal, time
+import uuid
 from datetime import datetime, timezone
 
 import pandas as pd
@@ -10,7 +11,6 @@ import dukascopy_python
 from dukascopy_python import instruments
 
 import fx101
-import g_desk_adapter
 import rfbc_monitor_live as rfbc
 import telegram_notify as telegram
 
@@ -135,8 +135,11 @@ def _emit_gdesk_context_snapshot(hour_key: str) -> None:
     enough for the logging pipeline. The scheduled ChatGPT task reads the five
     events sharing the same scan_id and performs the actual analysis itself.
     """
+    # Lazy import keeps lifecycle/RFBC operational if the optional Flask route
+    # dependencies are absent from a focused worker test environment.
+    import g_desk_adapter
     payload = g_desk_adapter.context_payload()
-    scan_id = f"GDESK-{hour_key}"
+    scan_id = f"GDESK-{hour_key}-{uuid.uuid4().hex[:10]}"
     for symbol in payload["symbols"]:
         fx101.log(
             "gdesk_context_symbol",
@@ -175,6 +178,11 @@ def _mark_bridge_consumed(decision_id: str, result: str, payload: dict) -> None:
     c.commit()
 
 
+def _reject_bridge(decision_id: str, reason: str, payload: dict) -> None:
+    _mark_bridge_consumed(decision_id, "REJECTED", {"reason":reason,"payload":payload})
+    fx101.log("gdesk_bridge_rejected", reason=reason, decision_id=decision_id)
+
+
 def _consume_gdesk_runtime_decision() -> None:
     """Consume the newest ChatGPT decision from the non-deployed runtime branch."""
     if not GDESK_RUNTIME_URL:
@@ -199,10 +207,10 @@ def _consume_gdesk_runtime_decision() -> None:
         generated = datetime.fromisoformat(generated_at.replace("Z", "+00:00"))
         age = datetime.now(timezone.utc) - generated.astimezone(timezone.utc)
     except Exception:
-        fx101.log("gdesk_bridge_rejected", reason="invalid_generated_at", decision_id=decision_id)
+        _reject_bridge(decision_id, "invalid_generated_at", body)
         return
     if age.total_seconds() < -300 or age.total_seconds() > 3600:
-        fx101.log("gdesk_bridge_rejected", reason="stale_decision", decision_id=decision_id, age_seconds=int(age.total_seconds()))
+        _reject_bridge(decision_id, "future_or_stale_decision", body)
         return
 
     if result == "SYSTEM_FAILURE":
@@ -217,18 +225,18 @@ def _consume_gdesk_runtime_decision() -> None:
     elif result == "TRADE":
         decisions = body.get("decisions")
         if not isinstance(decisions, list) or len(decisions) != 1:
-            fx101.log("gdesk_bridge_rejected", reason="trade_requires_one_decision", decision_id=decision_id)
+            _reject_bridge(decision_id, "trade_requires_one_decision", body)
             return
         ok, status, _ = fx101.ingest_desk_response({"decisions": decisions})
     else:
-        fx101.log("gdesk_bridge_rejected", reason="invalid_result", decision_id=decision_id, result=result)
+        _reject_bridge(decision_id, "invalid_result", body)
         return
 
     if ok:
         _mark_bridge_consumed(decision_id, result, body)
         fx101.log("gdesk_bridge_consumed", decision_id=decision_id, result=result, ingest_status=status)
     else:
-        fx101.log("gdesk_bridge_ingest_failed", decision_id=decision_id, result=result, status=status)
+        _reject_bridge(decision_id, f"ingest_failed:{status}", body)
 
 
 def main() -> None:

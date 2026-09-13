@@ -1,16 +1,17 @@
 import importlib, os, tempfile, unittest
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 class Fx101Tests(unittest.TestCase):
     def setUp(self):
-        self.tmp=tempfile.TemporaryDirectory(); os.environ["FX101_DB_PATH"]=str(Path(self.tmp.name)/"x.db")
+        self.tmp=tempfile.TemporaryDirectory(); os.environ.pop("TURSO_DATABASE_URL",None); os.environ.pop("TURSO_DB_URL",None); os.environ["FX101_DB_PATH"]=str(Path(self.tmp.name)/"x.db")
         import fx101; self.m=importlib.reload(fx101)
         self.m.create_account({"name":"Test account","broker":"Test","account_type":"paper","base_currency":"USD","tracked_balance":100,"per_trade_risk_cap":1,"aggregate_risk_cap":1,"max_positions":1})
-    def tearDown(self): self.tmp.cleanup()
-    def decision(self): return {"source":"G_DESK","symbol":"EURUSDc","side":"BUY","entry":1.1,"stop":1.09,"target":1.12,"volume":0.01,"risk_pct":0.5,"valid_until":"2026-12-01T00:00:00Z","cancel_condition":"close below level","confidence":"A","setup_name":"test"}
+    def tearDown(self): self.m.close_db(); self.tmp.cleanup()
+    def decision(self): return {"source":"G_DESK","symbol":"EURUSDc","side":"BUY","entry":1.1,"stop":1.09,"target":1.12,"volume":0.01,"risk_pct":0.5,"valid_until":(datetime.now(timezone.utc)+timedelta(hours=2)).isoformat(),"cancel_condition":"close below level","confidence":"A","setup_name":"test"}
     def test_persist_idempotent_and_lifecycle(self):
-        ok,status,t=self.m.persist_decision(self.decision()); self.assertTrue(ok); self.assertEqual(status,"signalled")
-        ok,status,_=self.m.persist_decision(self.decision()); self.assertEqual(status,"idempotent_existing")
+        decision=self.decision(); ok,status,t=self.m.persist_decision(decision); self.assertTrue(ok); self.assertEqual(status,"signalled")
+        ok,status,_=self.m.persist_decision(decision); self.assertEqual(status,"idempotent_existing")
         self.assertEqual(self.m.transition(t["trade_id"],"PLACED")["state"],"PLACED")
         self.assertEqual(self.m.transition(t["trade_id"],"OPEN")["state"],"OPEN")
         self.assertEqual(self.m.transition(t["trade_id"],"WON",1.12)["state"],"WON")
