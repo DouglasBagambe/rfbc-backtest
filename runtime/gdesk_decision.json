@@ -1,7 +1,7 @@
 {
-  "decision_id": "TEST-GDESK-2026-09-13T10-20260913T105415Z",
-  "generated_at": "2026-09-13T10:54:15Z",
+  "decision_id": "TEST-GDESK-BRIDGE-20260913T112400Z",
+  "generated_at": "2026-09-13T11:24:00Z",
   "result": "SYSTEM_FAILURE",
   "decisions": [],
-  "message": "E2E bridge test passed market-context retrieval; market is closed, so no trading decision was produced."
+  "message": "Production bridge smoke test only. Market is closed; no trading decision was produced."
 }
