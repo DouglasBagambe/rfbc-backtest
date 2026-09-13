@@ -1,7 +1,7 @@
 {
-  "decision_id": "INIT",
-  "generated_at": "1970-01-01T00:00:00Z",
-  "result": "NONE",
+  "decision_id": "TEST-GDESK-2026-09-13T10-20260913T105415Z",
+  "generated_at": "2026-09-13T10:54:15Z",
+  "result": "SYSTEM_FAILURE",
   "decisions": [],
-  "note": "Runtime handoff file for ChatGPT subscription G_DESK decisions. This branch is not deployed by Render."
+  "message": "E2E bridge test passed market-context retrieval; market is closed, so no trading decision was produced."
 }
