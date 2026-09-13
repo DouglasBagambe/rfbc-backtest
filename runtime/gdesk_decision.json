@@ -1,0 +1,7 @@
+{
+  "decision_id": "INIT",
+  "generated_at": "1970-01-01T00:00:00Z",
+  "result": "NONE",
+  "decisions": [],
+  "note": "Runtime handoff file for ChatGPT subscription G_DESK decisions. This branch is not deployed by Render."
+}
