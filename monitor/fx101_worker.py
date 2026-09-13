@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
-"""Always-on non-MT5 lifecycle-price and RFBC worker."""
+"""Always-on non-MT5 lifecycle-price, RFBC, and free G_DESK bridge worker."""
 from __future__ import annotations
-import logging, os, signal, time
+import json, logging, os, signal, time
 from datetime import datetime, timezone
 
 import pandas as pd
+import requests
 import dukascopy_python
 from dukascopy_python import instruments
 
 import fx101
+import g_desk_adapter
 import rfbc_monitor_live as rfbc
 import telegram_notify as telegram
 
@@ -25,6 +27,11 @@ PAIR_TO_INSTRUMENT = {
     "AUDJPY": instruments.INSTRUMENT_FX_CROSSES_AUD_JPY,
 }
 
+GDESK_RUNTIME_URL = os.getenv(
+    "G_DESK_RUNTIME_URL",
+    "https://raw.githubusercontent.com/DouglasBagambe/rfbc-backtest/gdesk-runtime/runtime/gdesk_decision.json",
+).strip()
+
 
 def stop(*_):
     global RUNNING
@@ -38,7 +45,8 @@ signal.signal(signal.SIGINT, stop)
 def _normalise(frame) -> pd.DataFrame:
     if frame is None or frame.empty:
         return pd.DataFrame(columns=["dt", "close", "volume"])
-    out = frame.reset_index().rename(columns={frame.reset_index().columns[0]: "dt"})
+    reset = frame.reset_index()
+    out = reset.rename(columns={reset.columns[0]: "dt"})
     out["dt"] = pd.to_datetime(out["dt"], utc=True, errors="coerce")
     for col in ("close", "volume"):
         if col in out.columns:
@@ -77,7 +85,6 @@ def _fetch_side(pair: str, side: str, start: pd.Timestamp, end: pd.Timestamp) ->
 def prices() -> dict[str, float]:
     """Free lifecycle snapshots from Dukascopy M1 BID/ASK; no Twelve Data quota."""
     now = pd.Timestamp.now(tz="UTC")
-    # On weekends/closed sessions retain the latest Friday quote for state display.
     start = now - (pd.Timedelta(hours=72) if now.weekday() >= 5 else pd.Timedelta(minutes=30))
     out: dict[str, float] = {}
     latest_ts: list[pd.Timestamp] = []
@@ -106,11 +113,11 @@ def scan_rfbc() -> None:
     """Run frozen RFBC unchanged; push only genuinely actionable events."""
     now = datetime.now(timezone.utc)
     for item in rfbc.evaluate_all(now):
-        action = item.get("action") or {"kind": "none"}
-        kind = str(action.get("kind", "none")).upper()
+        action = item.get("action") or {"kind":"none"}
+        kind = str(action.get("kind","none")).upper()
         if kind in {"NONE", "OPEN_TRADE", "STALE"}:
             continue
-        telegram.send_action({"action": kind, "symbol": item["symbol"], "checked_at": now.isoformat(), **action})
+        telegram.send_action({"action":kind,"symbol":item["symbol"],"checked_at":now.isoformat(),**action})
     fx101.log("rfbc_scan", checked_at=now.isoformat())
 
 
@@ -119,6 +126,109 @@ def _open_trade_count() -> int:
         return len(fx101.list_trades("WHERE state IN ('PLACED','OPEN')"))
     except Exception:
         return 0
+
+
+def _emit_gdesk_context_snapshot(hour_key: str) -> None:
+    """Publish live G_DESK context into Render logs for ChatGPT automation.
+
+    Context is emitted one symbol per log line so each JSON event remains small
+    enough for the logging pipeline. The scheduled ChatGPT task reads the five
+    events sharing the same scan_id and performs the actual analysis itself.
+    """
+    payload = g_desk_adapter.context_payload()
+    scan_id = f"GDESK-{hour_key}"
+    for symbol in payload["symbols"]:
+        fx101.log(
+            "gdesk_context_symbol",
+            scan_id=scan_id,
+            generated_at=payload["generated_at"],
+            symbol=symbol,
+            latest_completed_bar=payload["latest_completed_bar"].get(symbol),
+            market_state=payload["market_state"],
+            freshness=payload["freshness"],
+            source=payload["source"],
+            timeframe=payload["timeframe"],
+            bars=payload["bars"][symbol],
+        )
+    fx101.log(
+        "gdesk_context_ready",
+        scan_id=scan_id,
+        generated_at=payload["generated_at"],
+        symbols=payload["symbols"],
+        market_state=payload["market_state"],
+        freshness=payload["freshness"],
+        owner="chatgpt_subscription",
+    )
+
+
+def _bridge_marker_exists(decision_id: str) -> bool:
+    c = fx101.db()
+    return bool(list(c.execute("SELECT id FROM scans WHERE id=?", (decision_id,))))
+
+
+def _mark_bridge_consumed(decision_id: str, result: str, payload: dict) -> None:
+    c = fx101.db()
+    c.execute(
+        "INSERT INTO scans VALUES (?,?,?,?,?)",
+        (decision_id, "G_DESK_BRIDGE", fx101.now(), result, json.dumps(payload, separators=(",", ":"))),
+    )
+    c.commit()
+
+
+def _consume_gdesk_runtime_decision() -> None:
+    """Consume the newest ChatGPT decision from the non-deployed runtime branch."""
+    if not GDESK_RUNTIME_URL:
+        return
+    r = requests.get(
+        GDESK_RUNTIME_URL,
+        params={"cache_bust": int(time.time())},
+        headers={"Cache-Control": "no-cache"},
+        timeout=15,
+    )
+    r.raise_for_status()
+    body = r.json()
+    decision_id = str(body.get("decision_id") or "").strip()
+    result = str(body.get("result") or "").upper().strip()
+    if not decision_id or decision_id == "INIT" or result == "NONE":
+        return
+    if _bridge_marker_exists(decision_id):
+        return
+
+    generated_at = str(body.get("generated_at") or "")
+    try:
+        generated = datetime.fromisoformat(generated_at.replace("Z", "+00:00"))
+        age = datetime.now(timezone.utc) - generated.astimezone(timezone.utc)
+    except Exception:
+        fx101.log("gdesk_bridge_rejected", reason="invalid_generated_at", decision_id=decision_id)
+        return
+    if age.total_seconds() < -300 or age.total_seconds() > 3600:
+        fx101.log("gdesk_bridge_rejected", reason="stale_decision", decision_id=decision_id, age_seconds=int(age.total_seconds()))
+        return
+
+    if result == "SYSTEM_FAILURE":
+        message = str(body.get("message") or "G_DESK analysis bridge reported a system failure.")[:700]
+        fx101.telegram_send(f"G DESK SYSTEM FAILURE\n{message}")
+        _mark_bridge_consumed(decision_id, result, body)
+        fx101.log("gdesk_bridge_consumed", decision_id=decision_id, result=result)
+        return
+
+    if result == "NO_TRADE":
+        ok, status, _ = fx101.ingest_desk_response({"decisions": []})
+    elif result == "TRADE":
+        decisions = body.get("decisions")
+        if not isinstance(decisions, list) or len(decisions) != 1:
+            fx101.log("gdesk_bridge_rejected", reason="trade_requires_one_decision", decision_id=decision_id)
+            return
+        ok, status, _ = fx101.ingest_desk_response({"decisions": decisions})
+    else:
+        fx101.log("gdesk_bridge_rejected", reason="invalid_result", decision_id=decision_id, result=result)
+        return
+
+    if ok:
+        _mark_bridge_consumed(decision_id, result, body)
+        fx101.log("gdesk_bridge_consumed", decision_id=decision_id, result=result, ingest_status=status)
+    else:
+        fx101.log("gdesk_bridge_ingest_failed", decision_id=decision_id, result=result, status=status)
 
 
 def main() -> None:
@@ -130,7 +240,7 @@ def main() -> None:
     rfbc_every = max(60, int(os.getenv("FX101_RFBC_SCAN_SECONDS", "300")))
     mode = os.getenv("G_DESK_RUNTIME_MODE", "api").strip()
     fx101.db()
-    fx101.log("worker_started", poll_seconds=poll, gdesk_mode=mode, price_provider="dukascopy_m1")
+    fx101.log("worker_started", poll_seconds=poll, gdesk_mode=mode, price_provider="dukascopy_m1", gdesk_bridge=bool(GDESK_RUNTIME_URL))
 
     while RUNNING:
         try:
@@ -154,13 +264,23 @@ def main() -> None:
         if hour != last_hour:
             last_hour = hour
             if mode == "chatgpt_subscription":
-                fx101.log("hourly_desk_scan_delegated", owner="chatgpt_subscription")
+                try:
+                    _emit_gdesk_context_snapshot(hour)
+                    fx101.log("hourly_desk_scan_delegated", owner="chatgpt_subscription", scan_id=f"GDESK-{hour}")
+                except Exception as exc:
+                    fx101.log("gdesk_context_publish_failure", error=type(exc).__name__, detail=str(exc)[:180])
             else:
                 try:
-                    ok, status = fx101.request_desk_analysis()
-                    fx101.log("hourly_desk_scan", ok=ok, status=status)
+                    ok,status = fx101.request_desk_analysis()
+                    fx101.log("hourly_desk_scan", ok=ok,status=status)
                 except Exception as exc:
                     fx101.log("hourly_desk_scan_failure", error=type(exc).__name__)
+
+        if mode == "chatgpt_subscription":
+            try:
+                _consume_gdesk_runtime_decision()
+            except Exception as exc:
+                fx101.log("gdesk_bridge_poll_failure", error=type(exc).__name__, detail=str(exc)[:180])
 
         if time.monotonic() - last_rfbc >= rfbc_every:
             try:
