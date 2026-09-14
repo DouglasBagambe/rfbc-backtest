@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-2026-09-14T03-c2b423589d-20260914T035753Z",
-  "generated_at": "2026-09-14T03:57:53Z",
-  "result": "NO_TRADE",
+  "decision_id": "GDESK-2026-09-14T05-SYSTEM-20260914T050000Z",
+  "generated_at": "2026-09-14T05:00:00Z",
+  "result": "SYSTEM_FAILURE",
   "decisions": [],
-  "message": "G DESK NO TRADE. EURUSDc and GBPUSDc are pressing lower after consecutive bearish H1 closes but are extended without a clean pullback; GBPJPYc and EURJPYc are rebounding sharply from weekend-open weakness; USDCADc is only mildly firm. No clean asymmetrical entry across the five pairs, so no chase."
+  "message": "No fresh complete G_DESK context snapshot was available for the 05:00 UTC scan. The newest complete snapshot was generated at 04:05:15 UTC with latest completed H1 bar at 03:00 UTC, so it was not treated as current market data."
 }
