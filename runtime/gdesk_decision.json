@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-2026-09-14T06-SYSTEM-20260914T060226Z",
-  "generated_at": "2026-09-14T06:02:26Z",
+  "decision_id": "GDESK-2026-09-14T06-ea9f7694e0-SYSTEM-20260914T070256Z",
+  "generated_at": "2026-09-14T07:02:56Z",
   "result": "SYSTEM_FAILURE",
   "decisions": [],
-  "message": "No fresh complete G_DESK context snapshot was available for the 06:00 UTC scan. The newest complete snapshot was generated at 05:02:43 UTC with latest completed H1 bar at 04:00 UTC, so it was not treated as current market data."
+  "message": "No fresh complete G_DESK context snapshot was available for the 07:00 UTC scan. The newest complete five-symbol snapshot was generated at 06:05:17 UTC with latest completed H1 bar at 05:00 UTC, so it was not treated as current market data."
 }
