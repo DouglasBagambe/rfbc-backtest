@@ -1,12 +1,12 @@
 {
-  "decision_id": "GDESK-2026-09-14T13-2b67120302-20260914T131910Z",
-  "generated_at": "2026-09-14T13:19:10Z",
+  "decision_id": "GDESK-2026-09-14T14-be18f5afee-20260914T142614Z",
+  "generated_at": "2026-09-14T14:26:14Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "G DESK NO TRADE: complete current-hour MARKET_OPEN/FRESH five-symbol snapshot. EURUSDc and GBPUSDc both printed sharp bearish 12:00 UTC continuation candles and are too extended to sell cleanly at current levels; GBPJPYc and EURJPYc remain near session highs after steady upside and offer poor chase entries; USDCADc broke sharply higher in the latest completed H1 bar and is also overextended. No setup qualified without chasing or taking weak reward-to-risk.",
+  "message": "G DESK NO TRADE: current-hour MARKET_OPEN/FRESH five-symbol snapshot is complete. EURUSDc and GBPUSDc are already extended after sharp downside continuation; USDCADc is extended after a strong upside breakout; GBPJPYc is pressing higher after a steady advance; EURJPYc is choppy near recent highs. No clean entry qualifies without chasing or accepting weak reward-to-risk.",
   "context": {
-    "scan_id": "GDESK-2026-09-14T13-2b67120302",
-    "source_generated_at": "2026-09-14T13:00:18.597728+00:00",
-    "latest_completed_bar": "2026-09-14T12:00:00+00:00"
+    "scan_id": "GDESK-2026-09-14T14-be18f5afee",
+    "source_generated_at": "2026-09-14T14:02:56.393632+00:00",
+    "latest_completed_bar": "2026-09-14T13:00:00+00:00"
   }
 }
