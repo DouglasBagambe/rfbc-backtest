@@ -1,7 +1,7 @@
 {
-  "decision_id": "TEST-GDESK-BRIDGE-20260913T113500Z",
-  "generated_at": "2026-09-13T11:35:00Z",
-  "result": "SYSTEM_FAILURE",
+  "decision_id": "LIVE-GDESK-GDESK-2026-09-14T00-89d55c63c4-20260914T002400Z",
+  "generated_at": "2026-09-14T00:24:00Z",
+  "result": "NO_TRADE",
   "decisions": [],
-  "message": "Production bridge smoke test only. Market is closed; no trading decision was produced."
+  "message": "No qualified G_DESK setup on the 00:00 UTC market-open scan. EURJPY/GBPJPY remain directionally weak but are extended into early-Asia liquidity after the weekend reopen; EURUSD, GBPUSD, and USDCAD are mixed/choppy. Wait for cleaner confirmation rather than chase."
 }
