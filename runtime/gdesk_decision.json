@@ -1,13 +1,13 @@
 {
-  "decision_id": "GDESK-2026-09-14T15-f073fc1b28-20260914T151408Z",
-  "generated_at": "2026-09-14T15:14:08Z",
+  "decision_id": "GDESK-2026-09-14T16-574f3b0c80-20260914T161710Z",
+  "generated_at": "2026-09-14T16:17:10Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "G DESK NO TRADE: fresh five-symbol snapshot is complete. EURUSDc and GBPUSDc remain in broader downside structure but are rebounding from intraday lows; GBPJPYc, USDCADc, and EURJPYc are pulling back after strong advances. No setup offers a clean entry without chasing or fading momentum prematurely.",
+  "message": "G DESK NO TRADE: current-hour five-symbol snapshot is complete, MARKET_OPEN and FRESH. EURUSDc and GBPUSDc have rebounded sharply from intraday lows into nearby resistance after a broader selloff; GBPJPYc and EURJPYc are rolling over from recent highs; USDCADc is pulling back after a strong advance. No setup offers a clean entry without chasing the rebound or fading momentum prematurely.",
   "context": {
-    "scan_id": "GDESK-2026-09-14T15-f073fc1b28",
-    "source_generated_at": "2026-09-14T15:00:30.499652+00:00",
-    "latest_completed_bar": "2026-09-14T14:00:00+00:00",
+    "scan_id": "GDESK-2026-09-14T16-574f3b0c80",
+    "source_generated_at": "2026-09-14T16:03:19.903945+00:00",
+    "latest_completed_bar": "2026-09-14T15:00:00+00:00",
     "source": "Dukascopy BID/ASK H1 completed bars"
   }
 }
