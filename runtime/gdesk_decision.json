@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-2026-09-14T09-8bc66ab3c1-20260914T091412Z",
-  "generated_at": "2026-09-14T09:14:12Z",
-  "result": "SYSTEM_FAILURE",
+  "decision_id": "MANUAL-NOW-GDESK-2026-09-14T09-8bc66ab3c1-20260914T092030Z",
+  "generated_at": "2026-09-14T09:20:30Z",
+  "result": "NO_TRADE",
   "decisions": [],
-  "message": "Expected the most recently completed H1 bar at 08:00 UTC for this scan, but after re-check the newest complete five-symbol MARKET_OPEN/FRESH snapshot still ended at 07:00 UTC. No trading decision produced."
+  "message": "Immediate G DESK analysis completed on the current MARKET_OPEN/FRESH five-symbol snapshot. No setup qualified: EURUSDc and GBPUSDc were extended after sustained downside, GBPJPYc and USDCADc were pressing nearby resistance after recent strength, and EURJPYc remained range-bound without clean asymmetry."
 }
