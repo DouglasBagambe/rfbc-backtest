@@ -1,7 +1,7 @@
 {
-  "decision_id": "MANUAL-NOW-GDESK-2026-09-14T080100Z",
-  "generated_at": "2026-09-14T08:01:00Z",
+  "decision_id": "GDESK-2026-09-14T08-cc33ee8253-20260914T081218Z",
+  "generated_at": "2026-09-14T08:12:18Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "Manual Analyze Now completed using the latest complete five-symbol MARKET_OPEN/FRESH Dukascopy H1 snapshot. NO TRADE: EURUSDc and GBPUSDc remain under bearish pressure but are extended after the latest drop; GBPJPYc and EURJPYc are mixed near recent intraday resistance; USDCADc is firm but not offering a clean asymmetric entry. No setup is clean enough to enter without chasing."
+  "message": "G DESK NO TRADE: complete five-symbol MARKET_OPEN/FRESH Dukascopy H1 snapshot verified with latest completed bar at 07:00 UTC. EURUSDc is bearish but extended near fresh lows; GBPUSDc remains weak but lacks a clean continuation entry; GBPJPYc and EURJPYc are mixed; USDCADc is firm but pressing into nearby resistance. No setup offers a clean enough asymmetric entry without chasing."
 }
