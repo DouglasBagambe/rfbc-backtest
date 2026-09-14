@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-2026-09-14T08-cc33ee8253-20260914T081218Z",
-  "generated_at": "2026-09-14T08:12:18Z",
-  "result": "NO_TRADE",
+  "decision_id": "GDESK-2026-09-14T09-8bc66ab3c1-20260914T091412Z",
+  "generated_at": "2026-09-14T09:14:12Z",
+  "result": "SYSTEM_FAILURE",
   "decisions": [],
-  "message": "G DESK NO TRADE: complete five-symbol MARKET_OPEN/FRESH Dukascopy H1 snapshot verified with latest completed bar at 07:00 UTC. EURUSDc is bearish but extended near fresh lows; GBPUSDc remains weak but lacks a clean continuation entry; GBPJPYc and EURJPYc are mixed; USDCADc is firm but pressing into nearby resistance. No setup offers a clean enough asymmetric entry without chasing."
+  "message": "Expected the most recently completed H1 bar at 08:00 UTC for this scan, but after re-check the newest complete five-symbol MARKET_OPEN/FRESH snapshot still ended at 07:00 UTC. No trading decision produced."
 }
