@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-2026-09-14T11-bedec4c3a2-20260914T111454Z",
-  "generated_at": "2026-09-14T11:14:54Z",
+  "decision_id": "GDESK-2026-09-14T12-8abeb6452b-20260914T122232Z",
+  "generated_at": "2026-09-14T12:22:32Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "G DESK NO TRADE: complete current-hour MARKET_OPEN/FRESH five-symbol snapshot. EURUSDc and GBPUSDc remain bearish but are extended after sustained selling and only showing shallow rebounds; GBPJPYc and EURJPYc are pressing recent highs after multi-hour strength; USDCADc is elevated after a breakout and consolidating near resistance. No clean asymmetric entry qualified without chasing."
+  "message": "G DESK NO TRADE: complete current-hour MARKET_OPEN/FRESH five-symbol snapshot. EURUSDc and GBPUSDc are rebounding after sustained downside but remain too extended for a clean continuation entry; GBPJPYc and EURJPYc are pressing recent highs after multi-hour strength; USDCADc has pulled back from a recent breakout and lacks a clean asymmetric trigger. No setup qualified without chasing."
 }
