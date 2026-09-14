@@ -1,7 +1,7 @@
 {
-  "decision_id": "LIVE-E2E-GDESK-2026-09-14T00-89d55c63c4-20260914T002739Z",
-  "generated_at": "2026-09-14T00:27:39Z",
+  "decision_id": "GDESK-2026-09-14T03-c2b423589d-20260914T035753Z",
+  "generated_at": "2026-09-14T03:57:53Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "Market-open E2E: no qualified setup across the five-pair desk. EURJPYc and GBPJPYc remain weak but are extended after the weekend reopen; EURUSDc, GBPUSDc and USDCADc are mixed/choppy. No chase."
+  "message": "G DESK NO TRADE. EURUSDc and GBPUSDc are pressing lower after consecutive bearish H1 closes but are extended without a clean pullback; GBPJPYc and EURJPYc are rebounding sharply from weekend-open weakness; USDCADc is only mildly firm. No clean asymmetrical entry across the five pairs, so no chase."
 }
