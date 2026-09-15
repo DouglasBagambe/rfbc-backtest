@@ -1,34 +1,34 @@
 {
-  "decision_id": "GDESK-2026-09-15T14-412f890a8d-20260915T141440Z",
-  "generated_at": "2026-09-15T14:14:40Z",
+  "decision_id": "GDESK-2026-09-15T15-b391fc7b50-20260915T151627Z",
+  "generated_at": "2026-09-15T15:16:27Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "AUDUSDc",
+      "symbol": "USDCHFc",
       "side": "BUY",
       "order_type": "BUY_STOP",
-      "entry": 0.71350,
-      "stop": 0.71235,
-      "target": 0.71580,
+      "entry": 0.81995,
+      "stop": 0.81825,
+      "target": 0.82335,
       "volume": 0.01,
       "risk_pct": 0.25,
-      "valid_until": "2026-09-15T15:15:00Z",
-      "cancel_condition": "Cancel if the next completed H1 candle closes below 0.71235 before triggering; if price is already above 0.71350 when placing, skip rather than convert to a market buy.",
+      "valid_until": "2026-09-15T16:15:00Z",
+      "cancel_condition": "Cancel if the next completed H1 candle closes below 0.81825 before triggering; if price is already above 0.81995 when placing, skip rather than convert to a market buy.",
       "confidence": "MEDIUM_HIGH",
-      "setup_name": "H1 range breakout continuation",
-      "regime": "bullish recovery from intraday base",
-      "session": "London/New York overlap",
+      "setup_name": "H1 bullish range breakout continuation",
+      "regime": "bullish expansion from intraday consolidation",
+      "session": "New York session",
       "news_proximity": "not supplied in production context",
-      "exposure_note": "Proposed AUD +0.25%, USD -0.25%. Only one new setup selected from the 16-symbol universe to avoid correlated USD-short stacking; server-side active-symbol, account-risk, and portfolio-exposure gates remain authoritative.",
-      "reasoning": "AUDUSD recovered from the 06:00-08:00 base, held the 0.7123-0.7124 area through repeated tests, and the 13:00 H1 candle expanded bullishly to close near its high while breaking above the prior 0.71325 intraday resistance. A buy-stop at 0.71350 requires continuation beyond the fresh swing high instead of chasing inside the breakout candle. Other candidates were either more correlated, already represented by the prior EURJPY pending idea, or showed weaker/rejected structure.",
+      "exposure_note": "Proposed USD +0.25%, CHF -0.25%. Selected as the cleanest independent setup; server-side active-symbol, account-risk, aggregate-risk and currency-exposure gates remain authoritative.",
+      "reasoning": "USDCHF built a multi-hour base around 0.8173-0.8184, then the 14:00 H1 candle expanded strongly and closed at 0.819255 after breaking the prior intraday highs. A buy-stop above the 0.81992 swing high requires fresh continuation rather than chasing the breakout candle; the stop sits back below the breakout base and the target preserves 2R.",
       "context": {
-        "scan_id": "GDESK-2026-09-15T14-412f890a8d",
+        "scan_id": "GDESK-2026-09-15T15-b391fc7b50",
         "source": "Dukascopy BID/ASK",
-        "generated_at": "2026-09-15T14:01:43.395765+00:00",
-        "latest_completed_bar": "2026-09-15T13:00:00+00:00"
+        "generated_at": "2026-09-15T15:03:44.693087+00:00",
+        "latest_completed_bar": "2026-09-15T14:00:00+00:00"
       }
     }
   ],
-  "message": "Fresh MARKET_OPEN full-universe scan complete across all 16 reported symbols. AUDUSD is the cleanest new independent setup; correlated, rejected, or lower-quality candidates were excluded."
+  "message": "Fresh MARKET_OPEN full-universe scan complete across all 16 reported symbols. USDCHF is the cleanest qualified continuation setup; correlated, choppy, rejected, or lower-quality candidates were excluded."
 }
