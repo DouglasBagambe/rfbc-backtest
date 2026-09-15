@@ -1,6 +1,6 @@
 {
-  "decision_id": "MANUAL-GDESK-2026-09-15T13-f674b0787e-20260915T130915Z",
-  "generated_at": "2026-09-15T13:09:15Z",
+  "decision_id": "GDESK-2026-09-15T13-f674b0787e-20260915T131258Z",
+  "generated_at": "2026-09-15T13:12:58Z",
   "result": "TRADE",
   "decisions": [
     {
@@ -14,14 +14,14 @@
       "volume": 0.01,
       "risk_pct": 0.25,
       "valid_until": "2026-09-15T14:15:00Z",
-      "cancel_condition": "Cancel if an H1 candle closes below 178.78 before triggering. If price is already above 179.08 when placing the order, skip it rather than converting it to a market buy.",
+      "cancel_condition": "Cancel if an H1 candle closes below 178.78 before triggering; if price is already above 179.08 when placing, skip rather than convert to market buy.",
       "confidence": "MEDIUM_HIGH",
       "setup_name": "H1 breakout continuation",
       "regime": "bullish intraday expansion",
       "session": "London/New York overlap",
-      "news_proximity": "not assessed beyond supplied production context",
-      "exposure_note": "EUR +0.25%, JPY -0.25%; relatively independent of the tracked GBPUSD/USDCAD exposure. Server-side live portfolio gates remain authoritative.",
-      "reasoning": "EURJPY recovered from the 10:00 pullback with two consecutive bullish H1 closes, and the 12:00 candle closed near its high at 178.938. A buy-stop above 179.08 requires a clean break of the earlier intraday swing high instead of chasing inside the range.",
+      "news_proximity": "not supplied in production context",
+      "exposure_note": "EUR +0.25%, JPY -0.25%. Correlated EUR/JPY candidates were excluded to avoid stacking directional exposure; server-side live portfolio gates remain authoritative.",
+      "reasoning": "EURJPY recovered from the 10:00 pullback with two consecutive bullish H1 closes and the 12:00 candle closed near its high. A buy-stop above 179.08 requires a clean break of the earlier 179.0815 intraday swing rather than chasing inside the range. Across the 16-symbol universe, other apparent setups were weaker, extended, or materially correlated with this EUR-long/JPY-short expression.",
       "context": {
         "scan_id": "GDESK-2026-09-15T13-f674b0787e",
         "source": "Dukascopy BID/ASK",
@@ -30,5 +30,5 @@
       }
     }
   ],
-  "message": "Manual analyze-now scan: EURJPY is the cleanest fresh independent breakout setup. Other candidates were already extended, correlated with existing CAD/USD exposure, or lacked cleaner confirmation."
+  "message": "Fresh MARKET_OPEN full-universe scan complete across all 16 reported symbols. EURJPY is the only clean independent setup; correlated or lower-quality candidates were excluded."
 }
