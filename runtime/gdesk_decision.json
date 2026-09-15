@@ -1,35 +1,35 @@
 {
-  "decision_id": "GDESK-2026-09-15T06-24dc7dd44b-20260915T061900Z",
-  "generated_at": "2026-09-15T06:19:00Z",
+  "decision_id": "GDESK-2026-09-15T09-92f97c17ba-20260915T094300Z",
+  "generated_at": "2026-09-15T09:43:00Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
       "symbol": "GBPUSDc",
       "side": "SELL",
-      "entry": 1.34875,
-      "stop": 1.34975,
-      "target": 1.34675,
+      "entry": 1.34870,
+      "stop": 1.35020,
+      "target": 1.34600,
       "volume": 0.01,
       "risk_pct": 0.5,
-      "valid_until": "2026-09-15T07:15:00Z",
-      "cancel_condition": "Cancel before entry if M15 closes above 1.34920 or price trades above 1.34975. Do not chase below 1.34840.",
+      "valid_until": "2026-09-15T10:15:00Z",
+      "cancel_condition": "Cancel before entry if M15 closes above 1.34960 or price trades above 1.35020. Do not chase below 1.34820.",
       "confidence": "MEDIUM",
-      "setup_name": "USD-strength continuation",
-      "regime": "bearish GBPUSD continuation / firm USD",
-      "session": "London morning",
-      "news_proximity": "UK labour-data session; Fed decision is Wednesday, not immediate",
-      "exposure_note": "Single G_DESK USD-long expression; do not stack correlated EURUSD short simultaneously.",
-      "reasoning": "GBPUSD has printed a sequence of lower H1 highs/lows overnight and remains below the prior session structure while broad USD strength persists. Entry is near current spot rather than at the extreme low, with stop above the recent H1 rejection area and target back toward the prior 1.346x support zone.",
+      "setup_name": "GBPUSD bearish continuation after retrace",
+      "regime": "firm USD / bearish GBPUSD intraday structure",
+      "session": "London midday",
+      "news_proximity": "No immediate same-hour central-bank decision; Fed decision is Wednesday. Sterling remains under pressure in current macro backdrop.",
+      "exposure_note": "Single G_DESK USD-long expression; avoid stacking a simultaneous EURUSD short.",
+      "reasoning": "GBPUSD remains in a sequence of lower H1 structure after the sharp 06:00 UTC selloff. The 07:00 UTC rebound failed to restore prior structure and the 08:00 UTC bar rolled back over. Current public FX quotes show price back near 1.3487, giving a retrace entry rather than chasing the earlier low. Stop sits above the retrace/rejection area; target retests the 1.3460 zone.",
       "context": {
-        "scan_id": "GDESK-2026-09-15T06-24dc7dd44b",
-        "source_generated_at": "2026-09-15T06:03:41.295190+00:00",
-        "latest_completed_bar": "2026-09-15T05:00:00+00:00",
+        "scan_id": "GDESK-2026-09-15T09-92f97c17ba",
+        "source_generated_at": "2026-09-15T09:02:07.723853+00:00",
+        "latest_completed_bar": "2026-09-15T08:00:00+00:00",
         "source": "Dukascopy BID/ASK H1 completed bars",
-        "spot_reference": "~1.3487 from current public FX quotes",
-        "macro": "Broad USD strength ahead of the Fed; sterling near a one-month low"
+        "spot_reference": "~1.3487 from current public FX quote",
+        "macro": "Broad USD strength; sterling near a one-month low"
       }
     }
   ],
-  "message": "G DESK TRADE: GBPUSDc SELL continuation setup."
+  "message": "G DESK TRADE: GBPUSDc SELL at 1.34870, SL 1.35020, TP 1.34600, 0.01 lot."
 }
