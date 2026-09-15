@@ -164,3 +164,10 @@ try:
     import production_hotfix as _fx101_production_hotfix  # noqa: F401
 except Exception as exc:
     _LOG.exception("fx101_production_hotfix_load_failed: %s", exc)
+
+# Final presentation overlay. Loaded last so it can safely reshape Telegram UX
+# without altering trading/data/risk behavior.
+try:
+    import premium_ux as _fx101_premium_ux  # noqa: F401
+except Exception as exc:
+    _LOG.exception("fx101_premium_ux_load_failed: %s", exc)
