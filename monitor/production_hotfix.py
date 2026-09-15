@@ -8,9 +8,6 @@ from __future__ import annotations
 
 import json
 import uuid
-from datetime import datetime, timezone
-
-import pandas as pd
 
 import fx101
 import fx101_worker
@@ -32,7 +29,6 @@ def _ensure_manual_open(
     if c.execute("SELECT 1 FROM trades WHERE id=?", (trade_id,)).fetchone():
         return
 
-    # Reuse an exact historical signal when present instead of duplicating it.
     existing = c.execute(
         "SELECT id,state FROM trades WHERE symbol=? AND side=? AND ABS(entry-?)<1e-9 AND ABS(stop-?)<1e-9 AND ABS(target-?)<1e-9 ORDER BY created_at DESC LIMIT 1",
         (symbol, side, entry, stop, target),
@@ -67,7 +63,7 @@ def _ensure_manual_open(
             trade_id, "G_DESK", symbol, side, "OPEN", stamp, stamp, stamp, None,
             entry, None, stop, target, volume, risk_pct, valid_until,
             "Broker position was already placed manually; manage by SL/TP.",
-            "MANUAL", "manual tracking repair", None, None,
+            "MANUAL", "manual tracking repair", None, None, None,
             "Existing broker position", note, context,
             entry, None, None, None,
         ),
@@ -81,7 +77,6 @@ def _ensure_manual_open(
     fx101.log("manual_trade_tracking_repaired", trade_id=trade_id, reused_existing=False)
 
 
-# The user explicitly confirmed both positions were already placed.
 _ensure_manual_open(
     "MANUAL-GBPUSD-20260915-A",
     "GBPUSDc", "SELL", 1.34875, 1.34975, 1.34675, 0.01, 0.5,
@@ -98,6 +93,8 @@ _ensure_manual_open(
 
 def _active_trade_prices() -> dict[str, float]:
     """Fetch M1 prices only for PLACED/OPEN positions that need lifecycle tracking."""
+    import pandas as pd
+
     active = fx101.list_trades("WHERE state IN ('PLACED','OPEN')")
     targets = sorted({t["symbol"] for t in active})
     if not targets:
