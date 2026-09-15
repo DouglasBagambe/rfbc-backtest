@@ -1,35 +1,7 @@
 {
-  "decision_id": "GDESK-2026-09-15T09-92f97c17ba-20260915T094300Z",
-  "generated_at": "2026-09-15T09:43:00Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "GBPUSDc",
-      "side": "SELL",
-      "entry": 1.34870,
-      "stop": 1.35020,
-      "target": 1.34600,
-      "volume": 0.01,
-      "risk_pct": 0.5,
-      "valid_until": "2026-09-15T10:15:00Z",
-      "cancel_condition": "Cancel before entry if M15 closes above 1.34960 or price trades above 1.35020. Do not chase below 1.34820.",
-      "confidence": "MEDIUM",
-      "setup_name": "GBPUSD bearish continuation after retrace",
-      "regime": "firm USD / bearish GBPUSD intraday structure",
-      "session": "London midday",
-      "news_proximity": "No immediate same-hour central-bank decision; Fed decision is Wednesday. Sterling remains under pressure in current macro backdrop.",
-      "exposure_note": "Single G_DESK USD-long expression; avoid stacking a simultaneous EURUSD short.",
-      "reasoning": "GBPUSD remains in a sequence of lower H1 structure after the sharp 06:00 UTC selloff. The 07:00 UTC rebound failed to restore prior structure and the 08:00 UTC bar rolled back over. Current public FX quotes show price back near 1.3487, giving a retrace entry rather than chasing the earlier low. Stop sits above the retrace/rejection area; target retests the 1.3460 zone.",
-      "context": {
-        "scan_id": "GDESK-2026-09-15T09-92f97c17ba",
-        "source_generated_at": "2026-09-15T09:02:07.723853+00:00",
-        "latest_completed_bar": "2026-09-15T08:00:00+00:00",
-        "source": "Dukascopy BID/ASK H1 completed bars",
-        "spot_reference": "~1.3487 from current public FX quote",
-        "macro": "Broad USD strength; sterling near a one-month low"
-      }
-    }
-  ],
-  "message": "G DESK TRADE: GBPUSDc SELL at 1.34870, SL 1.35020, TP 1.34600, 0.01 lot."
+  "decision_id": "GDESK-2026-09-15T10-b4163b833c-20260915T101736Z",
+  "generated_at": "2026-09-15T10:17:36Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "G DESK NO TRADE: fresh complete five-symbol H1 snapshot reviewed; no clean independent setup meets the entry and risk threshold without chasing or forcing a trade."
 }
