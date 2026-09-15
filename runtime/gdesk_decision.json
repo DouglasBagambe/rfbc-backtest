@@ -1,6 +1,6 @@
 {
-  "decision_id": "GDESK-2026-09-15T15-b391fc7b50-20260915T151627Z",
-  "generated_at": "2026-09-15T15:16:27Z",
+  "decision_id": "GDESK-2026-09-15T16-b7f156a8d8-20260915T161623Z",
+  "generated_at": "2026-09-15T16:16:23Z",
   "result": "TRADE",
   "decisions": [
     {
@@ -13,22 +13,22 @@
       "target": 0.82335,
       "volume": 0.01,
       "risk_pct": 0.25,
-      "valid_until": "2026-09-15T16:15:00Z",
-      "cancel_condition": "Cancel if the next completed H1 candle closes below 0.81825 before triggering; if price is already above 0.81995 when placing, skip rather than convert to a market buy.",
+      "valid_until": "2026-09-15T17:15:00Z",
+      "cancel_condition": "Cancel if a completed H1 candle closes below 0.81825 before triggering; if price is already above 0.81995 when placing, skip rather than convert to a market buy.",
       "confidence": "MEDIUM_HIGH",
-      "setup_name": "H1 bullish range breakout continuation",
-      "regime": "bullish expansion from intraday consolidation",
+      "setup_name": "H1 bullish breakout continuation",
+      "regime": "bullish expansion with shallow post-breakout pullback",
       "session": "New York session",
       "news_proximity": "not supplied in production context",
-      "exposure_note": "Proposed USD +0.25%, CHF -0.25%. Selected as the cleanest independent setup; server-side active-symbol, account-risk, aggregate-risk and currency-exposure gates remain authoritative.",
-      "reasoning": "USDCHF built a multi-hour base around 0.8173-0.8184, then the 14:00 H1 candle expanded strongly and closed at 0.819255 after breaking the prior intraday highs. A buy-stop above the 0.81992 swing high requires fresh continuation rather than chasing the breakout candle; the stop sits back below the breakout base and the target preserves 2R.",
+      "exposure_note": "Proposed USD +0.25%, CHF -0.25%. Server-side duplicate-symbol, active-account-risk, aggregate-risk and currency-exposure gates remain authoritative.",
+      "reasoning": "USDCHF broke above its intraday consolidation on the 14:00 H1 candle, reaching 0.81992 and closing 0.819255. The 15:00 candle pulled back only modestly and held above the prior base. A buy-stop at 0.81995 requires a fresh break of the swing high rather than chasing; the stop sits below the breakout structure and the target is 2R.",
       "context": {
-        "scan_id": "GDESK-2026-09-15T15-b391fc7b50",
+        "scan_id": "GDESK-2026-09-15T16-b7f156a8d8",
         "source": "Dukascopy BID/ASK",
-        "generated_at": "2026-09-15T15:03:44.693087+00:00",
-        "latest_completed_bar": "2026-09-15T14:00:00+00:00"
+        "generated_at": "2026-09-15T16:00:34.024720+00:00",
+        "latest_completed_bar": "2026-09-15T15:00:00+00:00"
       }
     }
   ],
-  "message": "Fresh MARKET_OPEN full-universe scan complete across all 16 reported symbols. USDCHF is the cleanest qualified continuation setup; correlated, choppy, rejected, or lower-quality candidates were excluded."
+  "message": "Fresh MARKET_OPEN full-universe scan complete across all 16 reported symbols. USDCHF remains the only clean qualified setup; other candidates were choppy, mean-reverting, extended, or lacked clean confirmation."
 }
