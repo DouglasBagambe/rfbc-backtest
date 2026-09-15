@@ -1,7 +1,83 @@
 {
-  "decision_id": "GDESK-2026-09-15T10-b4163b833c-20260915T101736Z",
-  "generated_at": "2026-09-15T10:17:36Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "G DESK NO TRADE: fresh complete five-symbol H1 snapshot reviewed; no clean independent setup meets the entry and risk threshold without chasing or forcing a trade."
+  "decision_id": "EXPANDED-E2E-GDESK-2026-09-15T10-30d7d23c13-20260915T102600Z",
+  "generated_at": "2026-09-15T10:26:00Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "GBPUSDc",
+      "side": "SELL",
+      "entry": 1.3478,
+      "stop": 1.3492,
+      "target": 1.3450,
+      "volume": 0.01,
+      "risk_pct": 0.5,
+      "valid_until": "2026-09-15T11:15:00Z",
+      "cancel_condition": "Cancel if an H1 close is above 1.34920; do not chase below 1.34680.",
+      "confidence": "HIGH",
+      "setup_name": "bearish continuation pullback",
+      "regime": "H1 bearish",
+      "session": "London",
+      "news_proximity": "not assessed beyond supplied production context",
+      "exposure_note": "GBP -0.5%, USD +0.5% proposed exposure",
+      "reasoning": "GBPUSD remains in a clear lower-high/lower-low H1 sequence after the 06:00 selloff; the 07:00-09:00 rebound is a controlled pullback that has not repaired bearish structure.",
+      "context": {
+        "scan_id": "GDESK-2026-09-15T10-30d7d23c13",
+        "source": "Dukascopy BID/ASK",
+        "generated_at": "2026-09-15T10:21:32.923479+00:00",
+        "latest_completed_bar": "2026-09-15T09:00:00+00:00"
+      }
+    },
+    {
+      "source": "G_DESK",
+      "symbol": "CADJPYc",
+      "side": "BUY",
+      "entry": 111.405,
+      "stop": 111.245,
+      "target": 111.725,
+      "volume": 0.01,
+      "risk_pct": 0.5,
+      "valid_until": "2026-09-15T11:15:00Z",
+      "cancel_condition": "Cancel if an H1 close is below 111.245; do not chase above 111.520.",
+      "confidence": "MEDIUM_HIGH",
+      "setup_name": "trend pullback continuation",
+      "regime": "H1 bullish recovery",
+      "session": "London",
+      "news_proximity": "not assessed beyond supplied production context",
+      "exposure_note": "CAD +0.5%, JPY -0.5% proposed exposure",
+      "reasoning": "CADJPY has built higher lows from the 03:00 trough and broke into a fresh intraday high at 08:00; the 09:00 bar is a modest pullback while holding above the prior breakout area.",
+      "context": {
+        "scan_id": "GDESK-2026-09-15T10-30d7d23c13",
+        "source": "Dukascopy BID/ASK",
+        "generated_at": "2026-09-15T10:21:32.923479+00:00",
+        "latest_completed_bar": "2026-09-15T09:00:00+00:00"
+      }
+    },
+    {
+      "source": "G_DESK",
+      "symbol": "XAUUSDc",
+      "side": "SELL",
+      "entry": 4268.4,
+      "stop": 4281.2,
+      "target": 4242.8,
+      "volume": 0.01,
+      "risk_pct": 0.5,
+      "valid_until": "2026-09-15T11:15:00Z",
+      "cancel_condition": "Cancel if an H1 close is above 4281.20; do not chase below 4260.00.",
+      "confidence": "HIGH",
+      "setup_name": "bearish impulse pullback continuation",
+      "regime": "H1 bearish momentum",
+      "session": "London",
+      "news_proximity": "not assessed beyond supplied production context",
+      "exposure_note": "XAU -0.5%, USD +0.5% proposed exposure; combined proposed USD exposure reaches the 1.0% cap",
+      "reasoning": "Gold printed consecutive strong bearish H1 impulses at 07:00 and 08:00, then only a shallow 09:00 rebound; structure remains below the prior breakdown zone and favors continuation if the pullback fails.",
+      "context": {
+        "scan_id": "GDESK-2026-09-15T10-30d7d23c13",
+        "source": "Dukascopy BID/ASK",
+        "generated_at": "2026-09-15T10:21:32.923479+00:00",
+        "latest_completed_bar": "2026-09-15T09:00:00+00:00"
+      }
+    }
+  ],
+  "message": "Expanded 16-symbol scan: 3 qualified independent setups, 1.5% proposed aggregate risk; per-currency/metal directional exposure remains within 1.0%."
 }
