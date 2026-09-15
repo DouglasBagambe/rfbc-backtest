@@ -1,27 +1,27 @@
 {
-  "decision_id": "GDESK-2026-09-15T16-b7f156a8d8-20260915T161623Z",
-  "generated_at": "2026-09-15T16:16:23Z",
+  "decision_id": "GDESK-2026-09-15T16-b7f156a8d8-manual-20260915T162300Z",
+  "generated_at": "2026-09-15T16:23:00Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "USDCHFc",
+      "symbol": "CHFJPYc",
       "side": "BUY",
       "order_type": "BUY_STOP",
-      "entry": 0.81995,
-      "stop": 0.81825,
-      "target": 0.82335,
+      "entry": 189.420,
+      "stop": 189.240,
+      "target": 189.780,
       "volume": 0.01,
       "risk_pct": 0.25,
       "valid_until": "2026-09-15T17:15:00Z",
-      "cancel_condition": "Cancel if a completed H1 candle closes below 0.81825 before triggering; if price is already above 0.81995 when placing, skip rather than convert to a market buy.",
-      "confidence": "MEDIUM_HIGH",
-      "setup_name": "H1 bullish breakout continuation",
-      "regime": "bullish expansion with shallow post-breakout pullback",
+      "cancel_condition": "Cancel if a completed H1 candle closes below 189.240 before triggering; if price is already above 189.420 when placing, skip rather than convert to a market buy.",
+      "confidence": "MEDIUM",
+      "setup_name": "H1 bullish pullback continuation",
+      "regime": "gradual intraday recovery with higher lows after pullback",
       "session": "New York session",
       "news_proximity": "not supplied in production context",
-      "exposure_note": "Proposed USD +0.25%, CHF -0.25%. Server-side duplicate-symbol, active-account-risk, aggregate-risk and currency-exposure gates remain authoritative.",
-      "reasoning": "USDCHF broke above its intraday consolidation on the 14:00 H1 candle, reaching 0.81992 and closing 0.819255. The 15:00 candle pulled back only modestly and held above the prior base. A buy-stop at 0.81995 requires a fresh break of the swing high rather than chasing; the stop sits below the breakout structure and the target is 2R.",
+      "exposure_note": "Proposed CHF +0.25%, JPY -0.25%. Selected after USDCHF was blocked by the live directional-currency exposure gate; server-side portfolio gates remain authoritative.",
+      "reasoning": "CHFJPY has recovered from the 14:00 pullback, with the 15:00 H1 candle closing near its high at 189.3875 after holding above the prior intraday base. A buy-stop above 189.420 requires a clean continuation break rather than chasing inside the range; the stop sits below the latest pullback structure and the target is 2R.",
       "context": {
         "scan_id": "GDESK-2026-09-15T16-b7f156a8d8",
         "source": "Dukascopy BID/ASK",
@@ -30,5 +30,5 @@
       }
     }
   ],
-  "message": "Fresh MARKET_OPEN full-universe scan complete across all 16 reported symbols. USDCHF remains the only clean qualified setup; other candidates were choppy, mean-reverting, extended, or lacked clean confirmation."
+  "message": "Fresh MARKET_OPEN 16-market scan re-evaluated after USDCHF was rejected by live USD exposure limits. CHFJPY is the cleanest remaining independent continuation candidate; all other markets were weaker, correlated, or choppy."
 }
