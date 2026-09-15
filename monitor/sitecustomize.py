@@ -158,3 +158,9 @@ try:
     import usercustomize as _fx101_runtime_policy  # noqa: F401
 except Exception as exc:
     _LOG.exception("fx101_runtime_policy_load_failed: %s", exc)
+
+# Repair pre-Telegram manual positions and keep lifecycle polling lightweight.
+try:
+    import production_hotfix as _fx101_production_hotfix  # noqa: F401
+except Exception as exc:
+    _LOG.exception("fx101_production_hotfix_load_failed: %s", exc)
