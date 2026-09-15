@@ -8,6 +8,7 @@ application executes the real statement.  This avoids intermittent
 from __future__ import annotations
 
 import logging
+import os
 from typing import Any
 
 try:
@@ -111,3 +112,44 @@ if _turso is not None and not getattr(_turso, "_fx101_resilience_installed", Fal
 
     _turso.connect = _resilient_connect
     _turso._fx101_resilience_installed = True
+
+
+# Production safety bootstrap: the risk engine rejects every real G_DESK trade
+# when no account exists.  Create one explicit tracked account only when the
+# persistent account table is empty.  This is tracking state, not broker-live
+# equity, and never places an order.
+if os.getenv("G_DESK_RUNTIME_MODE", "").strip() == "chatgpt_subscription":
+    try:
+        import fx101 as _fx101
+
+        if not _fx101.list_accounts():
+            tracked = float(os.getenv("RFBC_EQUITY_USD", "10.03"))
+            _fx101.create_account(
+                {
+                    "id": "exness-cent-default",
+                    "name": "Exness Cent",
+                    "broker": "Exness",
+                    "account_type": "cent",
+                    "base_currency": "USD",
+                    "tracked_balance": tracked,
+                    "tracked_equity": tracked,
+                    "min_lot": 0.01,
+                    "volume_step": 0.01,
+                    "per_trade_risk_cap": 0.5,
+                    "aggregate_risk_cap": 1.0,
+                    "max_positions": 1,
+                    "allowed_symbols": [
+                        "EURUSDc",
+                        "GBPUSDc",
+                        "GBPJPYc",
+                        "USDCADc",
+                        "EURJPYc",
+                        "USDJPYc",
+                        "AUDJPYc",
+                    ],
+                    "notes": "Tracked Exness Standard Cent account; manual MT5 execution only.",
+                }
+            )
+            _LOG.warning("fx101_default_tracked_account_created")
+    except Exception as exc:
+        _LOG.exception("fx101_default_account_bootstrap_failed: %s", exc)
