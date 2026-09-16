@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260916T182013Z-C85BB3AE5C",
-  "generated_at": "2026-09-16T18:20:13Z",
+  "decision_id": "GDESK-20260916T192014Z-B7CA98A760",
+  "generated_at": "2026-09-16T19:20:14Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO TRADE — complete fresh 18-symbol Dukascopy H1 scan GDESK-2026-09-16T18-c85bb3ae5c produced no new independent setup clean enough to add. GBPUSDc/GBP-cross downside remains the clearest theme, but the prior GBPUSDc SELL_STOP decision is still within its validity window, so no duplicate/correlated GBP-short risk was added; XAUUSDc was rejected due to the abnormally wide latest spread."
+  "message": "NO TRADE — complete fresh 18-symbol Dukascopy H1 scan GDESK-2026-09-16T19-b7ca98a760 produced no new independent setup clean enough to add. The latest completed H1 bar shows an exceptional synchronized USD repricing across EURUSDc, GBPUSDc, AUDUSDc, NZDUSDc, USDCHFc and USDJPYc, with extreme XAUUSDc volatility; chasing that event-driven displacement would give poor entry quality. Existing duplicate/correlation constraints also argue against adding another GBP/USD-theme position immediately after the prior valid GBPUSDc setup window."
 }
