@@ -1,6 +1,6 @@
 {
-  "decision_id": "GDESK-20260916T142209Z-34BF6ECF09",
-  "generated_at": "2026-09-16T14:22:09Z",
+  "decision_id": "GDESK-20260916T152216Z-6CBE861FA2",
+  "generated_at": "2026-09-16T15:22:16Z",
   "result": "NO_TRADE",
   "decisions": [],
   "message": "No sufficiently clean, independent H1 setup qualified across the complete 18-symbol fresh Dukascopy BID/ASK universe."
