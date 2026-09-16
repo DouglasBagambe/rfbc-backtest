@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260916T222000Z-2FE60E185E",
-  "generated_at": "2026-09-16T22:20:00Z",
+  "decision_id": "GDESK-20260916T232000Z-17D1E1334A",
+  "generated_at": "2026-09-16T23:20:00Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO TRADE — complete fresh 18-symbol Dukascopy H1 scan GDESK-2026-09-16T22-2fe60e185e produced no genuinely qualified new setup. The universe remains in post-shock price discovery after the synchronized 18:00 UTC displacement. USD pairs and gold have not formed clean continuation or reversal structure, JPY crosses are rebounding without sufficiently independent confirmation, and several latest closing spreads remain abnormally wide. Chasing the displacement would give poor stop efficiency and correlated exposure; wait for cleaner structure."
+  "message": "NO TRADE — complete fresh 18-symbol Dukascopy H1 scan GDESK-2026-09-16T23-17d1e1334a produced no genuinely qualified new setup. The universe is still digesting the synchronized 18:00 UTC shock: USD majors remain extended with weak follow-through, JPY crosses are rebounding but mostly correlated, gold remains volatile after the sharp displacement, and several late-session spreads are still elevated. No entry currently offers sufficiently clean structure, stop efficiency, and independent exposure to justify 0.25%-0.5% risk."
 }
