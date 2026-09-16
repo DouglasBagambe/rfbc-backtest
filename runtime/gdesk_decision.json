@@ -1,34 +1,34 @@
 {
-  "decision_id": "GDESK-2026-09-16T05-14b2198978-MANUAL-0552Z",
-  "generated_at": "2026-09-16T05:52:00Z",
+  "decision_id": "GDESK-2026-09-16T06-d1175b0e5a-061241Z",
+  "generated_at": "2026-09-16T06:12:41Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "EURCADc",
+      "symbol": "XAUUSDc",
       "side": "BUY",
       "order_type": "BUY_STOP",
-      "entry": 1.60835,
-      "stop": 1.60765,
-      "target": 1.60975,
+      "entry": 4334.20,
+      "stop": 4319.80,
+      "target": 4363.00,
       "volume": 0.01,
       "risk_pct": 0.25,
-      "valid_until": "2026-09-16T06:15:00Z",
-      "cancel_condition": "Cancel if a completed H1 candle closes below 1.60765 before triggering; if price is already above 1.60835 when placing, skip rather than convert to a market buy.",
+      "valid_until": "2026-09-16T08:15:00Z",
+      "cancel_condition": "Cancel if a completed H1 candle closes below 4320.00 before triggering; if price is already above 4334.20 when placing, skip rather than convert to a market buy.",
       "confidence": "MEDIUM_HIGH",
-      "setup_name": "H1 bullish continuation breakout",
-      "regime": "bullish expansion holding near intraday highs",
+      "setup_name": "H1 impulse continuation breakout",
+      "regime": "bullish expansion after sharp upside impulse and shallow consolidation",
       "session": "London morning",
       "news_proximity": "not supplied in production context",
-      "exposure_note": "Proposed EUR +0.25%, CAD -0.25%. Chosen over GBPCAD to avoid stacking two versions of the same short-CAD thesis; server-side portfolio gates remain authoritative.",
-      "reasoning": "EURCAD advanced from 1.60677 at 00:00 through 1.60785 at 02:00 and 1.60808 at 03:00, then held tightly near the highs at 04:00 instead of retracing. A buy-stop just above the 1.608325 swing high requires fresh continuation confirmation. The stop sits beneath the immediate breakout shelf and the target preserves 2R.",
+      "exposure_note": "Proposed XAU +0.25% directional risk. No additional correlated USD setup is proposed; server-side portfolio gates remain authoritative.",
+      "reasoning": "Gold printed a strong 02:00 bullish impulse from roughly 4282.6 to 4321.9, extended to 4341.1 at 03:00, then held above 4320 through 04:00 and recovered to 4326.6 at 05:00. A buy-stop above the 05:00 high requires renewed continuation rather than chasing the existing move. The stop sits below the post-impulse consolidation floor and the target preserves 2R.",
       "context": {
-        "scan_id": "GDESK-2026-09-16T05-14b2198978",
+        "scan_id": "GDESK-2026-09-16T06-d1175b0e5a",
         "source": "Dukascopy BID/ASK",
-        "generated_at": "2026-09-16T05:49:52.041031+00:00",
-        "latest_completed_bar": "2026-09-16T04:00:00+00:00"
+        "generated_at": "2026-09-16T06:00:20.761050+00:00",
+        "latest_completed_bar": "2026-09-16T05:00:00+00:00"
       }
     }
   ],
-  "message": "Fresh MARKET_OPEN 18-market manual scan complete. EURCAD is the cleanest qualified continuation setup. USDJPY and AUDJPY were included in G DESK but neither had a sufficiently clean trigger; GBPCAD was excluded to avoid stacking the same CAD-short thesis."
+  "message": "Fresh MARKET_OPEN 18-market scan complete. XAUUSD is the cleanest qualified continuation setup. USDJPY and AUDJPY were analyzed but lacked a clean trigger; no additional setup met the conservative portfolio threshold."
 }
