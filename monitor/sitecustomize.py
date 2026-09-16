@@ -171,3 +171,10 @@ try:
     import premium_ux as _fx101_premium_ux  # noqa: F401
 except Exception as exc:
     _LOG.exception("fx101_premium_ux_load_failed: %s", exc)
+
+# Temporary live-mode overlay: pause RFBC execution and move USDJPY/AUDJPY into
+# G DESK. Frozen RFBC implementation remains in the repo for later re-enable.
+try:
+    import gdesk_only_mode as _fx101_gdesk_only_mode  # noqa: F401
+except Exception as exc:
+    _LOG.exception("fx101_gdesk_only_mode_load_failed: %s", exc)
