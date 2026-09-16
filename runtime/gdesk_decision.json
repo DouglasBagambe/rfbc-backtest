@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260916T152216Z-6CBE861FA2",
-  "generated_at": "2026-09-16T15:22:16Z",
+  "decision_id": "GDESK-20260916T162154Z-02F02D9DCB",
+  "generated_at": "2026-09-16T16:21:54Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "No sufficiently clean, independent H1 setup qualified across the complete 18-symbol fresh Dukascopy BID/ASK universe."
+  "message": "No sufficiently clean, non-chased H1 setup qualified across the complete 18-symbol fresh Dukascopy BID/ASK universe for scan GDESK-2026-09-16T16-02f02d9dcb."
 }
