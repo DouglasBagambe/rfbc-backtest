@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260916T192014Z-B7CA98A760",
-  "generated_at": "2026-09-16T19:20:14Z",
+  "decision_id": "GDESK-20260916T202330Z-9E75605ED0",
+  "generated_at": "2026-09-16T20:23:30Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO TRADE — complete fresh 18-symbol Dukascopy H1 scan GDESK-2026-09-16T19-b7ca98a760 produced no new independent setup clean enough to add. The latest completed H1 bar shows an exceptional synchronized USD repricing across EURUSDc, GBPUSDc, AUDUSDc, NZDUSDc, USDCHFc and USDJPYc, with extreme XAUUSDc volatility; chasing that event-driven displacement would give poor entry quality. Existing duplicate/correlation constraints also argue against adding another GBP/USD-theme position immediately after the prior valid GBPUSDc setup window."
+  "message": "NO TRADE — complete fresh 18-symbol Dukascopy H1 scan GDESK-2026-09-16T20-9e75605ed0 produced no genuinely qualified new setup. The 18:00 UTC bar delivered an exceptional synchronized USD repricing and extreme XAUUSDc displacement; the 19:00 UTC bars are primarily post-shock consolidation/retracement, so entering now would be chase-prone with unstable structure and poor stop placement. JPY crosses also show conflicting rebound behavior. Wait for cleaner post-event structure rather than force exposure."
 }
