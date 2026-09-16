@@ -1,7 +1,7 @@
 {
-  "decision_id": "PIPELINE-TEST-20260916T131500Z",
-  "generated_at": "2026-09-16T13:15:00Z",
-  "result": "SYSTEM_FAILURE",
+  "decision_id": "GDESK-20260916T132013Z-3CD62D8505",
+  "generated_at": "2026-09-16T13:20:13Z",
+  "result": "NO_TRADE",
   "decisions": [],
-  "message": "PIPELINE TEST ONLY • G DESK Telegram delivery restored. This is not a trading result and no trade was created."
+  "message": "No sufficiently clean, independent H1 setup qualified across the complete 18-symbol fresh Dukascopy BID/ASK universe."
 }
