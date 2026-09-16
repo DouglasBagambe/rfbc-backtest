@@ -54,6 +54,10 @@ def _rfbc_paused() -> None:
 
 fx101_worker.scan_rfbc = _rfbc_paused
 
+# G DESK results are not considered successfully consumed unless Telegram
+# actually accepts the sendMessage request. Transient failures remain retryable.
+import telegram_delivery_hardening  # noqa: F401,E402
+
 fx101.log(
     "gdesk_only_mode_loaded",
     rfbc_paused=True,
