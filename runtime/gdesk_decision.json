@@ -1,36 +1,7 @@
 {
-  "decision_id": "GDESK-20260916T171709Z-69CE9358DA",
-  "generated_at": "2026-09-16T17:17:09Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "GBPUSDc",
-      "side": "SELL",
-      "order_type": "SELL_STOP",
-      "entry": 1.34420,
-      "stop": 1.34635,
-      "target": 1.33990,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-09-16T19:00:00Z",
-      "cancel_condition": "Cancel if an H1 candle closes above 1.34635 before entry or if the order remains unfilled at valid_until.",
-      "confidence": "medium-high",
-      "setup_name": "H1 bearish continuation breakdown",
-      "regime": "bearish trend / lower-high continuation",
-      "session": "late London / New York",
-      "news_proximity": "not supplied in market context; no external news input used",
-      "exposure_note": "Single GBP-short/USD-long proposal at 0.25% risk; no duplicate proposed exposure and within stated portfolio caps.",
-      "reasoning": "GBPUSD has maintained the clearest persistent downside structure in the supplied H1 universe, falling from the 1.349 area through successive lower highs/lows and holding near the session low. A sell-stop below the 16:00 H1 low requires fresh downside confirmation rather than chasing the existing move; the stop sits above the recent breakdown/retest structure and the target preserves approximately 2R.",
-      "context": {
-        "scan_id": "GDESK-2026-09-16T17-69ce9358da",
-        "source": "Dukascopy BID/ASK",
-        "generated_at": "2026-09-16T17:01:44.166614+00:00",
-        "latest_completed_bar": "2026-09-16T16:00:00+00:00",
-        "freshness": "FRESH",
-        "market_state": "MARKET_OPEN"
-      }
-    }
-  ],
-  "message": "GBPUSDc SELL_STOP continuation qualified from the complete fresh 18-symbol Dukascopy H1 scan GDESK-2026-09-16T17-69ce9358da."
+  "decision_id": "GDESK-20260916T182013Z-C85BB3AE5C",
+  "generated_at": "2026-09-16T18:20:13Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO TRADE — complete fresh 18-symbol Dukascopy H1 scan GDESK-2026-09-16T18-c85bb3ae5c produced no new independent setup clean enough to add. GBPUSDc/GBP-cross downside remains the clearest theme, but the prior GBPUSDc SELL_STOP decision is still within its validity window, so no duplicate/correlated GBP-short risk was added; XAUUSDc was rejected due to the abnormally wide latest spread."
 }
