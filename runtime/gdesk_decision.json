@@ -1,6 +1,6 @@
 {
-  "decision_id": "GDESK-2026-09-15T19-0c24ae3942-20260915T191312Z",
-  "generated_at": "2026-09-15T19:13:12Z",
+  "decision_id": "GDESK-2026-09-16T05-14b2198978-MANUAL-0552Z",
+  "generated_at": "2026-09-16T05:52:00Z",
   "result": "TRADE",
   "decisions": [
     {
@@ -8,27 +8,27 @@
       "symbol": "EURCADc",
       "side": "BUY",
       "order_type": "BUY_STOP",
-      "entry": 1.60645,
-      "stop": 1.60495,
-      "target": 1.60945,
+      "entry": 1.60835,
+      "stop": 1.60765,
+      "target": 1.60975,
       "volume": 0.01,
       "risk_pct": 0.25,
-      "valid_until": "2026-09-15T20:15:00Z",
-      "cancel_condition": "Cancel if a completed H1 candle closes below 1.60495 before triggering; if price is already above 1.60645 when placing, skip rather than convert to a market buy.",
-      "confidence": "MEDIUM",
-      "setup_name": "H1 bullish rejection continuation",
-      "regime": "volatile recovery after intraday pullback",
-      "session": "New York late session",
+      "valid_until": "2026-09-16T06:15:00Z",
+      "cancel_condition": "Cancel if a completed H1 candle closes below 1.60765 before triggering; if price is already above 1.60835 when placing, skip rather than convert to a market buy.",
+      "confidence": "MEDIUM_HIGH",
+      "setup_name": "H1 bullish continuation breakout",
+      "regime": "bullish expansion holding near intraday highs",
+      "session": "London morning",
       "news_proximity": "not supplied in production context",
-      "exposure_note": "Proposed EUR +0.25%, CAD -0.25%. No additional candidate is included because several alternatives are correlated or lack equally clean structure; server-side portfolio gates remain authoritative.",
-      "reasoning": "EURCAD printed a strong 18:00 bullish rejection from the 1.6050 area and closed near the hourly high after two hours of decline. A buy-stop above 1.60645 requires continuation through the immediate 18:00 high instead of chasing the rebound. The stop is below the rejection base and the target provides 2R while remaining below the earlier 1.6083-1.6086 intraday resistance extension.",
+      "exposure_note": "Proposed EUR +0.25%, CAD -0.25%. Chosen over GBPCAD to avoid stacking two versions of the same short-CAD thesis; server-side portfolio gates remain authoritative.",
+      "reasoning": "EURCAD advanced from 1.60677 at 00:00 through 1.60785 at 02:00 and 1.60808 at 03:00, then held tightly near the highs at 04:00 instead of retracing. A buy-stop just above the 1.608325 swing high requires fresh continuation confirmation. The stop sits beneath the immediate breakout shelf and the target preserves 2R.",
       "context": {
-        "scan_id": "GDESK-2026-09-15T19-0c24ae3942",
+        "scan_id": "GDESK-2026-09-16T05-14b2198978",
         "source": "Dukascopy BID/ASK",
-        "generated_at": "2026-09-15T19:01:10.788744+00:00",
-        "latest_completed_bar": "2026-09-15T18:00:00+00:00"
+        "generated_at": "2026-09-16T05:49:52.041031+00:00",
+        "latest_completed_bar": "2026-09-16T04:00:00+00:00"
       }
     }
   ],
-  "message": "Fresh MARKET_OPEN 16-market scan complete. EURCAD is the cleanest qualified continuation setup; other markets were choppy, extended, correlated, or lacked sufficient confirmation."
+  "message": "Fresh MARKET_OPEN 18-market manual scan complete. EURCAD is the cleanest qualified continuation setup. USDJPY and AUDJPY were included in G DESK but neither had a sufficiently clean trigger; GBPCAD was excluded to avoid stacking the same CAD-short thesis."
 }
