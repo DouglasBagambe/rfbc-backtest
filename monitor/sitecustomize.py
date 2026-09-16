@@ -7,7 +7,6 @@ application executes the real statement. This avoids intermittent
 """
 from __future__ import annotations
 
-import base64
 import json
 import logging
 import os
@@ -185,35 +184,27 @@ try:
 except Exception as exc:
     _LOG.exception("fx101_gdesk_only_mode_load_failed: %s", exc)
 
-# Harden the ChatGPT-subscription decision mailbox. The prior raw-content fetch
-# could block the worker indefinitely. Use GitHub's Contents API with strict
-# connect/read timeouts and keep duplicate suppression in-process; persistent
-# trade/scan state still remains in Fx101/Turso.
+# Harden the ChatGPT-subscription decision mailbox. Use a public CDN endpoint
+# instead of unauthenticated GitHub REST/raw endpoints, avoiding API rate limits
+# and long raw-content stalls. Cache-busting plus strict connect/read timeouts
+# keeps each poll bounded. Trading/data/risk behavior is unchanged.
 if os.getenv("G_DESK_RUNTIME_MODE", "").strip() == "chatgpt_subscription":
     try:
         import fx101 as _bridge_fx101
         import fx101_worker as _bridge_worker
 
-        _GDESK_API_URL = "https://api.github.com/repos/DouglasBagambe/rfbc-backtest/contents/runtime/gdesk_decision.json"
+        _GDESK_MAILBOX_URL = "https://cdn.jsdelivr.net/gh/DouglasBagambe/rfbc-backtest@gdesk-runtime/runtime/gdesk_decision.json"
         _GDESK_CONSUMED: set[str] = set()
 
         def _consume_gdesk_runtime_decision_hardened() -> None:
             response = requests.get(
-                _GDESK_API_URL,
-                params={"ref": "gdesk-runtime", "cache_bust": int(time.time())},
-                headers={
-                    "Accept": "application/vnd.github+json",
-                    "Cache-Control": "no-cache",
-                    "User-Agent": "fx101-gdesk-bridge",
-                },
+                _GDESK_MAILBOX_URL,
+                params={"v": int(time.time())},
+                headers={"Cache-Control": "no-cache", "User-Agent": "fx101-gdesk-bridge"},
                 timeout=(5, 10),
             )
             response.raise_for_status()
-            envelope = response.json()
-            encoded = str(envelope.get("content") or "").replace("\n", "")
-            if not encoded:
-                raise RuntimeError("gdesk_runtime_content_missing")
-            body = json.loads(base64.b64decode(encoded).decode("utf-8"))
+            body = response.json()
 
             decision_id = str(body.get("decision_id") or "").strip()
             result = str(body.get("result") or "").upper().strip()
@@ -260,6 +251,6 @@ if os.getenv("G_DESK_RUNTIME_MODE", "").strip() == "chatgpt_subscription":
             _bridge_fx101.log("gdesk_bridge_consumed", decision_id=decision_id, result=result, ingest_status=status)
 
         _bridge_worker._consume_gdesk_runtime_decision = _consume_gdesk_runtime_decision_hardened
-        _bridge_fx101.log("gdesk_bridge_hardening_loaded", transport="github_contents_api", timeout_seconds=10)
+        _bridge_fx101.log("gdesk_bridge_hardening_loaded", transport="jsdelivr_cdn", timeout_seconds=10)
     except Exception as exc:
         _LOG.exception("gdesk_bridge_hardening_load_failed: %s", exc)
