@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260917T092020Z-E0A4C2B886",
-  "generated_at": "2026-09-17T09:20:20Z",
+  "decision_id": "GDESK-20260917T102131Z-5DB9D5A5E7",
+  "generated_at": "2026-09-17T10:21:31Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE — reviewed all 18 fresh completed H1 BID/ASK contexts for scan GDESK-2026-09-17T09-e0a4c2b886. The universe remains dominated by post-shock USD repricing and correlated JPY/cross retracements; gold is volatile and rebounding without a clean fresh trigger. No independent setup qualifies at the required risk quality without chasing, forcing entry, or duplicating directional exposure."
+  "message": "NO_TRADE — reviewed all 18 fresh completed Dukascopy H1 BID/ASK contexts for scan GDESK-2026-09-17T10-5db9d5a5e7. The universe is still digesting the prior USD shock with mixed retracements and strongly correlated cross moves; XAUUSD remains volatile after the sharp selloff and rebound. No clean independent setup currently offers sufficient structure and risk quality without chasing, forcing entry, or duplicating directional exposure."
 }
