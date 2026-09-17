@@ -31,6 +31,10 @@ GDESK_RUNTIME_URL = os.getenv(
     "G_DESK_RUNTIME_URL",
     "https://raw.githubusercontent.com/DouglasBagambe/rfbc-backtest/gdesk-runtime/runtime/gdesk_decision.json",
 ).strip()
+GDESK_RUNTIME_API_URL = (
+    "https://api.github.com/repos/DouglasBagambe/rfbc-backtest/contents/"
+    "runtime/gdesk_decision.json"
+)
 
 
 def stop(*_):
@@ -135,8 +139,6 @@ def _emit_gdesk_context_snapshot(hour_key: str) -> None:
     enough for the logging pipeline. The scheduled ChatGPT task reads the five
     events sharing the same scan_id and performs the actual analysis itself.
     """
-    # Lazy import keeps lifecycle/RFBC operational if the optional Flask route
-    # dependencies are absent from a focused worker test environment.
     import g_desk_adapter
     payload = g_desk_adapter.context_payload()
     scan_id = f"GDESK-{hour_key}-{uuid.uuid4().hex[:10]}"
@@ -183,18 +185,28 @@ def _reject_bridge(decision_id: str, reason: str, payload: dict) -> None:
     fx101.log("gdesk_bridge_rejected", reason=reason, decision_id=decision_id)
 
 
+def _fetch_gdesk_runtime_decision() -> dict:
+    """Fetch the runtime mailbox without relying on raw.githubusercontent CDN freshness."""
+    url = GDESK_RUNTIME_URL
+    params = {"cache_bust": int(time.time())}
+    headers = {"Cache-Control": "no-cache"}
+    if "raw.githubusercontent.com/DouglasBagambe/rfbc-backtest/" in url:
+        url = GDESK_RUNTIME_API_URL
+        params = {"ref": "gdesk-runtime", "cache_bust": int(time.time())}
+        headers["Accept"] = "application/vnd.github.raw+json"
+    r = requests.get(url, params=params, headers=headers, timeout=15)
+    r.raise_for_status()
+    body = r.json()
+    if not isinstance(body, dict):
+        raise RuntimeError("gdesk_runtime_payload_not_object")
+    return body
+
+
 def _consume_gdesk_runtime_decision() -> None:
     """Consume the newest ChatGPT decision from the non-deployed runtime branch."""
     if not GDESK_RUNTIME_URL:
         return
-    r = requests.get(
-        GDESK_RUNTIME_URL,
-        params={"cache_bust": int(time.time())},
-        headers={"Cache-Control": "no-cache"},
-        timeout=15,
-    )
-    r.raise_for_status()
-    body = r.json()
+    body = _fetch_gdesk_runtime_decision()
     decision_id = str(body.get("decision_id") or "").strip()
     result = str(body.get("result") or "").upper().strip()
     if not decision_id or decision_id == "INIT" or result == "NONE":
@@ -215,7 +227,8 @@ def _consume_gdesk_runtime_decision() -> None:
 
     if result == "SYSTEM_FAILURE":
         message = str(body.get("message") or "G_DESK analysis bridge reported a system failure.")[:700]
-        fx101.telegram_send(f"G DESK SYSTEM FAILURE\n{message}")
+        ok, status = fx101.telegram_send(f"G DESK SYSTEM FAILURE\n{message}")
+        fx101.log("gdesk_telegram_delivery", decision_id=decision_id, result=result, ok=ok, status=status)
         _mark_bridge_consumed(decision_id, result, body)
         fx101.log("gdesk_bridge_consumed", decision_id=decision_id, result=result)
         return
