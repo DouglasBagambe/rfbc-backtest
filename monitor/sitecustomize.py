@@ -184,73 +184,12 @@ try:
 except Exception as exc:
     _LOG.exception("fx101_gdesk_only_mode_load_failed: %s", exc)
 
-# Harden the ChatGPT-subscription decision mailbox. Use a public CDN endpoint
-# instead of unauthenticated GitHub REST/raw endpoints, avoiding API rate limits
-# and long raw-content stalls. Cache-busting plus strict connect/read timeouts
-# keeps each poll bounded. Trading/data/risk behavior is unchanged.
+# G DESK mailbox freshness is handled directly in fx101_worker via the GitHub
+# Contents API. Do not override it with raw/CDN transports; those can serve stale
+# branch content and silently suppress current-hour Telegram results.
 if os.getenv("G_DESK_RUNTIME_MODE", "").strip() == "chatgpt_subscription":
     try:
         import fx101 as _bridge_fx101
-        import fx101_worker as _bridge_worker
-
-        _GDESK_MAILBOX_URL = "https://cdn.jsdelivr.net/gh/DouglasBagambe/rfbc-backtest@gdesk-runtime/runtime/gdesk_decision.json"
-        _GDESK_CONSUMED: set[str] = set()
-
-        def _consume_gdesk_runtime_decision_hardened() -> None:
-            response = requests.get(
-                _GDESK_MAILBOX_URL,
-                params={"v": int(time.time())},
-                headers={"Cache-Control": "no-cache", "User-Agent": "fx101-gdesk-bridge"},
-                timeout=(5, 10),
-            )
-            response.raise_for_status()
-            body = response.json()
-
-            decision_id = str(body.get("decision_id") or "").strip()
-            result = str(body.get("result") or "").upper().strip()
-            if not decision_id or decision_id == "INIT" or result == "NONE" or decision_id in _GDESK_CONSUMED:
-                return
-
-            generated_at = str(body.get("generated_at") or "")
-            try:
-                generated = datetime.fromisoformat(generated_at.replace("Z", "+00:00"))
-                age = datetime.now(timezone.utc) - generated.astimezone(timezone.utc)
-            except Exception as exc:
-                raise RuntimeError("gdesk_runtime_invalid_generated_at") from exc
-            if age.total_seconds() < -300 or age.total_seconds() > 3600:
-                _bridge_fx101.log("gdesk_bridge_rejected", reason="future_or_stale_decision", decision_id=decision_id)
-                _GDESK_CONSUMED.add(decision_id)
-                return
-
-            if result == "SYSTEM_FAILURE":
-                message = str(body.get("message") or "G_DESK analysis bridge reported a system failure.")[:700]
-                ok, status = _bridge_fx101.telegram_send(f"G DESK SYSTEM FAILURE\n{message}")
-                if not ok:
-                    raise RuntimeError(f"telegram_send_failed:{status}")
-                _GDESK_CONSUMED.add(decision_id)
-                _bridge_fx101.log("gdesk_bridge_consumed", decision_id=decision_id, result=result, telegram_status=status)
-                return
-
-            if result == "NO_TRADE":
-                ok, status, _ = _bridge_fx101.ingest_desk_response({"decisions": []})
-            elif result == "TRADE":
-                decisions = body.get("decisions")
-                if not isinstance(decisions, list) or not decisions:
-                    _bridge_fx101.log("gdesk_bridge_rejected", reason="trade_requires_decisions", decision_id=decision_id)
-                    _GDESK_CONSUMED.add(decision_id)
-                    return
-                ok, status, _ = _bridge_fx101.ingest_desk_response({"decisions": decisions})
-            else:
-                _bridge_fx101.log("gdesk_bridge_rejected", reason="invalid_result", decision_id=decision_id)
-                _GDESK_CONSUMED.add(decision_id)
-                return
-
-            if not ok:
-                raise RuntimeError(f"gdesk_ingest_failed:{status}")
-            _GDESK_CONSUMED.add(decision_id)
-            _bridge_fx101.log("gdesk_bridge_consumed", decision_id=decision_id, result=result, ingest_status=status)
-
-        _bridge_worker._consume_gdesk_runtime_decision = _consume_gdesk_runtime_decision_hardened
-        _bridge_fx101.log("gdesk_bridge_hardening_loaded", transport="jsdelivr_cdn", timeout_seconds=10)
+        _bridge_fx101.log("gdesk_bridge_hardening_loaded", transport="github_contents_api", timeout_seconds=15)
     except Exception as exc:
         _LOG.exception("gdesk_bridge_hardening_load_failed: %s", exc)
