@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260917T172149Z-997FE29EAD",
-  "generated_at": "2026-09-17T17:21:49Z",
+  "decision_id": "GDESK-20260917T182145Z-62855B5AFD",
+  "generated_at": "2026-09-17T18:21:45Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE — complete fresh 18-symbol scan processed for GDESK-2026-09-17T17-997fe29ead. All symbols still share the 16:00Z completed H1 bar used by the preceding desk decision; no genuinely new independent setup justifies another signal without chasing or duplicating exposure."
+  "message": "NO_TRADE — complete fresh 18-symbol scan processed for GDESK-2026-09-17T18-62855b5afd using completed Dukascopy H1 BID/ASK bars through 17:00Z. Several pairs show directional movement, but the latest bars are consolidation/retracement rather than clean new entries; no setup meets the desk threshold without chasing or forcing a trade."
 }
