@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260917T042239Z-044D62223D",
-  "generated_at": "2026-09-17T04:22:39Z",
+  "decision_id": "GDESK-20260917T052211Z-387F89AB66",
+  "generated_at": "2026-09-17T05:22:11Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO TRADE — complete fresh 18-symbol Dukascopy H1 scan GDESK-2026-09-17T04-044d62223d produced no genuinely qualified setup. EURAUD and GBPAUD remain bearish but are extended after consecutive downside H1 bars; AUDUSD and NZDUSD are rebounding after the prior USD shock without a clean confirmed continuation trigger; USDJPY and most JPY crosses are consolidating/mixed; XAUUSD remains exceptionally volatile and whipsaw-prone after the displacement. No candidate currently combines a fresh trigger, efficient invalidation, acceptable spread/volatility and sufficiently independent exposure to justify 0.25%-0.5% risk."
+  "message": "NO TRADE — complete fresh 18-symbol Dukascopy H1 scan GDESK-2026-09-17T05-387f89ab66 produced no genuinely qualified setup. EURAUD and GBPAUD remain in strong bearish structure but are extended after three consecutive downside H1 bars and are sitting near fresh lows, making immediate shorts poor risk/reward. AUDUSD and NZDUSD show a four-bar rebound but are retracing the prior sharp displacement rather than presenting a clean confirmed breakout. USDJPY and JPY crosses are consolidating after the prior volatility impulse. XAUUSD remains exceptionally volatile and directionally unstable after the large displacement and rebound. No candidate currently combines a fresh trigger, efficient invalidation, acceptable spread/volatility and sufficiently independent exposure to justify 0.25%-0.5% risk."
 }
