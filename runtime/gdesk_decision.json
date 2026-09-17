@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260917T102131Z-5DB9D5A5E7",
-  "generated_at": "2026-09-17T10:21:31Z",
+  "decision_id": "GDESK-20260917T112238Z-5DC9396E33",
+  "generated_at": "2026-09-17T11:22:38Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE — reviewed all 18 fresh completed Dukascopy H1 BID/ASK contexts for scan GDESK-2026-09-17T10-5db9d5a5e7. The universe is still digesting the prior USD shock with mixed retracements and strongly correlated cross moves; XAUUSD remains volatile after the sharp selloff and rebound. No clean independent setup currently offers sufficient structure and risk quality without chasing, forcing entry, or duplicating directional exposure."
+  "message": "NO_TRADE — reviewed all 18 fresh completed Dukascopy H1 BID/ASK contexts for scan GDESK-2026-09-17T11-5dc9396e33. Several crosses are retracing after the prior USD shock, but the strongest moves are correlated and either already extended or lack clean confirmation at the latest completed H1 close. XAUUSD remains volatile after its sharp selloff/rebound. No independent setup currently clears structure, entry quality, and portfolio-exposure gates without chasing or forcing a trade."
 }
