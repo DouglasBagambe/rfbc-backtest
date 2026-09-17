@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260917T022100Z-9A87026CC4",
-  "generated_at": "2026-09-17T02:21:00Z",
+  "decision_id": "GDESK-20260917T032100Z-4FD5177FF0",
+  "generated_at": "2026-09-17T03:21:00Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO TRADE — complete fresh 18-symbol Dukascopy H1 scan GDESK-2026-09-17T02-9a87026cc4 produced no genuinely qualified setup. The large 18:00 UTC macro displacement still dominates USD pairs, while the latest completed H1 bars are mostly consolidation or partial retracement rather than clean fresh triggers. EURAUD, GBPAUD, EURCAD and GBPCAD retain downside pressure but are extended; JPY crosses remain mixed; XAUUSD is rebounding inside exceptionally high post-shock volatility. No candidate currently offers clean structure, efficient invalidation and sufficiently independent exposure to justify 0.25%-0.5% risk."
+  "message": "NO TRADE — complete fresh 18-symbol Dukascopy H1 scan GDESK-2026-09-17T03-4fd5177ff0 produced no genuinely qualified setup. The prior macro displacement still dominates several USD and cross pairs. EURAUD and GBPAUD continue lower but are extended after consecutive bearish H1 bars; AUDUSD is rebounding without a clean continuation trigger; JPY crosses are mixed; XAUUSD remains exceptionally volatile and whipsawing after the shock. No candidate currently combines a fresh trigger, efficient invalidation, acceptable spread/volatility and sufficiently independent exposure to justify 0.25%-0.5% risk."
 }
