@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260917T002100Z-80980E94E1",
-  "generated_at": "2026-09-17T00:21:00Z",
+  "decision_id": "GDESK-20260917T012100Z-EDBF94E50E",
+  "generated_at": "2026-09-17T01:21:00Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO TRADE — complete fresh 18-symbol Dukascopy H1 scan GDESK-2026-09-17T00-80980e94e1 produced no genuinely qualified new setup. The synchronized 18:00 UTC displacement remains the dominant move: USD pairs are extended and consolidating, JPY crosses show mixed post-shock retracement, and gold remains volatile without a clean low-risk continuation or reversal structure. Late-session spread distortions also weaken entry quality. No setup currently offers sufficiently clean structure, stop efficiency, and independent exposure to justify 0.25%-0.5% risk."
+  "message": "NO TRADE — complete fresh 18-symbol Dukascopy H1 scan GDESK-2026-09-17T01-edbf94e50e produced no genuinely qualified setup. The post-18:00 UTC macro displacement remains dominant: EURUSD, GBPUSD and NZDUSD are still pressured while USDCHF and USDCAD retain USD-strength structure, but entries are extended and the latest H1 bars are mostly consolidation/retracement rather than clean fresh triggers. JPY crosses are mixed after the shock and XAUUSD remains highly volatile after its sharp selloff/rebound. No candidate currently combines clean structure, efficient invalidation and sufficiently independent exposure to justify 0.25%-0.5% risk."
 }
