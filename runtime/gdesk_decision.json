@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260917T071856Z-76B83B4186",
-  "generated_at": "2026-09-17T07:18:56Z",
+  "decision_id": "GDESK-20260917T082202Z-D05AB12742",
+  "generated_at": "2026-09-17T08:22:02Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE — current H1 context shows broad USD weakness and JPY strength, but the clean EURJPY continuation is already represented by the prior still-valid pending setup and the remaining correlated moves are extended or lack a clean fresh trigger. No additional independent setup qualifies without forcing exposure."
+  "message": "NO_TRADE — all 18 fresh H1 contexts were reviewed. The post-shock USD/JPY/GBP moves are either extended, retracing, or highly correlated, while gold is rebounding inside elevated volatility rather than offering a clean fresh trigger. No independent setup qualifies without forcing entry or duplicating directional exposure."
 }
