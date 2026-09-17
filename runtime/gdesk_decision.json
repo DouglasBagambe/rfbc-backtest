@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260917T161923Z-42AD8B764B",
-  "generated_at": "2026-09-17T16:19:23Z",
+  "decision_id": "GDESK-20260917T172149Z-997FE29EAD",
+  "generated_at": "2026-09-17T17:21:49Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE — full 18-symbol scan completed on fresh 16Z Dukascopy H1 BID/ASK context. GBP weakness remains the clearest theme, but GBPUSDc was already signalled on the prior scan and the current move is extended; no new independent setup is clean enough without duplicating exposure or chasing."
+  "message": "NO_TRADE — complete fresh 18-symbol scan processed for GDESK-2026-09-17T17-997fe29ead. All symbols still share the 16:00Z completed H1 bar used by the preceding desk decision; no genuinely new independent setup justifies another signal without chasing or duplicating exposure."
 }
