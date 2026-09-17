@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260917T192145Z-48E25CFF2E",
-  "generated_at": "2026-09-17T19:21:45Z",
+  "decision_id": "GDESK-20260917T201800Z-9490E90371",
+  "generated_at": "2026-09-17T20:18:00Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE — complete fresh 18-symbol scan processed for GDESK-2026-09-17T19-48e25cff2e using completed Dukascopy H1 BID/ASK bars through 18:00Z. GBPUSD/GBPCAD remain bearish after sharp earlier moves and XAUUSD has pulled back from its intraday surge, but current entries would be late or inside consolidation/retracement. No setup meets the desk threshold without chasing or forcing a trade."
+  "message": "NO_TRADE — complete fresh 18-symbol scan processed for GDESK-2026-09-17T20-9490e90371 using completed Dukascopy H1 BID/ASK bars through 19:00Z. GBPUSD and GBPCAD remain broadly bearish but are consolidating after the earlier impulse; XAUUSD is still retracing from its intraday surge; JPY crosses are mixed and compressed. No current entry offers sufficient structure and reward without chasing or forcing a trade."
 }
