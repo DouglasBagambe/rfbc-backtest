@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260917T222004Z-EE6AE7DD53",
-  "generated_at": "2026-09-17T22:20:04Z",
+  "decision_id": "GDESK-20260917T232015Z-781EDFBB92",
+  "generated_at": "2026-09-17T23:20:15Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE — complete fresh 18-symbol scan processed for GDESK-2026-09-17T22-ee6ae7dd53 using completed Dukascopy H1 BID/ASK bars. Late-session/rollover spreads are materially widened across much of the universe, including major FX crosses, while XAUUSD has already retraced sharply from its intraday surge and offers no clean non-chasing entry. GBPUSD remains structurally soft but current execution quality is poor; JPY crosses are mixed/compressed. No setup meets the required structure, execution quality, and reward threshold without forcing a trade."
+  "message": "NO_TRADE — complete fresh 18-symbol scan processed for GDESK-2026-09-17T23-781edfbb92 using completed Dukascopy H1 BID/ASK bars. Execution conditions remain poor after rollover: spreads were materially distorted in the preceding hours across major FX and crosses, while the latest completed bars show mostly compression or mixed follow-through. GBPUSD remains structurally soft but has already extended lower and lacks a clean non-chasing trigger; XAUUSD has retraced sharply from the intraday surge and is consolidating with elevated spread. No setup meets the required structure, execution quality, and reward threshold without forcing a trade."
 }
