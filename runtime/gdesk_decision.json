@@ -1,34 +1,7 @@
 {
-  "decision_id": "GDESK-20260917T062052Z-D4867D4501",
-  "generated_at": "2026-09-17T06:20:52Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "EURJPYc",
-      "side": "SELL",
-      "order_type": "SELL_STOP",
-      "entry": 178.49,
-      "stop": 178.95,
-      "target": 177.57,
-      "volume": 0.01,
-      "risk_pct": 0.5,
-      "valid_until": "2026-09-17T08:00:00Z",
-      "cancel_condition": "Cancel if not triggered by 08:00 UTC, or if a completed H1 candle closes above 178.95 before entry.",
-      "confidence": "HIGH",
-      "setup_name": "JPY-strength downside continuation breakout",
-      "regime": "bearish momentum / synchronized JPY strength",
-      "session": "London morning",
-      "news_proximity": "Not independently evaluated; decision uses only supplied production Dukascopy market context as required.",
-      "exposure_note": "Single 0.5% EURJPY short; no other proposed trade, so proposed aggregate risk is 0.5% and JPY directional exposure remains within the 1.0% cap. Existing account exposure remains subject to server-side gates.",
-      "reasoning": "EURJPY printed a decisive 05:00 UTC bearish H1 displacement from 178.93 to 178.57 and broke below the prior session support zone around 178.84-178.89. The move is confirmed by simultaneous downside breaks in USDJPY, GBPJPY, CADJPY, CHFJPY and AUDJPY, indicating broad JPY strength rather than isolated EUR weakness. A SELL_STOP below the 05:00 low avoids chasing the current candle and requires continuation confirmation; the stop sits above the broken support/retest area, with a 2.0R target.",
-      "context": {
-        "scan_id": "GDESK-2026-09-17T06-d4867d4501",
-        "source": "Dukascopy BID/ASK",
-        "generated_at": "2026-09-17T06:05:01.759079+00:00",
-        "latest_completed_bar": "2026-09-17T05:00:00+00:00"
-      }
-    }
-  ],
-  "message": "TRADE — EURJPYc SELL_STOP 178.49, SL 178.95, TP 177.57. Broad synchronized JPY strength confirms the downside continuation setup; pending entry avoids chasing the 05:00 UTC displacement."
+  "decision_id": "GDESK-20260917T071856Z-76B83B4186",
+  "generated_at": "2026-09-17T07:18:56Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE — current H1 context shows broad USD weakness and JPY strength, but the clean EURJPY continuation is already represented by the prior still-valid pending setup and the remaining correlated moves are extended or lack a clean fresh trigger. No additional independent setup qualifies without forcing exposure."
 }
