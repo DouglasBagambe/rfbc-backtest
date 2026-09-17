@@ -1,7 +1,36 @@
 {
-  "decision_id": "GDESK-20260917T141832Z-621D6933D5",
-  "generated_at": "2026-09-17T14:18:32Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE — reviewed all 18 fresh completed Dukascopy H1 BID/ASK contexts for scan GDESK-2026-09-17T14-621d6933d5. XAUUSD remains strongly elevated after a rapid impulse and is not a clean chase entry; GBP pairs remain unstable after sharp correlated moves. AUD/NZD rebounds, JPY crosses, and the remaining FX universe show mixed continuation/retracement structure without a sufficiently clean independent setup. No candidate clears structure, entry quality, and portfolio-exposure gates without forcing a trade."
+  "decision_id": "GDESK-20260917T152145Z-927C65C624",
+  "generated_at": "2026-09-17T15:21:45Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "GBPUSDc",
+      "side": "SELL",
+      "order_type": "SELL_STOP",
+      "entry": 1.3350,
+      "stop": 1.3383,
+      "target": 1.3268,
+      "volume": 0.01,
+      "risk_pct": 0.5,
+      "valid_until": "2026-09-17T16:30:00Z",
+      "cancel_condition": "Cancel if not triggered by valid_until, or if a completed H1 candle closes above 1.3383 before entry.",
+      "confidence": "MEDIUM_HIGH",
+      "setup_name": "GBP bearish continuation breakdown",
+      "regime": "Bearish momentum / post-impulse continuation",
+      "session": "London-New York overlap",
+      "news_proximity": "Not supplied in market context; server-side/live operator news gate remains authoritative.",
+      "exposure_note": "Single GBP-short/USD-long proposal; 0.50% proposed initial risk and no duplicate proposed symbol, within the stated desk exposure limits before server-side account-risk enforcement.",
+      "reasoning": "GBPUSD printed a decisive bearish impulse at 11:00 UTC, failed to recover it at 12:00, then extended lower through 13:00 and 14:00. The latest completed H1 closed 1.33528 near its 1.33512 low, while correlated GBP crosses GBPJPY, GBPAUD and GBPCAD also weakened, confirming broad GBP pressure. A sell-stop below the latest low avoids chasing the current candle and requires fresh downside confirmation. Stop is above the latest H1 reaction/open area; target provides roughly 2.5R.",
+      "context": {
+        "scan_id": "GDESK-2026-09-17T15-927c65c624",
+        "source": "Dukascopy BID/ASK",
+        "generated_at": "2026-09-17T15:01:58.545805+00:00",
+        "latest_completed_bar": "2026-09-17T14:00:00+00:00",
+        "market_state": "MARKET_OPEN",
+        "freshness": "FRESH"
+      }
+    }
+  ],
+  "message": "TRADE — GBPUSDc SELL_STOP continuation setup after broad GBP weakness. Entry requires a break below the latest completed H1 low; server-side portfolio/account gates remain authoritative."
 }
