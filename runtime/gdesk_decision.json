@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260917T112238Z-5DC9396E33",
-  "generated_at": "2026-09-17T11:22:38Z",
+  "decision_id": "GDESK-20260917T121719Z-6F66675913",
+  "generated_at": "2026-09-17T12:17:19Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE — reviewed all 18 fresh completed Dukascopy H1 BID/ASK contexts for scan GDESK-2026-09-17T11-5dc9396e33. Several crosses are retracing after the prior USD shock, but the strongest moves are correlated and either already extended or lack clean confirmation at the latest completed H1 close. XAUUSD remains volatile after its sharp selloff/rebound. No independent setup currently clears structure, entry quality, and portfolio-exposure gates without chasing or forcing a trade."
+  "message": "NO_TRADE — reviewed all 18 fresh completed Dukascopy H1 BID/ASK contexts for scan GDESK-2026-09-17T12-6f66675913. The latest H1 shows a sharp correlated GBP selloff across GBPUSD, GBPAUD and GBPCAD, while EURGBP surged, but those moves are already extended and chasing them would give poor entry quality. XAUUSD also accelerated sharply higher after a volatile rebound. Other FX pairs remain mixed or are retracing. No independent setup clears structure, entry quality and portfolio-exposure gates without forcing a trade."
 }
