@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260917T132045Z-A0A176AB54",
-  "generated_at": "2026-09-17T13:20:45Z",
+  "decision_id": "GDESK-20260917T141832Z-621D6933D5",
+  "generated_at": "2026-09-17T14:18:32Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE — reviewed all 18 fresh completed Dukascopy H1 BID/ASK contexts for scan GDESK-2026-09-17T13-a0a176ab54. GBP remains disorderly after a sharp correlated selloff, while XAUUSD has accelerated strongly higher into an extended move. AUDUSD and NZDUSD are rebounding, but cross-pair confirmation is mixed; JPY crosses and the remaining FX universe are choppy or retracing. No independent setup currently clears structure, entry quality, and portfolio-exposure gates without chasing or forcing a trade."
+  "message": "NO_TRADE — reviewed all 18 fresh completed Dukascopy H1 BID/ASK contexts for scan GDESK-2026-09-17T14-621d6933d5. XAUUSD remains strongly elevated after a rapid impulse and is not a clean chase entry; GBP pairs remain unstable after sharp correlated moves. AUD/NZD rebounds, JPY crosses, and the remaining FX universe show mixed continuation/retracement structure without a sufficiently clean independent setup. No candidate clears structure, entry quality, and portfolio-exposure gates without forcing a trade."
 }
