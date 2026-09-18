@@ -1,7 +1,34 @@
 {
-  "decision_id": "GDESK-20260917T232015Z-781EDFBB92",
-  "generated_at": "2026-09-17T23:20:15Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE — complete fresh 18-symbol scan processed for GDESK-2026-09-17T23-781edfbb92 using completed Dukascopy H1 BID/ASK bars. Execution conditions remain poor after rollover: spreads were materially distorted in the preceding hours across major FX and crosses, while the latest completed bars show mostly compression or mixed follow-through. GBPUSD remains structurally soft but has already extended lower and lacks a clean non-chasing trigger; XAUUSD has retraced sharply from the intraday surge and is consolidating with elevated spread. No setup meets the required structure, execution quality, and reward threshold without forcing a trade."
+  "decision_id": "GDESK-20260918T001723Z-8A3AA4E5FB",
+  "generated_at": "2026-09-18T00:17:23Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "AUDJPYc",
+      "side": "BUY",
+      "order_type": "BUY_STOP",
+      "entry": 111.115,
+      "stop": 110.94,
+      "target": 111.465,
+      "volume": 0.01,
+      "risk_pct": 0.5,
+      "valid_until": "2026-09-18T02:00:00Z",
+      "cancel_condition": "Cancel if an H1 bar closes below 110.940 before trigger, or if executable spread materially widens above normal conditions before entry.",
+      "confidence": 0.72,
+      "setup_name": "H1 continuation breakout",
+      "regime": "AUD strength / JPY weakness with late-session upside expansion",
+      "session": "Asia open",
+      "news_proximity": "Not provided in supplied market-context snapshot",
+      "exposure_note": "Adds approximately 0.50% AUD-long/JPY-short directional risk; no second correlated JPY trade proposed.",
+      "reasoning": "AUDJPYc printed a strong 23:00 UTC expansion bar from 110.8605 to 111.1005, closing near its 111.113 high and cleanly above the preceding 22:00 high at 110.9295 and the prior 17:00 swing high at 111.0235. AUDUSDc simultaneously rebounded strongly while USDJPYc also expanded higher, giving cross-pair confirmation of AUD strength and JPY weakness. A buy-stop above 111.113 avoids anticipating the breakout; the stop below 110.940 sits beneath the broken resistance zone, and the 111.465 target provides 2.0R. Latest spread normalized to 0.007 after rollover distortion, so execution quality is acceptable if it remains normal at trigger.",
+      "context": {
+        "scan_id": "GDESK-2026-09-18T00-8a3aa4e5fb",
+        "generated_at": "2026-09-18T00:01:14.550127+00:00",
+        "latest_completed_bar": "2026-09-17T23:00:00+00:00",
+        "source": "Dukascopy BID/ASK"
+      }
+    }
+  ],
+  "message": "TRADE — AUDJPYc BUY_STOP 111.115, SL 110.940, TP 111.465. Fresh complete 18-symbol scan; breakout is cross-confirmed by AUDUSD strength and USDJPY upside."
 }
