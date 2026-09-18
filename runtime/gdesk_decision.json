@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260918T012016Z-E159786627",
-  "generated_at": "2026-09-18T01:20:16Z",
+  "decision_id": "GDESK-20260918T021825Z-7F77C686AD",
+  "generated_at": "2026-09-18T02:18:25Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE — fresh complete 18-symbol H1 scan. No new independent setup clears the desk threshold; AUDJPYc has already moved through the prior BUY_STOP trigger, while the remaining universe is either choppy, extended, or affected by recent rollover spread distortion."
+  "message": "NO_TRADE — fresh complete 18-symbol H1 scan. No genuinely qualified independent setup clears the desk threshold: major FX is mixed/choppy after the prior session moves, JPY crosses have already rebounded from earlier lows without a clean fresh trigger, and XAUUSDc remains volatile/extended with poor immediate structure."
 }
