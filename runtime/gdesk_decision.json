@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260918T131916Z-NO-TRADE",
-  "generated_at": "2026-09-18T13:19:16Z",
+  "decision_id": "GDESK-20260918T141713Z-NO-TRADE",
+  "generated_at": "2026-09-18T14:17:13Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE — all 18 symbols reviewed from fresh current-hour Dukascopy H1 BID/ASK context (scan GDESK-2026-09-18T13-ff80aa7c2b). JPY crosses remain extended after the strong overnight rally but have shifted into pullback/consolidation: GBPJPYc, EURJPYc, CADJPYc, CHFJPYc, AUDJPYc and USDJPYc all lack a clean continuation trigger at the latest completed H1 close, while reversal shorts remain unconfirmed. EURUSDc and GBPUSDc sold off sharply into 11:00 UTC then stabilized, leaving poor chase entries; AUDUSDc and NZDUSDc remain weak without clean fresh breakdown structure. XAUUSDc is volatile and choppy after the 09:00 UTC rejection and 12:00 UTC downswing, with no low-risk entry. No setup meets desk quality, reward-to-risk and exposure rules without forcing a trade."
+  "message": "NO_TRADE — all 18 symbols reviewed from fresh current-hour Dukascopy H1 BID/ASK context (scan GDESK-2026-09-18T14-41330fbdaa). JPY crosses remain broadly elevated after the overnight rally but are consolidating/pulling back without a clean fresh continuation trigger; reversal shorts are not confirmed. EURUSDc and GBPUSDc remain under pressure after the 10:00-13:00 UTC selloff, but current levels are poor chase entries. AUDUSDc and NZDUSDc are weak without a clean new breakdown trigger. XAUUSDc reversed sharply from the morning highs and sold off into 13:00 UTC, leaving elevated volatility and unattractive chase risk. No setup meets desk quality, reward-to-risk, and exposure rules without forcing a trade."
 }
