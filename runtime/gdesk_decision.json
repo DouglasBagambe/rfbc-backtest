@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260918T042006Z-NO-TRADE",
-  "generated_at": "2026-09-18T04:20:06Z",
+  "decision_id": "GDESK-20260918T052400Z-NO-TRADE",
+  "generated_at": "2026-09-18T05:24:00Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE — all 18 symbols reviewed. JPY crosses and AUDUSD show strong fresh expansion, but entries are extended after the 03:00 UTC impulse; USDJPYc also already has a live pullback setup from the prior scan. No additional independent setup offers clean non-chasing risk/reward within portfolio limits."
+  "message": "NO_TRADE — all 18 symbols reviewed from fresh current-hour Dukascopy H1 BID/ASK context (scan GDESK-2026-09-18T05-485adf7e48). JPY crosses remain strongly bid after the 02:00–04:00 UTC expansion but are extended and correlated; chasing would give poor entry quality and concentrated JPY exposure. AUDUSDc and NZDUSDc also show post-impulse volatility, while XAUUSDc remains noisy. No new independent setup meets the desk's non-chasing risk/reward and exposure rules."
 }
