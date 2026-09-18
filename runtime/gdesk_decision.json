@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260918T092150Z-NO-TRADE",
-  "generated_at": "2026-09-18T09:21:50Z",
+  "decision_id": "GDESK-20260918T102215Z-NO-TRADE",
+  "generated_at": "2026-09-18T10:22:15Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE — all 18 symbols reviewed from fresh current-hour Dukascopy H1 BID/ASK context (scan GDESK-2026-09-18T09-9a8c7220c9). JPY crosses show strong synchronized upside through the latest completed H1, but entries are extended after the sharp 07:00–08:00 UTC continuation and would concentrate JPY exposure. XAUUSDc remains elevated near 4392 after a strong multi-hour rise but is consolidating below recent highs without a clean retracement or confirmed breakout. Other FX pairs are mixed or lack sufficiently clean reward-to-risk. No setup currently meets desk entry-quality and exposure rules without chasing."
+  "message": "NO_TRADE — all 18 symbols reviewed from fresh current-hour Dukascopy H1 BID/ASK context (scan GDESK-2026-09-18T10-0b36f05fc9). JPY crosses remain strongly synchronized upward but are extended after the 07:00–09:00 UTC continuation, making fresh entries chase-prone and highly concentrated in JPY exposure. XAUUSDc reversed sharply from the 4398 area into the 4376.65 latest close after its multi-hour rise, leaving no clean confirmed continuation or reversal entry. Other FX pairs remain mixed or lack sufficiently clean structure and reward-to-risk. No setup currently meets desk entry-quality and exposure rules without forcing a trade."
 }
