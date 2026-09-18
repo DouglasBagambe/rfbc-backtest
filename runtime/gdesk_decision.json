@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260918T192019Z-NO-TRADE",
-  "generated_at": "2026-09-18T19:20:19Z",
+  "decision_id": "GDESK-20260918T202035Z-NO-TRADE",
+  "generated_at": "2026-09-18T20:20:35Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE — all 18 symbols reviewed from fresh current-hour Dukascopy H1 BID/ASK context (scan GDESK-2026-09-18T19-6e12e7dc83, generated 2026-09-18T19:00:25.550862Z). Late-Friday conditions remain unsuitable for a fresh qualified entry: USDCHFc is extended after a sharp downside continuation, USDJPYc and multiple JPY crosses have reversed hard from earlier highs, GBPUSDc has already rebounded strongly from its intraday selloff, and XAUUSDc is volatile after a large two-way swing. The remaining crosses are mixed or lack clean confirmation and reward-to-risk. No setup qualifies without chasing or taking poor late-session/correlated exposure."
+  "message": "NO_TRADE — all 18 symbols reviewed from fresh current-hour Dukascopy H1 BID/ASK context (scan GDESK-2026-09-18T20-bbc214c362, generated 2026-09-18T20:01:03.956979Z). Late-Friday conditions remain unsuitable for a fresh qualified entry. USDCHFc is extended after a sustained downside move; USDJPYc and the JPY crosses are consolidating after sharp intraday reversals; GBPUSDc has already rebounded materially from its selloff; XAUUSDc remains volatile after a large two-way swing. The remaining FX crosses are mixed or lack clean confirmation and reward-to-risk. No setup qualifies without chasing, accepting poor late-session conditions, or adding correlated exposure."
 }
