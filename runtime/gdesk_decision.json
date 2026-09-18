@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260918T071840Z-NO-TRADE",
-  "generated_at": "2026-09-18T07:18:40Z",
+  "decision_id": "GDESK-20260918T082017Z-NO-TRADE",
+  "generated_at": "2026-09-18T08:20:17Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE — all 18 symbols reviewed from fresh current-hour Dukascopy H1 BID/ASK context (scan GDESK-2026-09-18T07-fa1cbc3b54). JPY crosses remain strongly elevated after the 02:00–04:00 UTC impulse but the 06:00 bar is a broad pullback, making fresh continuation entries chase-prone and highly correlated. XAUUSDc extended sharply to 4393.57 on the latest completed H1 bar after a multi-hour rebound and is too stretched/volatile for a clean new entry without confirmation or retracement. Remaining FX pairs are mixed or lack sufficient structure and reward-to-risk. No independent setup currently meets desk entry-quality and exposure rules."
+  "message": "NO_TRADE — all 18 symbols reviewed from fresh current-hour Dukascopy H1 BID/ASK context (scan GDESK-2026-09-18T08-037041fe05). JPY crosses rebounded aggressively on the latest completed H1 after a broad 06:00 UTC pullback, but continuation entries are now chase-prone and strongly correlated. XAUUSDc remains bullish but extended near 4393 after a sharp multi-hour rise, with the latest H1 consolidating below 4400 rather than providing a clean retracement or confirmed breakout. Other FX pairs are mixed, range-bound, or lack clean reward-to-risk. No independent setup currently meets desk entry-quality and exposure rules."
 }
