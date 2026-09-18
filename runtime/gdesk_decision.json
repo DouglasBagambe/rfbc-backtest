@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260918T222234Z-NO-TRADE",
-  "generated_at": "2026-09-18T22:22:34Z",
+  "decision_id": "GDESK-20260918T232053Z-NO-TRADE",
+  "generated_at": "2026-09-18T23:20:53Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE — all 18 symbols reviewed from complete fresh current-hour Dukascopy H1 BID/ASK context (scan GDESK-2026-09-18T22-a9a31178dd, generated 2026-09-18T22:02:24.354572Z). No genuinely qualified setup. The latest completed H1 snapshot shows severe late-Friday spread deterioration across the desk (for example EURUSDc 45 pips-equivalent points, GBPUSDc 58, AUDUSDc 74, NZDUSDc 46, USDCHFc 43, XAUUSDc 1.53, with JPY crosses also widened) immediately into the weekend close. Price action is mixed after large intraday reversals and entering now would require accepting abnormal transaction cost and poor execution quality."
+  "message": "NO_TRADE — all 18 symbols reviewed from complete fresh current-hour Dukascopy H1 BID/ASK context (scan GDESK-2026-09-18T23-9e5639969d, generated 2026-09-18T23:03:03.254631Z). No genuinely qualified setup. The final completed H1 snapshot remains late-Friday/weekend-close conditions with severe spread deterioration across the universe (e.g. EURUSDc 0.00045, GBPUSDc 0.00058, AUDUSDc 0.00074, NZDUSDc 0.00046, USDCHFc 0.00043, XAUUSDc 1.53, with JPY crosses also widened). Several pairs show intraday reversals, but execution quality is too poor to justify a new position into the weekend close."
 }
