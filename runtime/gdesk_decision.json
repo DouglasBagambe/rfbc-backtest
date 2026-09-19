@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260918T232053Z-NO-TRADE",
-  "generated_at": "2026-09-18T23:20:53Z",
-  "result": "NO_TRADE",
+  "decision_id": "GDESK-20260919T011727Z-SYSTEM-FAILURE",
+  "generated_at": "2026-09-19T01:17:27Z",
+  "result": "SYSTEM_FAILURE",
   "decisions": [],
-  "message": "NO_TRADE — all 18 symbols reviewed from complete fresh current-hour Dukascopy H1 BID/ASK context (scan GDESK-2026-09-18T23-9e5639969d, generated 2026-09-18T23:03:03.254631Z). No genuinely qualified setup. The final completed H1 snapshot remains late-Friday/weekend-close conditions with severe spread deterioration across the universe (e.g. EURUSDc 0.00045, GBPUSDc 0.00058, AUDUSDc 0.00074, NZDUSDc 0.00046, USDCHFc 0.00043, XAUUSDc 1.53, with JPY crosses also widened). Several pairs show intraday reversals, but execution quality is too poor to justify a new position into the weekend close."
+  "message": "SYSTEM_FAILURE — current-hour G_DESK context exists but is MARKET_CLOSED, not the required MARKET_OPEN/FRESH state. Scan GDESK-2026-09-19T01-ea5aa5e75a generated at 2026-09-19T01:04:25.056473Z. No trading decision was produced."
 }
