@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260921T022045Z-NO-TRADE",
-  "generated_at": "2026-09-21T02:20:45Z",
+  "decision_id": "GDESK-20260921T032120Z-NO-TRADE",
+  "generated_at": "2026-09-21T03:21:20Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: all 18 reported symbols were complete, MARKET_OPEN and FRESH for scan GDESK-2026-09-21T02-f61f355a3a. The first completed Monday H1 bars show broad JPY strength and mixed cross-market follow-through, but the reopen structure is still too thin and correlated to justify a genuinely qualified setup at the required risk quality. No trade forced."
+  "message": "NO_TRADE: all 18 reported symbols were complete, MARKET_OPEN and FRESH for scan GDESK-2026-09-21T03-35337151f6. Monday reopen price action remains thin and highly correlated, with JPY crosses attempting only partial rebounds after Friday weakness and no clean independent H1 setup offering sufficient confirmation and risk quality. No trade forced."
 }
