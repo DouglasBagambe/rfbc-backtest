@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260921T041807Z-NO-TRADE",
-  "generated_at": "2026-09-21T04:18:07Z",
+  "decision_id": "GDESK-20260921T052100Z-NO-TRADE",
+  "generated_at": "2026-09-21T05:21:00Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: all 18 reported symbols were complete, MARKET_OPEN and FRESH for scan GDESK-2026-09-21T04-bf42d05361. Early-Monday H1 action remains mixed and highly correlated: JPY crosses are rebounding unevenly, USD majors lack clean continuation confirmation, and the sharp bearish moves in EURAUD/GBPAUD/XAUUSD do not offer a sufficiently clean risk-quality entry without chasing. No trade forced."
+  "message": "NO_TRADE: all 18 reported symbols were complete, MARKET_OPEN and FRESH for scan GDESK-2026-09-21T05-b07538b112. Early-Monday H1 structure remains mixed and correlated. EURAUD, GBPAUD and XAUUSD retain bearish pressure but current entries would chase already-extended moves; JPY crosses are rebounding without clean continuation confirmation; USD majors remain range-like or conflicting. No setup met the required risk-quality threshold, so no trade was forced."
 }
