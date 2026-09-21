@@ -1,36 +1,7 @@
 {
-  "decision_id": "GDESK-20260921T131920Z-CHFJPY-BUY-STOP",
-  "generated_at": "2026-09-21T13:19:20Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "CHFJPYc",
-      "side": "BUY",
-      "order_type": "BUY_STOP",
-      "entry": 191.60,
-      "stop": 191.27,
-      "target": 192.26,
-      "volume": 0.01,
-      "risk_pct": 0.5,
-      "valid_until": "2026-09-21T15:00:00Z",
-      "cancel_condition": "Cancel if an H1 bar closes below 191.27 before entry, if the order has not triggered by 15:00 UTC, or if broker-side portfolio/risk gates reject it.",
-      "confidence": 0.71,
-      "setup_name": "H1 trend breakout continuation",
-      "regime": "Bullish intraday expansion with higher highs and higher lows",
-      "session": "London afternoon / New York morning",
-      "news_proximity": "Not supplied in the Render market context; unverified",
-      "exposure_note": "0.5% proposed risk; long CHF / short JPY. No second JPY-short setup is proposed, keeping new directional JPY exposure at 0.5%. Existing account risk remains server-side authoritative.",
-      "reasoning": "CHFJPYc is the cleanest continuation candidate in the current 18-symbol scan. From 07:00 through 12:00 UTC it advanced from 191.1165 to 191.5575, with successive expansion through 191.20, 191.31 and 191.50 and only shallow pullbacks. The 12:00 bar held above the 11:00 breakout area and printed a 191.5925 high with a normal 0.021 spread. A buy-stop at 191.60 requires fresh confirmation above the current swing high; the stop is below the 10:00-11:00 breakout base and the 192.26 target provides 2R.",
-      "context": {
-        "scan_id": "GDESK-2026-09-21T13-2545e69443",
-        "source": "Dukascopy BID/ASK",
-        "context_generated_at": "2026-09-21T13:02:08.554904+00:00",
-        "latest_completed_bar": "2026-09-21T12:00:00+00:00",
-        "market_state": "MARKET_OPEN",
-        "freshness": "FRESH"
-      }
-    }
-  ],
-  "message": "TRADE: CHFJPYc BUY_STOP 191.60, SL 191.27, TP 192.26, 0.5% risk. H1 bullish continuation; server-side portfolio gates remain authoritative."
+  "decision_id": "GDESK-20260921T141721Z-NO-TRADE",
+  "generated_at": "2026-09-21T14:17:21Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: all 18 current-hour G_DESK symbols were complete, MARKET_OPEN and FRESH, but no new setup met the qualification and portfolio-quality threshold without forcing an entry. CHFJPYc pulled back below the prior 191.60 breakout trigger, while the broader universe remained mixed or lacked clean confirmation."
 }
