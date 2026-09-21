@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260921T181757Z-NO-TRADE",
-  "generated_at": "2026-09-21T18:17:57Z",
+  "decision_id": "GDESK-20260921T192147Z-NO-TRADE",
+  "generated_at": "2026-09-21T19:21:47Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: fresh MARKET_OPEN context for scan GDESK-2026-09-21T18-56a22ce1ee was complete across all 18 reported symbols. The completed Dukascopy H1 BID/ASK universe was reviewed; several JPY crosses showed directional strength and USDCAD held near intraday highs, but no setup offered a sufficiently clean entry, stop structure, and independent exposure profile to qualify under desk risk rules without forcing a trade."
+  "message": "NO_TRADE: fresh MARKET_OPEN context for scan GDESK-2026-09-21T19-fedf837ddf was complete across all 18 reported symbols. The completed Dukascopy H1 BID/ASK universe was reviewed. USDCAD and several CAD/JPY crosses retained directional momentum while EURUSD and GBPUSD remained soft, but the strongest moves were already extended or consolidating near session extremes; no entry offered sufficiently clean structure and reward-to-risk without forcing a late move or concentrating correlated USD/CAD/JPY exposure."
 }
