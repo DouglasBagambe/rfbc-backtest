@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260920T222159Z-SYSTEM-FAILURE",
-  "generated_at": "2026-09-20T22:21:59Z",
-  "result": "SYSTEM_FAILURE",
+  "decision_id": "GDESK-20260921T001818Z-NO-TRADE",
+  "generated_at": "2026-09-21T00:18:18Z",
+  "result": "NO_TRADE",
   "decisions": [],
-  "message": "SYSTEM_FAILURE: current-hour market context is MARKET_CLOSED. Scan GDESK-2026-09-20T22-0e2cd4dd86 generated at 2026-09-20T22:02:38.776202+00:00. No trading decision was produced."
+  "message": "NO_TRADE: all 18 reported symbols were complete and fresh for scan GDESK-2026-09-21T00-8939781207. Early Monday reopen price action remains too thin/mixed for a genuinely qualified setup; no trade forced."
 }
