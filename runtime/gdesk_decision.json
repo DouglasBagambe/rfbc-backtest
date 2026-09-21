@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260921T001818Z-NO-TRADE",
-  "generated_at": "2026-09-21T00:18:18Z",
+  "decision_id": "GDESK-20260921T012228Z-NO-TRADE",
+  "generated_at": "2026-09-21T01:22:28Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: all 18 reported symbols were complete and fresh for scan GDESK-2026-09-21T00-8939781207. Early Monday reopen price action remains too thin/mixed for a genuinely qualified setup; no trade forced."
+  "message": "NO_TRADE: all 18 reported symbols were complete, MARKET_OPEN and FRESH for scan GDESK-2026-09-21T01-3af287172c. Early Monday reopen structure remains too thin and mixed for a genuinely qualified setup; broad JPY strength is visible but lacks sufficient confirmation/risk quality. No trade forced."
 }
