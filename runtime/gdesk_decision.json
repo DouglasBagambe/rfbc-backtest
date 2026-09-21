@@ -1,36 +1,36 @@
 {
-  "decision_id": "GDESK-20260921T071823Z-USDCAD-BUY-STOP",
-  "generated_at": "2026-09-21T07:18:23Z",
+  "decision_id": "GDESK-20260921T081707Z-XAUUSD-SELL-STOP",
+  "generated_at": "2026-09-21T08:17:07Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "USDCADc",
-      "side": "BUY",
-      "order_type": "BUY_STOP",
-      "entry": 1.40230,
-      "stop": 1.40080,
-      "target": 1.40605,
+      "symbol": "XAUUSDc",
+      "side": "SELL",
+      "order_type": "SELL_STOP",
+      "entry": 4341.80,
+      "stop": 4356.30,
+      "target": 4305.55,
       "volume": 0.01,
       "risk_pct": 0.5,
-      "valid_until": "2026-09-21T10:00:00Z",
-      "cancel_condition": "Cancel if an H1 candle closes below 1.40080 before entry, or if price gaps through 1.40230 without a controlled trigger.",
+      "valid_until": "2026-09-21T11:00:00Z",
+      "cancel_condition": "Cancel if an H1 candle closes above 4356.30 before entry, or if price gaps below 4341.80 without a controlled trigger.",
       "confidence": "MEDIUM_HIGH",
-      "setup_name": "H1 CAD-breakout continuation",
-      "regime": "USDCAD bullish expansion / CAD weakness",
+      "setup_name": "H1 gold downside continuation breakout",
+      "regime": "XAUUSD bearish intraday expansion",
       "session": "London",
       "news_proximity": "Unknown from supplied market context; server-side/live execution checks remain authoritative.",
-      "exposure_note": "Single CAD-short exposure selected; correlated EURCAD/GBPCAD continuation candidates were excluded to avoid stacking CAD risk.",
-      "reasoning": "USDCAD produced the cleanest fresh H1 expansion in the 18-symbol universe: the 06:00 UTC bar advanced from about 1.40091 to 1.401735 and printed 1.402245, extending the sequence of higher closes from the 04:00 and 05:00 bars. A buy-stop just above that completed-bar high requires continuation confirmation rather than chasing the close. The stop sits back below the breakout base/06:00 open area, while the target preserves 2.5R. Other CAD crosses showed similar strength, so only USDCAD is proposed to keep directional CAD exposure concentrated in one trade.",
+      "exposure_note": "Single XAUUSD short adds USD-long directional exposure; with the prior USDCAD USD-long candidate at 0.5% risk, proposed combined USD-directional exposure is capped at 1.0%. No correlated additional USD-long trades are proposed.",
+      "reasoning": "XAUUSD is the cleanest fresh continuation setup in the 18-symbol scan. From 01:00 through 07:00 UTC, completed H1 closes stepped from 4377.60 to 4363.995, 4359.22, 4355.905, 4350.93, 4353.25 and 4344.295, with the latest bar rejecting 4356.195 and closing near its 4341.895 low. A sell-stop just below that completed-bar low requires fresh downside confirmation instead of chasing the close. The stop is above the latest bar high and immediate breakdown structure; the target preserves 2.5R. Other JPY/CAD moves were either correlated with an existing candidate or less clean at the trigger point.",
       "context": {
-        "scan_id": "GDESK-2026-09-21T07-19005624a1",
-        "generated_at": "2026-09-21T07:03:09.146062+00:00",
-        "latest_completed_bar": "2026-09-21T06:00:00+00:00",
+        "scan_id": "GDESK-2026-09-21T08-3db63750c9",
+        "generated_at": "2026-09-21T08:03:50.154962+00:00",
+        "latest_completed_bar": "2026-09-21T07:00:00+00:00",
         "source": "Dukascopy BID/ASK",
         "market_state": "MARKET_OPEN",
         "freshness": "FRESH"
       }
     }
   ],
-  "message": "TRADE: USDCADc BUY_STOP 1.40230, SL 1.40080, TP 1.40605. One CAD-short exposure only; correlated CAD crosses excluded."
+  "message": "TRADE: XAUUSDc SELL_STOP 4341.80, SL 4356.30, TP 4305.55. Downside continuation only on confirmed break; no correlated additional USD-long exposure proposed."
 }
