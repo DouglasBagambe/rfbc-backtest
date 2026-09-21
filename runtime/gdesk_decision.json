@@ -1,36 +1,36 @@
 {
-  "decision_id": "GDESK-20260921T122253Z-NZDUSD-BUY-STOP",
-  "generated_at": "2026-09-21T12:22:53Z",
+  "decision_id": "GDESK-20260921T131920Z-CHFJPY-BUY-STOP",
+  "generated_at": "2026-09-21T13:19:20Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "NZDUSDc",
+      "symbol": "CHFJPYc",
       "side": "BUY",
       "order_type": "BUY_STOP",
-      "entry": 0.57365,
-      "stop": 0.57240,
-      "target": 0.57615,
+      "entry": 191.60,
+      "stop": 191.27,
+      "target": 192.26,
       "volume": 0.01,
       "risk_pct": 0.5,
-      "valid_until": "2026-09-21T14:00:00Z",
-      "cancel_condition": "Cancel if an H1 bar closes back below 0.57240 before entry, if the order has not triggered by 14:00 UTC, or if broker-side portfolio/risk gates reject it.",
-      "confidence": 0.72,
-      "setup_name": "H1 momentum breakout continuation",
-      "regime": "Bullish intraday expansion after consolidation",
+      "valid_until": "2026-09-21T15:00:00Z",
+      "cancel_condition": "Cancel if an H1 bar closes below 191.27 before entry, if the order has not triggered by 15:00 UTC, or if broker-side portfolio/risk gates reject it.",
+      "confidence": 0.71,
+      "setup_name": "H1 trend breakout continuation",
+      "regime": "Bullish intraday expansion with higher highs and higher lows",
       "session": "London afternoon / New York morning",
       "news_proximity": "Not supplied in the Render market context; unverified",
-      "exposure_note": "0.5% proposed risk; long NZD / short USD. No second USD-short setup is proposed, keeping new directional USD exposure at 0.5%.",
-      "reasoning": "NZDUSDc produced the cleanest fresh breakout in the 18-symbol scan: the 11:00 UTC completed H1 bar expanded from 0.57248 to 0.57352, printed 0.573595 above the prior intraday high near 0.573225, and closed near its high with a normal 0.00008 BID/ASK spread. A buy-stop above the breakout high avoids chasing unless continuation confirms; the stop sits below the breakout base/10:00 area and the target is 2R from entry.",
+      "exposure_note": "0.5% proposed risk; long CHF / short JPY. No second JPY-short setup is proposed, keeping new directional JPY exposure at 0.5%. Existing account risk remains server-side authoritative.",
+      "reasoning": "CHFJPYc is the cleanest continuation candidate in the current 18-symbol scan. From 07:00 through 12:00 UTC it advanced from 191.1165 to 191.5575, with successive expansion through 191.20, 191.31 and 191.50 and only shallow pullbacks. The 12:00 bar held above the 11:00 breakout area and printed a 191.5925 high with a normal 0.021 spread. A buy-stop at 191.60 requires fresh confirmation above the current swing high; the stop is below the 10:00-11:00 breakout base and the 192.26 target provides 2R.",
       "context": {
-        "scan_id": "GDESK-2026-09-21T12-7bcb604322",
+        "scan_id": "GDESK-2026-09-21T13-2545e69443",
         "source": "Dukascopy BID/ASK",
-        "context_generated_at": "2026-09-21T12:01:29.050716+00:00",
-        "latest_completed_bar": "2026-09-21T11:00:00+00:00",
+        "context_generated_at": "2026-09-21T13:02:08.554904+00:00",
+        "latest_completed_bar": "2026-09-21T12:00:00+00:00",
         "market_state": "MARKET_OPEN",
         "freshness": "FRESH"
       }
     }
   ],
-  "message": "TRADE: NZDUSDc BUY_STOP 0.57365, SL 0.57240, TP 0.57615, 0.5% risk. Clean H1 breakout continuation; server-side portfolio gates remain authoritative."
+  "message": "TRADE: CHFJPYc BUY_STOP 191.60, SL 191.27, TP 192.26, 0.5% risk. H1 bullish continuation; server-side portfolio gates remain authoritative."
 }
