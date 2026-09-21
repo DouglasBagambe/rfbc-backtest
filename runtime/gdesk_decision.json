@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260921T211747Z-NO-TRADE",
-  "generated_at": "2026-09-21T21:17:47Z",
+  "decision_id": "GDESK-20260921T221808Z-NO-TRADE",
+  "generated_at": "2026-09-21T22:18:08Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: fresh MARKET_OPEN context for scan GDESK-2026-09-21T21-6956077499 was complete across all 18 reported symbols. The completed Dukascopy H1 BID/ASK universe was reviewed. Several pairs retained earlier directional structure, but the latest completed H1 bars were mostly consolidating or retracing, while rollover spreads widened sharply across much of the universe (including EURUSD, GBPUSD, JPY crosses, AUD/NZD crosses and gold). No setup offered sufficiently clean execution quality and reward-to-risk without chasing or accepting abnormal spread conditions."
+  "message": "NO_TRADE: fresh MARKET_OPEN context for scan GDESK-2026-09-21T22-2deaf9d77d was complete across all 18 reported symbols. The supplied completed Dukascopy H1 BID/ASK universe was reviewed. Rollover spreads were abnormally wide on the latest completed bars across much of the universe, including major USD pairs, JPY crosses, AUD/NZD crosses, GBP/AUD/CAD crosses and gold. Price structure was mixed or retracing and no setup offered sufficiently clean execution and reward-to-risk under current spread conditions without chasing."
 }
