@@ -1,7 +1,36 @@
 {
-  "decision_id": "GDESK-20260921T062209Z-NO-TRADE",
-  "generated_at": "2026-09-21T06:22:09Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: all 18 reported symbols were complete, MARKET_OPEN and FRESH for scan GDESK-2026-09-21T06-4050963c3b. The latest completed H1 bars show bearish pressure in EURUSD, GBPUSD and XAUUSD, but those moves are already extended into nearby lows; JPY crosses are mixed/rebounding and the remaining crosses lack clean independent continuation or reversal confirmation. No setup met the required 0.25%-0.5% risk-quality threshold without chasing or adding correlated exposure, so no trade was forced."
+  "decision_id": "GDESK-20260921T071823Z-USDCAD-BUY-STOP",
+  "generated_at": "2026-09-21T07:18:23Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "USDCADc",
+      "side": "BUY",
+      "order_type": "BUY_STOP",
+      "entry": 1.40230,
+      "stop": 1.40080,
+      "target": 1.40605,
+      "volume": 0.01,
+      "risk_pct": 0.5,
+      "valid_until": "2026-09-21T10:00:00Z",
+      "cancel_condition": "Cancel if an H1 candle closes below 1.40080 before entry, or if price gaps through 1.40230 without a controlled trigger.",
+      "confidence": "MEDIUM_HIGH",
+      "setup_name": "H1 CAD-breakout continuation",
+      "regime": "USDCAD bullish expansion / CAD weakness",
+      "session": "London",
+      "news_proximity": "Unknown from supplied market context; server-side/live execution checks remain authoritative.",
+      "exposure_note": "Single CAD-short exposure selected; correlated EURCAD/GBPCAD continuation candidates were excluded to avoid stacking CAD risk.",
+      "reasoning": "USDCAD produced the cleanest fresh H1 expansion in the 18-symbol universe: the 06:00 UTC bar advanced from about 1.40091 to 1.401735 and printed 1.402245, extending the sequence of higher closes from the 04:00 and 05:00 bars. A buy-stop just above that completed-bar high requires continuation confirmation rather than chasing the close. The stop sits back below the breakout base/06:00 open area, while the target preserves 2.5R. Other CAD crosses showed similar strength, so only USDCAD is proposed to keep directional CAD exposure concentrated in one trade.",
+      "context": {
+        "scan_id": "GDESK-2026-09-21T07-19005624a1",
+        "generated_at": "2026-09-21T07:03:09.146062+00:00",
+        "latest_completed_bar": "2026-09-21T06:00:00+00:00",
+        "source": "Dukascopy BID/ASK",
+        "market_state": "MARKET_OPEN",
+        "freshness": "FRESH"
+      }
+    }
+  ],
+  "message": "TRADE: USDCADc BUY_STOP 1.40230, SL 1.40080, TP 1.40605. One CAD-short exposure only; correlated CAD crosses excluded."
 }
