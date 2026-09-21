@@ -1,7 +1,36 @@
 {
-  "decision_id": "GDESK-20260921T141721Z-NO-TRADE",
-  "generated_at": "2026-09-21T14:17:21Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: all 18 current-hour G_DESK symbols were complete, MARKET_OPEN and FRESH, but no new setup met the qualification and portfolio-quality threshold without forcing an entry. CHFJPYc pulled back below the prior 191.60 breakout trigger, while the broader universe remained mixed or lacked clean confirmation."
+  "decision_id": "GDESK-20260921T152044Z-CHFJPY-BUY-STOP",
+  "generated_at": "2026-09-21T15:20:44Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "CHFJPYc",
+      "side": "BUY",
+      "order_type": "BUY_STOP",
+      "entry": 191.90,
+      "stop": 191.42,
+      "target": 192.86,
+      "volume": 0.01,
+      "risk_pct": 0.5,
+      "valid_until": "2026-09-21T17:00:00Z",
+      "cancel_condition": "Cancel if an H1 candle closes back below 191.42 before entry, or if the order has not triggered by valid_until.",
+      "confidence": "HIGH",
+      "setup_name": "H1 momentum breakout continuation",
+      "regime": "Bullish momentum / range expansion",
+      "session": "London-New York overlap",
+      "news_proximity": "Not supplied in the Render market context; no news assumption made.",
+      "exposure_note": "Long CHF / short JPY at 0.5% proposed risk; no additional correlated decision proposed, keeping aggregate proposed risk at 0.5%.",
+      "reasoning": "CHFJPYc showed the cleanest structure in the 18-symbol universe: sustained intraday higher prices followed by a decisive 14:00 UTC expansion from 191.463 to 191.8675, closing above the prior session high near 191.59. A stop entry above 191.90 requires continuation rather than chasing the completed breakout candle. Stop 191.42 sits below the breakout candle origin/recent structure; target 192.86 provides approximately 2R.",
+      "context": {
+        "scan_id": "GDESK-2026-09-21T15-78347b3555",
+        "source": "Dukascopy BID/ASK",
+        "generated_at": "2026-09-21T15:03:29.853759+00:00",
+        "latest_completed_bar": "2026-09-21T14:00:00+00:00",
+        "market_state": "MARKET_OPEN",
+        "freshness": "FRESH"
+      }
+    }
+  ],
+  "message": "TRADE: CHFJPYc BUY_STOP 191.90, SL 191.42, TP 192.86. One clean H1 breakout-continuation setup qualified across the complete 18-symbol universe."
 }
