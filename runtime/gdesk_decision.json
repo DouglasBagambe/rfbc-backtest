@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260921T172227Z-NO-TRADE",
-  "generated_at": "2026-09-21T17:22:27Z",
+  "decision_id": "GDESK-20260921T181757Z-NO-TRADE",
+  "generated_at": "2026-09-21T18:17:57Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: fresh MARKET_OPEN context for scan GDESK-2026-09-21T17-fcb8e6fa4c was complete across all 18 reported symbols. The H1 universe was reviewed and no new setup qualified strongly enough under the desk risk and duplicate-exposure rules without forcing a trade."
+  "message": "NO_TRADE: fresh MARKET_OPEN context for scan GDESK-2026-09-21T18-56a22ce1ee was complete across all 18 reported symbols. The completed Dukascopy H1 BID/ASK universe was reviewed; several JPY crosses showed directional strength and USDCAD held near intraday highs, but no setup offered a sufficiently clean entry, stop structure, and independent exposure profile to qualify under desk risk rules without forcing a trade."
 }
