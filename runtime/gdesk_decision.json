@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260921T192147Z-NO-TRADE",
-  "generated_at": "2026-09-21T19:21:47Z",
+  "decision_id": "GDESK-20260921T201928Z-NO-TRADE",
+  "generated_at": "2026-09-21T20:19:28Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: fresh MARKET_OPEN context for scan GDESK-2026-09-21T19-fedf837ddf was complete across all 18 reported symbols. The completed Dukascopy H1 BID/ASK universe was reviewed. USDCAD and several CAD/JPY crosses retained directional momentum while EURUSD and GBPUSD remained soft, but the strongest moves were already extended or consolidating near session extremes; no entry offered sufficiently clean structure and reward-to-risk without forcing a late move or concentrating correlated USD/CAD/JPY exposure."
+  "message": "NO_TRADE: fresh MARKET_OPEN context for scan GDESK-2026-09-21T20-f16e9c4f8d was complete across all 18 reported symbols. The completed Dukascopy H1 BID/ASK universe was reviewed. USD majors were mixed-to-soft while several JPY and CAD crosses showed earlier directional movement, but the latest completed H1 bars were mostly consolidating, retracing, or sitting too close to recent session extremes. Gold was volatile and directionally noisy after a sharp intraday selloff/rebound sequence. No setup offered sufficiently clean structure and reward-to-risk without chasing or creating concentrated correlated exposure."
 }
