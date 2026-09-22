@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260922T062155Z-NO-TRADE",
-  "generated_at": "2026-09-22T06:21:55Z",
+  "decision_id": "GDESK-20260922T072240Z-NO-TRADE",
+  "generated_at": "2026-09-22T07:22:40Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-22T06-f568280a48 reviewed from completed Dukascopy H1 BID/ASK bars through 05:00 UTC. NZDUSD has already expanded sharply and is vulnerable to chase risk; XAUUSD printed a strong bearish expansion into fresh lows but is extended and volatile; JPY crosses are mixed after earlier strength; the remaining majors and crosses lack a clean, well-defined continuation or reversal entry with acceptable structure. No setup is sufficiently clean at current levels to justify 0.25%-0.5% risk without chasing momentum or taking unstable/correlated exposure."
+  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-22T07-fb10b6ce29 reviewed from completed Dukascopy H1 BID/ASK bars through 06:00 UTC. XAUUSD remains in a strong bearish expansion but is already extended near fresh lows, making immediate short entry chase-prone; USDJPY and CADJPY printed bullish 06:00 continuation bars but are also extended into correlated JPY exposure; NZDUSD remains elevated after its earlier sharp expansion; GBPUSD and EURUSD weakened into 06:00 without a clean continuation trigger; remaining crosses are mixed or range-bound. No setup offers sufficiently clean structure and reward-to-risk to justify 0.25%-0.5% risk without chasing or taking unstable/correlated exposure."
 }
