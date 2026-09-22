@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260922T102019Z-NO-TRADE",
-  "generated_at": "2026-09-22T10:20:19Z",
+  "decision_id": "GDESK-20260922T112252Z-NO-TRADE",
+  "generated_at": "2026-09-22T11:22:52Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-22T10-002212de83 reviewed from completed Dukascopy H1 BID/ASK bars through 09:00 UTC. Broad JPY crosses remain in a sharp risk-off impulse with GBPJPY, EURJPY, CADJPY, AUDJPY and USDJPY extending lower, while EURUSD/GBPUSD are rebounding from large intraday selloffs and XAUUSD is rebounding after a steep decline. The latest structure is dominated by post-impulse volatility and correlated reversals; entering now would mostly chase extended moves or fade unstable rebounds. No independent setup meets the required quality, exposure and reward-to-risk threshold for 0.25%-0.5% risk this scan."
+  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-22T11-d204a690fb reviewed from completed Dukascopy H1 BID/ASK bars through 10:00 UTC. The broad JPY selloff in GBPJPY, EURJPY, CADJPY, AUDJPY and USDJPY has already undergone a sharp impulse and partial rebound, USDCHF remains extended lower after its 09:00 breakdown, XAUUSD is volatile after a large intraday drop/rebound, and major USD pairs are mixed around post-impulse retracements. The latest completed bars do not provide a clean independent continuation or reversal entry with sufficient structure and reward-to-risk without chasing. No setup qualifies at 0.25%-0.5% risk this scan."
 }
