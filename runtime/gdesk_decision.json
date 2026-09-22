@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260922T151804Z-NO-TRADE",
-  "generated_at": "2026-09-22T15:18:04Z",
+  "decision_id": "GDESK-20260922T161739Z-NO-TRADE",
+  "generated_at": "2026-09-22T16:17:39Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan reviewed. Broad USD strength and JPY-cross weakness are visible, but the latest H1 structures are extended or mixed after sharp intraday moves and no new setup offers a clean confirmation/invalidation profile without chasing or duplicating recent exposure. Wait for the next completed H1 scan."
+  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-22T16-963d9d7c9d reviewed from Dukascopy completed H1 BID/ASK bars. USD strength remains broad (EURUSD, GBPUSD, AUDUSD and NZDUSD lower; USDCAD and USDCHF firmer), while JPY crosses are mixed/rebounding after earlier weakness. The strongest USD moves are already extended into the latest completed H1 bar and no candidate offers a sufficiently clean fresh entry, stop invalidation and reward profile without chasing or concentrating correlated USD exposure. Wait for the next completed H1 scan."
 }
