@@ -1,6 +1,7 @@
 {
-  "decision_id": "GDESK-20260921T232232Z-NO-TRADE",
-  "generated_at": "2026-09-21T23:22:32Z",
+  "decision_id": "GDESK-20260922T001908Z-NO-TRADE",
+  "generated_at": "2026-09-22T00:19:08Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: fresh MARKET_OPEN context for scan GDESK-2026-09-21T23-70692bf7a0 was complete across all 18 reported symbols. The supplied completed Dukascopy H1 BID/ASK universe was reviewed. No setup met the execution-quality threshold without forcing a trade: several pairs remain in mixed/retracing H1 structure, while rollover-related spread distortion remains material in the recent bars across multiple USD pairs, JPY crosses, GBP/AUD/CAD crosses and gold. The cleaner directional moves are either extended or lack a sufficiently attractive fresh entry with disciplined stop placement and reward-to-risk."
+  "message": "NO_TRADE: fresh MARKET_OPEN context for scan GDESK-2026-09-22T00-ba0b9614ea was complete across all 18 reported symbols. The supplied completed Dukascopy H1 BID/ASK universe was reviewed. No setup met the execution-quality threshold without forcing a trade. Several instruments remain in mixed or late-stage intraday structure, while recent rollover spread expansion materially distorts execution quality across multiple USD pairs, JPY crosses, GBP/AUD/CAD crosses and XAUUSD. Gold rebounded strongly into the latest completed bar but a fresh entry here would be chase-prone without confirmation beyond the supplied completed H1 data. Wait for cleaner post-rollover structure and spreads."
+}
