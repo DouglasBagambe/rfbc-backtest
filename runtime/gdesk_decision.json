@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260922T122000Z-NO-TRADE",
-  "generated_at": "2026-09-22T12:20:00Z",
+  "decision_id": "GDESK-20260922T132227Z-NO-TRADE",
+  "generated_at": "2026-09-22T13:22:27Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-22T12-6e81c4187d reviewed from completed Dukascopy H1 BID/ASK bars through 11:00 UTC. JPY crosses remain in post-impulse rebound/consolidation after the sharp 08:00-09:00 selloff; USDJPY, EURJPY, GBPJPY, CADJPY and AUDJPY have bounced but not formed a clean continuation or reversal trigger. EURUSD and GBPUSD are mixed after their morning volatility, USDCHF is rebounding from an extended breakdown, and XAUUSD remains volatile and directionally unclear after its large intraday selloff/rebound. Crosses are similarly mixed. No independent setup offers sufficiently clean structure and reward-to-risk without chasing, so no trade qualifies at 0.25%-0.5% risk this scan."
+  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-22T13-eaf55d6210 reviewed from completed Dukascopy H1 BID/ASK bars through 12:00 UTC. JPY crosses are rebounding after the sharp 08:00-09:00 selloff but remain inside recovery/consolidation rather than a clean continuation or reversal trigger. EURUSD and GBPUSD remain soft after volatile morning moves; AUDUSD and NZDUSD are rolling over after rebounds; USDCHF is rebounding from its breakdown; XAUUSD is still highly volatile after a large selloff and partial recovery. Crosses remain mixed. No independent setup has sufficiently clean structure and reward-to-risk to justify entry without chasing, so no trade qualifies at 0.25%-0.5% risk this scan."
 }
