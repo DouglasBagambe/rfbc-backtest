@@ -1,7 +1,35 @@
 {
-  "decision_id": "GDESK-20260922T012214Z-NO-TRADE",
-  "generated_at": "2026-09-22T01:22:14Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: fresh MARKET_OPEN context for scan GDESK-2026-09-22T01-0fa78e26a6 was complete across all 18 reported symbols. The supplied completed Dukascopy H1 BID/ASK universe was reviewed. No setup met the execution-quality threshold without forcing a trade. Price action remains mixed after rollover, with pronounced spread expansion in multiple USD, JPY, GBP/AUD/CAD crosses and XAUUSD around the 20:00-21:00 UTC bars. The latest completed H1 bars show partial normalization but no sufficiently clean, confirmed entry with attractive structure and risk/reward across the universe."
+  "decision_id": "GDESK-20260922T022135Z-AUDUSD-SELL-LIMIT",
+  "generated_at": "2026-09-22T02:21:35Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "AUDUSDc",
+      "side": "SELL",
+      "order_type": "SELL_LIMIT",
+      "entry": 0.71115,
+      "stop": 0.71225,
+      "target": 0.70840,
+      "volume": 0.01,
+      "risk_pct": 0.5,
+      "valid_until": "2026-09-22T05:00:00Z",
+      "cancel_condition": "Cancel if an H1 candle closes above 0.71225 before entry, if the order is not filled by 05:00 UTC, or if spread/market conditions become abnormal before fill.",
+      "confidence": "HIGH",
+      "setup_name": "AUD weakness breakdown pullback",
+      "regime": "Bearish momentum / fresh downside expansion",
+      "session": "Asia",
+      "news_proximity": "Not supplied in market context; server-side/live execution checks remain authoritative.",
+      "exposure_note": "Single AUD-short/USD-long proposal; 0.5% proposed risk, within the <=1.0% directional currency exposure cap before server-side account-risk enforcement.",
+      "reasoning": "AUDUSD broke sharply lower on the latest completed H1 bar, closing 0.710435 after trading down to 0.70984. The move is cross-confirmed by simultaneous AUD weakness: AUDJPY also sold off hard while EURAUD and GBPAUD broke higher. Rather than chase the extended breakdown, use a SELL_LIMIT on a retrace toward 0.71115, below the prior consolidation/failed support area. Stop 0.71225 invalidates the immediate bearish continuation structure; target 0.70840 provides 2.5R from the planned entry.",
+      "context": {
+        "scan_id": "GDESK-2026-09-22T02-39131a1708",
+        "generated_at": "2026-09-22T02:00:37.776418+00:00",
+        "latest_completed_bar": "2026-09-22T01:00:00+00:00",
+        "source": "Dukascopy BID/ASK",
+        "timeframe": "H1 completed bars"
+      }
+    }
+  ],
+  "message": "TRADE: AUDUSDc SELL_LIMIT pullback setup selected from a complete fresh 18-symbol MARKET_OPEN scan; AUD weakness is confirmed across AUDUSD, AUDJPY, EURAUD and GBPAUD. Server-side portfolio/account-risk gates remain authoritative."
 }
