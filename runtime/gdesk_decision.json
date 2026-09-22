@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260922T181747Z-NO-TRADE",
-  "generated_at": "2026-09-22T18:17:47Z",
+  "decision_id": "GDESK-20260922T192124Z-NO-TRADE",
+  "generated_at": "2026-09-22T19:21:24Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-22T18-72dbe1de71 reviewed from Dukascopy completed H1 BID/ASK bars. EURUSD and GBPUSD remain weak and USDCAD firm, but those USD moves are already extended and the latest completed bars are consolidating/retracing rather than offering a clean fresh trigger. JPY crosses are mixed, while XAUUSD has rebounded sharply inside a volatile intraday range. Crosses including EURAUD and GBPAUD show directional pressure but no sufficiently clean new entry/invalidation/reward profile without chasing or stacking correlated exposure. Wait for the next completed H1 scan."
+  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-22T19-5df702829a reviewed from Dukascopy completed H1 BID/ASK bars. USD weakness seen earlier has already produced extended moves in EURUSD/GBPUSD and corresponding strength in USDCAD, while the latest completed bars are mostly retracing or consolidating rather than providing a clean fresh trigger. JPY crosses remain mixed after the earlier volatility; XAUUSD has rebounded sharply into prior intraday highs after a large two-way range. Crosses such as EURAUD/GBPAUD retain pressure but do not offer a sufficiently clean entry, invalidation and reward profile without chasing or stacking correlated exposure. Wait for the next completed H1 scan."
 }
