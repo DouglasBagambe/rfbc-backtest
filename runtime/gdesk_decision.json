@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260922T081823Z-NO-TRADE",
-  "generated_at": "2026-09-22T08:18:23Z",
+  "decision_id": "GDESK-20260922T092205Z-NO-TRADE",
+  "generated_at": "2026-09-22T09:22:05Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-22T08-940734552d reviewed from completed Dukascopy H1 BID/ASK bars through 07:00 UTC. XAUUSD, EURUSD, GBPUSD and AUDUSD show strong bearish expansion into fresh short-term lows, but immediate shorts are chase-prone after large impulse bars. USDJPY is advancing while AUDJPY reversed sharply lower, leaving JPY signals internally mixed; USDCAD rebounded sharply and several crosses remain range-bound or conflicting. No setup offers a sufficiently clean, non-extended entry with acceptable structure and reward-to-risk for 0.25%-0.5% risk this scan."
+  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-22T09-9358ac10b3 reviewed from completed Dukascopy H1 BID/ASK bars through 08:00 UTC. The latest hour shows broad high-volatility dislocation: EURUSD and GBPUSD printed deep intrabar selloffs with partial rebounds; GBPJPY, EURJPY, CADJPY, CHFJPY, AUDJPY and USDJPY all sold off sharply; XAUUSD rebounded violently after a multi-hour decline. Several AUD/NZD and cross pairs also show large reversal bars. Entering now would chase post-impulse moves or trade directly into unstable reversals, while cross-market JPY/USD/gold structure is not clean enough for a high-confidence continuation or pullback entry. No setup meets the required quality and reward-to-risk threshold for 0.25%-0.5% risk this scan."
 }
