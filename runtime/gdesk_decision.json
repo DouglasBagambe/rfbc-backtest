@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260922T032000Z-NO-TRADE",
-  "generated_at": "2026-09-22T03:20:00Z",
+  "decision_id": "GDESK-20260922T042144Z-NO-TRADE",
+  "generated_at": "2026-09-22T04:21:44Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan reviewed. The latest H1 shows sharp reversal/expansion in several AUD/NZD crosses and mixed follow-through elsewhere; no new setup offers sufficiently clean structure and reward-to-risk without chasing or duplicating concentrated currency exposure. Existing server-side portfolio/account-risk gates remain authoritative."
+  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-22T04-2564910d0b reviewed from completed Dukascopy H1 BID/ASK bars. JPY crosses show constructive upward drift while AUD/NZD pairs are reacting to sharp recent expansion, but no setup is clean enough at current levels to justify 0.25%-0.5% risk without chasing, entering after unstable reversal, or concentrating correlated currency exposure."
 }
