@@ -1,35 +1,7 @@
 {
-  "decision_id": "GDESK-20260922T141810Z-USDCAD-BUY-STOP",
-  "generated_at": "2026-09-22T14:18:10Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "USDCADc",
-      "side": "BUY",
-      "order_type": "BUY_STOP",
-      "entry": 1.40570,
-      "stop": 1.40320,
-      "target": 1.41070,
-      "volume": 0.01,
-      "risk_pct": 0.35,
-      "valid_until": "2026-09-22T16:00:00Z",
-      "cancel_condition": "Cancel if not triggered by 16:00 UTC, or if a completed H1 candle closes below 1.40320 before entry.",
-      "confidence": "medium",
-      "setup_name": "H1 bullish continuation breakout",
-      "regime": "bullish intraday expansion after consolidation",
-      "session": "London-New York overlap",
-      "news_proximity": "Unknown from supplied market-context feed; no news calendar was included.",
-      "exposure_note": "Standalone long-USD/short-CAD exposure; proposed risk 0.35%, below the 1.0% currency-direction cap before server-side existing-account checks.",
-      "reasoning": "USDCAD recovered from the 07:00-09:00 pullback and printed a clean sequence of higher H1 closes from 11:00 through 13:00 UTC (1.40430, 1.404815, 1.40531), with the latest bar probing 1.40564. A buy-stop above that high avoids chasing inside the range and requires continuation confirmation. Stop 1.40320 sits below the 11:00 breakout base; target 1.41070 provides approximately 2R. Other symbols are either consolidating after sharp moves, showing mixed cross-currency structure, or lack a comparably clean trigger.",
-      "context": {
-        "scan_id": "GDESK-2026-09-22T14-90249c25e0",
-        "generated_at": "2026-09-22T14:03:15.348715+00:00",
-        "latest_completed_bar": "2026-09-22T13:00:00+00:00",
-        "source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars"
-      }
-    }
-  ],
-  "message": "TRADE: USDCADc BUY_STOP 1.40570, SL 1.40320, TP 1.41070, 0.35% proposed risk. Complete fresh 18-symbol MARKET_OPEN scan reviewed; server-side portfolio gates remain authoritative."
+  "decision_id": "GDESK-20260922T151804Z-NO-TRADE",
+  "generated_at": "2026-09-22T15:18:04Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan reviewed. Broad USD strength and JPY-cross weakness are visible, but the latest H1 structures are extended or mixed after sharp intraday moves and no new setup offers a clean confirmation/invalidation profile without chasing or duplicating recent exposure. Wait for the next completed H1 scan."
 }
