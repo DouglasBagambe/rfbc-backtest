@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260922T192449Z-NO-TRADE",
-  "generated_at": "2026-09-22T19:24:49Z",
+  "decision_id": "GDESK-20260922T201818Z-NO-TRADE",
+  "generated_at": "2026-09-22T20:18:18Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-22T19-5df702829a reviewed from Dukascopy completed H1 BID/ASK bars. Earlier USD-driven moves are extended and the latest completed H1 bars are retracing or consolidating rather than presenting a clean fresh trigger. JPY crosses remain mixed after earlier volatility; XAUUSD has rebounded sharply into prior intraday highs after a large two-way range. No setup currently offers a sufficiently clean entry, invalidation and reward profile without chasing or stacking correlated exposure. Wait for the next completed H1 scan."
+  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-22T20-342adbe2a9 reviewed from Dukascopy completed H1 BID/ASK bars. USD majors remain mixed after the earlier directional move; EURUSD and GBPUSD are rebounding from intraday lows while USDCHF has reversed lower. JPY crosses are consolidating after sharp earlier volatility. USDCAD retains upside structure but is pulling back without a clean fresh trigger, and XAUUSD has rebounded strongly toward prior intraday highs where chasing would give poor invalidation/reward. No setup currently clears the quality threshold without chasing or taking ambiguous correlated exposure. Wait for the next completed H1 scan."
 }
