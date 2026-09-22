@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260922T052221Z-NO-TRADE",
-  "generated_at": "2026-09-22T05:22:21Z",
+  "decision_id": "GDESK-20260922T062155Z-NO-TRADE",
+  "generated_at": "2026-09-22T06:21:55Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-22T05-bfeec4f9c3 reviewed from completed Dukascopy H1 BID/ASK bars through 04:00 UTC. JPY crosses retain constructive upward structure, while AUD/NZD and several crosses are still digesting sharp recent expansion/reversal. XAUUSD remains choppy after a volatile downswing. No setup is sufficiently clean at current levels to justify 0.25%-0.5% risk without chasing momentum, entering unstable reversal structure, or adding correlated currency exposure."
+  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-22T06-f568280a48 reviewed from completed Dukascopy H1 BID/ASK bars through 05:00 UTC. NZDUSD has already expanded sharply and is vulnerable to chase risk; XAUUSD printed a strong bearish expansion into fresh lows but is extended and volatile; JPY crosses are mixed after earlier strength; the remaining majors and crosses lack a clean, well-defined continuation or reversal entry with acceptable structure. No setup is sufficiently clean at current levels to justify 0.25%-0.5% risk without chasing momentum or taking unstable/correlated exposure."
 }
