@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260923T002109Z-NO-TRADE",
-  "generated_at": "2026-09-23T00:21:09Z",
+  "decision_id": "GDESK-20260923T011719Z-NO-TRADE",
+  "generated_at": "2026-09-23T01:17:19Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-23T00-901e1f86b2 reviewed from Dukascopy completed H1 BID/ASK bars. No setup clears the production quality threshold. Major USD pairs remain mixed after the prior session move, JPY crosses are consolidating rather than presenting clean continuation triggers, and several crosses show recent rollover-spread distortion. XAUUSD rebounded strongly into the 4360s but does not offer a clean low-risk continuation or reversal entry from the completed 23:00 UTC bar. Wait for the next completed H1 scan."
+  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-23T01-5bc3ae8206 reviewed from Dukascopy completed H1 BID/ASK bars through 00:00 UTC. No setup clears the production quality threshold. Major USD pairs are mixed after the prior-session move, JPY crosses are rebounding/consolidating without a clean confirmed continuation trigger, several crosses retain rollover-spread distortion, and XAUUSD remains volatile after its sharp rebound with no clean low-risk entry. Wait for the next completed H1 scan."
 }
