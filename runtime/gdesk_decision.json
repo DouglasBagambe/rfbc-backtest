@@ -1,35 +1,35 @@
 {
-  "decision_id": "GDESK-20260923T092039Z-CADJPY-BREAKOUT",
-  "generated_at": "2026-09-23T09:20:39Z",
+  "decision_id": "GDESK-20260923T102238Z-GBPCAD-BREAKDOWN",
+  "generated_at": "2026-09-23T10:22:38Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "CADJPYc",
-      "side": "BUY",
-      "order_type": "BUY_STOP",
-      "entry": 112.14,
-      "stop": 111.96,
-      "target": 112.50,
+      "symbol": "GBPCADc",
+      "side": "SELL",
+      "order_type": "SELL_STOP",
+      "entry": 1.8698,
+      "stop": 1.87305,
+      "target": 1.8633,
       "volume": 0.01,
       "risk_pct": 0.5,
-      "valid_until": "2026-09-23T12:00:00Z",
-      "cancel_condition": "Cancel if not triggered by valid_until, or if a completed H1 candle closes below 111.96 before entry.",
-      "confidence": 0.73,
-      "setup_name": "H1 range breakout continuation",
-      "regime": "Bullish breakout from intraday consolidation",
+      "valid_until": "2026-09-23T13:00:00Z",
+      "cancel_condition": "Cancel if not triggered by valid_until, or if a completed H1 candle closes above 1.87305 before entry.",
+      "confidence": 0.76,
+      "setup_name": "H1 bearish breakdown continuation",
+      "regime": "Strong bearish momentum with successive lower highs and lower lows",
       "session": "London",
       "news_proximity": "Not assessed beyond supplied Render market context",
-      "exposure_note": "0.5% proposed CAD-long/JPY-short risk; single setup, aggregate proposed risk 0.5% and below portfolio limits. Existing account exposure remains server-enforced.",
-      "reasoning": "CADJPYc printed a decisive 08:00 UTC H1 expansion candle, closing 112.1255 near its 112.1255 high and above the prior 24-hour resistance near 112.0745. A BUY_STOP at 112.14 requires continuation confirmation instead of chasing the completed candle; 111.96 sits below the breakout base/recent structure, and 112.50 provides approximately 2R reward-to-risk.",
+      "exposure_note": "0.5% proposed GBP-short/CAD-long risk. This is a single new setup; proposed aggregate risk is 0.5%. Combined with the previously published 0.5% CADJPY CAD-long setup, maximum proposed CAD directional exposure is 1.0%, at the stated limit; existing live account risk remains server-enforced.",
+      "reasoning": "GBPCADc shows the cleanest continuation structure in the fresh 18-symbol scan: the 07:00, 08:00 and 09:00 UTC H1 closes stepped down from 1.874155 to 1.872895 to 1.870485, with the latest candle closing near its low after breaking prior intraday support. A SELL_STOP at 1.8698 requires a fresh break below the 09:00 low near 1.86989 rather than chasing the completed candle. The stop at 1.87305 is above the broken 08:00 structure, while 1.8633 gives approximately 2R reward-to-risk.",
       "context": {
-        "scan_id": "GDESK-2026-09-23T09-7593378b5f",
+        "scan_id": "GDESK-2026-09-23T10-55f66a9fb9",
         "source": "Dukascopy BID/ASK",
-        "generated_at": "2026-09-23T09:04:17.656324+00:00",
-        "latest_completed_bar": "2026-09-23T08:00:00+00:00",
+        "generated_at": "2026-09-23T10:04:59.652032+00:00",
+        "latest_completed_bar": "2026-09-23T09:00:00+00:00",
         "timeframe": "H1 completed bars"
       }
     }
   ],
-  "message": "TRADE: CADJPYc BUY_STOP 112.14, SL 111.96, TP 112.50. Fresh complete 18-symbol MARKET_OPEN scan reviewed; CADJPY produced the cleanest confirmed H1 breakout structure without forcing an immediate chase entry."
+  "message": "TRADE: GBPCADc SELL_STOP 1.8698, SL 1.87305, TP 1.8633. Fresh complete 18-symbol MARKET_OPEN scan reviewed; GBPCAD produced the cleanest H1 bearish continuation setup without chasing the completed candle."
 }
