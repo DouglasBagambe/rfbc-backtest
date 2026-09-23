@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260923T142044Z-NO-TRADE",
-  "generated_at": "2026-09-23T14:20:44Z",
+  "decision_id": "GDESK-20260923T152141Z-NO-TRADE",
+  "generated_at": "2026-09-23T15:21:41Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: fresh complete 18-symbol MARKET_OPEN scan GDESK-2026-09-23T14-d79ca950c8 reviewed. EURAUDc long and GBPUSDc short remain the strongest H1 continuation structures, but both already have still-valid pending G_DESK setups from the prior decision, so duplicates are not issued. AUDUSDc, XAUUSDc and other USD-strength continuations are extended after large 13:00 UTC impulse bars and would be chase entries; remaining crosses lack sufficiently clean independent confirmation."
+  "message": "NO_TRADE: fresh complete 18-symbol MARKET_OPEN scan GDESK-2026-09-23T15-73913d56cf reviewed. USD-strength/AUD-weakness continuation remains dominant, but EURUSDc, GBPUSDc, AUDUSDc, NZDUSDc, XAUUSDc and related crosses are extended after the 13:00 UTC impulse and do not offer a clean non-chase H1 entry. EURAUDc/GBPAUDc continuation is constructive but overlaps the prior still-valid AUD-weakness setup context, so no duplicate correlated exposure is issued. Remaining JPY/CAD/CHF crosses lack sufficiently clean independent confirmation."
 }
