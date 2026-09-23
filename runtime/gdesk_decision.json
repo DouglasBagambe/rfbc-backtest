@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260923T181814Z-NO-TRADE",
-  "generated_at": "2026-09-23T18:18:14Z",
+  "decision_id": "GDESK-20260923T192019Z-NO-TRADE",
+  "generated_at": "2026-09-23T19:20:19Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: fresh complete 18-symbol MARKET_OPEN scan GDESK-2026-09-23T18-10170fe354 reviewed. Broad USD strength and AUD/NZD weakness remain visible, but the latest completed H1 bars show retracement or loss of clean continuation across several of the strongest prior moves. EURUSDc and GBPUSDc remain extended lower, AUDUSDc/NZDUSDc bounced sharply from their lows, USDJPYc and USDCHFc pulled back after strength, and XAUUSDc is rebounding inside elevated post-selloff volatility. Crosses are mixed and correlated exposure would dominate any continuation basket. No independent setup meets the quality, entry, risk and exposure gates without chasing or forcing a trade."
+  "message": "NO_TRADE: fresh complete 18-symbol MARKET_OPEN scan GDESK-2026-09-23T19-e765213146 reviewed. USD strength remains broad against EUR, GBP, AUD and NZD, while USDJPYc and USDCHFc retain higher intraday structure, but the latest completed H1 bars are retracing or consolidating after already-extended directional moves. EURUSDc/GBPUSDc remain near session lows after sharp declines; AUDUSDc/NZDUSDc have bounced from lows; USDJPYc pulled back sharply before a partial recovery; XAUUSDc is volatile after a large selloff and rebound. Crosses are mixed and highly correlated continuation entries would concentrate exposure. No setup meets the quality, entry, risk and exposure gates without chasing or forcing a trade."
 }
