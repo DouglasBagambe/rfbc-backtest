@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260923T072105Z-NO-TRADE",
-  "generated_at": "2026-09-23T07:21:05Z",
+  "decision_id": "GDESK-20260923T081827Z-NO-TRADE",
+  "generated_at": "2026-09-23T08:18:27Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-23T07-42b228e0f3 reviewed from Dukascopy completed H1 BID/ASK bars. Broad USD strength persists, but EURUSD, GBPUSD and AUDUSD are already extended near session lows, making immediate shorts chase entries. JPY crosses are mixed/range-bound without a clean independent trigger. XAUUSD sold off sharply overnight and remains volatile without a clean continuation or reversal structure. Several instruments also show prior rollover spread distortion. No setup clears the production quality threshold this scan."
+  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-23T08-6c6c3cbab1 reviewed from Dukascopy completed H1 BID/ASK bars. USD strength is broad, with EURUSD, GBPUSD, AUDUSD and NZDUSD pressing session lows while USDCAD is pressing highs, but continuation entries are already extended and would be chase trades. USDCHF has not cleanly cleared nearby resistance. JPY crosses remain mixed, EURAUD/GBPAUD breakout attempts lack clean confirmation, and XAUUSD is in a sharp volatile selloff without a disciplined fresh trigger. No setup clears the production quality threshold this scan."
 }
