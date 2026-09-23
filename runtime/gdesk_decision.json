@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260923T152141Z-NO-TRADE",
-  "generated_at": "2026-09-23T15:21:41Z",
+  "decision_id": "GDESK-20260923T161802Z-NO-TRADE",
+  "generated_at": "2026-09-23T16:18:02Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: fresh complete 18-symbol MARKET_OPEN scan GDESK-2026-09-23T15-73913d56cf reviewed. USD-strength/AUD-weakness continuation remains dominant, but EURUSDc, GBPUSDc, AUDUSDc, NZDUSDc, XAUUSDc and related crosses are extended after the 13:00 UTC impulse and do not offer a clean non-chase H1 entry. EURAUDc/GBPAUDc continuation is constructive but overlaps the prior still-valid AUD-weakness setup context, so no duplicate correlated exposure is issued. Remaining JPY/CAD/CHF crosses lack sufficiently clean independent confirmation."
+  "message": "NO_TRADE: fresh complete 18-symbol MARKET_OPEN scan GDESK-2026-09-23T16-784635b87a reviewed. USD-strength/AUD-weakness continuation remains dominant, but EURUSDc, GBPUSDc, AUDUSDc, NZDUSDc and XAUUSDc remain extended after the 13:00 UTC impulse and the latest completed H1 bars do not offer a clean non-chase entry. EURAUDc and GBPAUDc continuation remains correlated with the same AUD-weakness theme, while JPY/CAD/CHF crosses lack sufficiently clean independent confirmation. No setup meets the quality and exposure gates without forcing a trade."
 }
