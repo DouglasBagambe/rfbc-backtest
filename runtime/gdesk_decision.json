@@ -1,7 +1,35 @@
 {
-  "decision_id": "GDESK-20260923T081827Z-NO-TRADE",
-  "generated_at": "2026-09-23T08:18:27Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol MARKET_OPEN scan GDESK-2026-09-23T08-6c6c3cbab1 reviewed from Dukascopy completed H1 BID/ASK bars. USD strength is broad, with EURUSD, GBPUSD, AUDUSD and NZDUSD pressing session lows while USDCAD is pressing highs, but continuation entries are already extended and would be chase trades. USDCHF has not cleanly cleared nearby resistance. JPY crosses remain mixed, EURAUD/GBPAUD breakout attempts lack clean confirmation, and XAUUSD is in a sharp volatile selloff without a disciplined fresh trigger. No setup clears the production quality threshold this scan."
+  "decision_id": "GDESK-20260923T092039Z-CADJPY-BREAKOUT",
+  "generated_at": "2026-09-23T09:20:39Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "CADJPYc",
+      "side": "BUY",
+      "order_type": "BUY_STOP",
+      "entry": 112.14,
+      "stop": 111.96,
+      "target": 112.50,
+      "volume": 0.01,
+      "risk_pct": 0.5,
+      "valid_until": "2026-09-23T12:00:00Z",
+      "cancel_condition": "Cancel if not triggered by valid_until, or if a completed H1 candle closes below 111.96 before entry.",
+      "confidence": 0.73,
+      "setup_name": "H1 range breakout continuation",
+      "regime": "Bullish breakout from intraday consolidation",
+      "session": "London",
+      "news_proximity": "Not assessed beyond supplied Render market context",
+      "exposure_note": "0.5% proposed CAD-long/JPY-short risk; single setup, aggregate proposed risk 0.5% and below portfolio limits. Existing account exposure remains server-enforced.",
+      "reasoning": "CADJPYc printed a decisive 08:00 UTC H1 expansion candle, closing 112.1255 near its 112.1255 high and above the prior 24-hour resistance near 112.0745. A BUY_STOP at 112.14 requires continuation confirmation instead of chasing the completed candle; 111.96 sits below the breakout base/recent structure, and 112.50 provides approximately 2R reward-to-risk.",
+      "context": {
+        "scan_id": "GDESK-2026-09-23T09-7593378b5f",
+        "source": "Dukascopy BID/ASK",
+        "generated_at": "2026-09-23T09:04:17.656324+00:00",
+        "latest_completed_bar": "2026-09-23T08:00:00+00:00",
+        "timeframe": "H1 completed bars"
+      }
+    }
+  ],
+  "message": "TRADE: CADJPYc BUY_STOP 112.14, SL 111.96, TP 112.50. Fresh complete 18-symbol MARKET_OPEN scan reviewed; CADJPY produced the cleanest confirmed H1 breakout structure without forcing an immediate chase entry."
 }
