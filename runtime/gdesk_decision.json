@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260924T011751Z-NO-TRADE",
-  "generated_at": "2026-09-24T01:17:51Z",
+  "decision_id": "GDESK-20260924T021718Z-NO-TRADE",
+  "generated_at": "2026-09-24T02:17:18Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: fresh complete 18-symbol MARKET_OPEN scan GDESK-2026-09-24T01-a3b9c9957e reviewed. USD strength and JPY strength are both pronounced in the newest completed H1 bars, but EURUSDc, GBPUSDc, AUDUSDc, NZDUSDc and the JPY crosses are already extended after sharp continuation moves, making immediate entries chase-prone. XAUUSDc is rebounding inside a volatile prior selloff rather than presenting a clean directional trigger. Several symbols also showed severe rollover spread expansion in preceding bars. No setup meets the quality, entry, risk and exposure gates without forcing a trade."
+  "message": "NO_TRADE: fresh complete 18-symbol MARKET_OPEN scan GDESK-2026-09-24T02-2f0886d40d reviewed from Dukascopy completed H1 BID/ASK bars. JPY strength remains broad and pronounced across USDJPYc, AUDJPYc, EURJPYc, GBPJPYc, CADJPYc and CHFJPYc, while EURUSDc, GBPUSDc and AUDUSDc also show downside pressure, but the latest moves are already extended near session lows and immediate continuation entries are chase-prone. XAUUSDc printed a sharp volatile rejection rather than a clean low-risk trigger. Prior rollover bars also show material spread expansion across several crosses. No setup clears the quality, entry, risk and exposure gates without forcing a trade."
 }
