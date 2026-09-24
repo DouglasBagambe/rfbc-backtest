@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260924T052033Z-NO-TRADE",
-  "generated_at": "2026-09-24T05:20:33Z",
+  "decision_id": "GDESK-20260924T062200Z-NO-TRADE",
+  "generated_at": "2026-09-24T06:22:00Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: fresh complete 18-symbol MARKET_OPEN scan GDESK-2026-09-24T05-f6ea3d523f reviewed from Dukascopy completed H1 BID/ASK bars. JPY crosses remain weak after the sharp 00Z-01Z selloff, but the latest bars show rebound/consolidation rather than a clean fresh continuation trigger. EURUSDc, GBPUSDc and AUDUSDc retain bearish pressure but are near recent lows and lack a confirmed pullback/rejection entry. XAUUSDc remains volatile and two-sided after the 01Z drop and rebound. No setup clears the quality, entry, risk and exposure gates without forcing a trade."
+  "message": "NO_TRADE: fresh complete 18-symbol MARKET_OPEN scan GDESK-2026-09-24T06-f5f8004023 reviewed from Dukascopy completed H1 BID/ASK bars through 05:00Z. JPY crosses rebounded sharply in the latest completed hour after the earlier selloff, leaving continuation entries poorly timed and reversal structure unconfirmed. EURUSDc, GBPUSDc and AUDUSDc remain under broader bearish pressure but are consolidating near recent lows without a clean pullback/rejection trigger. XAUUSDc remains volatile and two-sided around 4278-4296 after the prior decline. Crosses are mixed and correlated exposure would add little independent edge. No setup clears the quality, entry, risk and exposure gates without forcing a trade."
 }
