@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260924T132132Z-NO-TRADE",
-  "generated_at": "2026-09-24T13:21:32Z",
+  "decision_id": "GDESK-20260924T142208Z-NO-TRADE",
+  "generated_at": "2026-09-24T14:22:08Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: Fresh complete 18-symbol MARKET_OPEN Dukascopy H1 BID/ASK scan reviewed. Several pairs show short-term movement, but none offers a sufficiently clean, non-chasing H1 entry with defensible stop/target structure to justify 0.25%-0.5% risk."
+  "message": "NO_TRADE: Fresh complete 18-symbol MARKET_OPEN Dukascopy H1 BID/ASK scan GDESK-2026-09-24T14-93956d94b0 reviewed. USDCHF showed the strongest intraday expansion but is extended after the 07:00 UTC impulse and lacks a clean non-chasing H1 entry; USD/CAD and JPY crosses are mixed, gold remains volatile and whipsaw-prone, and no setup offers sufficiently clean entry/stop/target structure to justify 0.25%-0.5% risk."
 }
