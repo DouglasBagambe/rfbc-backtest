@@ -1,7 +1,34 @@
 {
-  "decision_id": "GDESK-20260924T081705Z-NO-TRADE",
-  "generated_at": "2026-09-24T08:17:05Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: Fresh complete 18-symbol MARKET_OPEN scan reviewed. No new independent setup clears the quality and portfolio gates. The prior USDJPYc BUY_STOP 158.50 remains untriggered and valid under its existing rules; no duplicate JPY/USD exposure is added."
+  "decision_id": "GDESK-20260924T091858Z-USDCHF-BUY-STOP",
+  "generated_at": "2026-09-24T09:18:58Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "USDCHFc",
+      "side": "BUY",
+      "order_type": "BUY_STOP",
+      "entry": 0.82810,
+      "stop": 0.82595,
+      "target": 0.83240,
+      "volume": 0.01,
+      "risk_pct": 0.5,
+      "valid_until": "2026-09-24T12:00:00Z",
+      "cancel_condition": "Cancel if an H1 candle closes below 0.82595 before entry, or if the order remains unfilled at 12:00 UTC.",
+      "confidence": "medium-high",
+      "setup_name": "H1 breakout continuation",
+      "regime": "bullish breakout / USD strength",
+      "session": "London",
+      "news_proximity": "not supplied in Render market context",
+      "exposure_note": "Long USD / short CHF. Prior USDJPYc BUY_STOP is still pending, so combined proposed USD directional risk is 1.0%, within the 1.0% currency cap if both are accepted; server-side portfolio gates remain authoritative.",
+      "reasoning": "USDCHFc broke sharply above its prior H1 range at 07:00 UTC and held the breakout with a second higher close at 08:00 UTC (0.82791) near the session high. A stop entry above 0.82810 requires continuation confirmation rather than chasing the completed candle. The stop sits back below the breakout structure and the 0.83240 target preserves 2R reward-to-risk.",
+      "context": {
+        "scan_id": "GDESK-2026-09-24T09-b8578c37d6",
+        "generated_at": "2026-09-24T09:05:20.674278+00:00",
+        "latest_completed_bar": "2026-09-24T08:00:00+00:00",
+        "source": "Dukascopy BID/ASK"
+      }
+    }
+  ],
+  "message": "TRADE: USDCHFc BUY_STOP 0.82810, SL 0.82595, TP 0.83240. Fresh complete 18-symbol MARKET_OPEN scan reviewed; breakout continuation is the cleanest independent setup and remains subject to server-side portfolio gates."
 }
