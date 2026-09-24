@@ -1,37 +1,7 @@
 {
-  "decision_id": "GDESK-20260924T172101Z-USDCADC-BUY-STOP",
-  "generated_at": "2026-09-24T17:21:01Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "USDCADc",
-      "side": "BUY",
-      "order_type": "BUY_STOP",
-      "entry": 1.41420,
-      "stop": 1.41255,
-      "target": 1.41750,
-      "volume": 0.01,
-      "risk_pct": 0.5,
-      "valid_until": "2026-09-24T19:15:00Z",
-      "cancel_condition": "Cancel if not triggered by valid_until, or if a completed H1 candle closes below 1.41255 before entry.",
-      "confidence": "medium-high",
-      "setup_name": "H1 bullish breakout continuation",
-      "regime": "bullish intraday expansion with confirmation pullback",
-      "session": "New York session",
-      "news_proximity": "not supplied in market context",
-      "exposure_note": "Adds 0.5% long-USD / short-CAD directional risk. No additional trade is proposed, keeping proposed aggregate risk at 0.5%; existing account exposure remains subject to server-side gates.",
-      "reasoning": "USDCADc has the cleanest fresh continuation structure after scanning the complete 18-symbol universe. Price advanced persistently from the 09:00 UTC area through 15:00 UTC, reaching 1.414965, then the 16:00 UTC completed bar pulled back to 1.413445 without breaking the rising intraday structure. A BUY_STOP at 1.41420 requires renewed strength above the latest completed-bar high rather than buying the pullback blindly. The stop is below the 16:00 UTC low at 1.412565 and the target is 2R. Other correlated USD and CAD expressions were excluded to avoid stacking the same directional exposure.",
-      "context": {
-        "scan_id": "GDESK-2026-09-24T17-71c8a60d07",
-        "generated_at": "2026-09-24T17:00:36.952592+00:00",
-        "latest_completed_bar": "2026-09-24T16:00:00+00:00",
-        "source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars",
-        "market_state": "MARKET_OPEN",
-        "freshness": "FRESH"
-      }
-    }
-  ],
-  "message": "TRADE: USDCADc BUY_STOP 1.41420, SL 1.41255, TP 1.41750, 0.5% risk. Fresh H1 continuation setup; server-side portfolio gates remain authoritative."
+  "decision_id": "GDESK-20260924T181823Z-NO-TRADE",
+  "generated_at": "2026-09-24T18:18:23Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: complete fresh 18-symbol H1 scan found no new independent setup clean enough to add. USDCADc remains near the prior breakout trigger and issuing another USDCAD decision would risk a duplicate; AUDUSDc/NZDUSDc weakness and related cross moves are materially correlated, while XAUUSDc remains volatile and structurally noisy. Wait for the next completed H1 scan."
 }
