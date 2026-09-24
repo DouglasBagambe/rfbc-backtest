@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260923T232200Z-NO-TRADE",
-  "generated_at": "2026-09-23T23:22:00Z",
+  "decision_id": "GDESK-20260924T002206Z-NO-TRADE",
+  "generated_at": "2026-09-24T00:22:06Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: fresh complete 18-symbol MARKET_OPEN scan GDESK-2026-09-23T23-07bcf4aab3 reviewed. USD strength remains broadly extended across EURUSDc, GBPUSDc, AUDUSDc and NZDUSDc, but the latest H1 bars are consolidating rather than offering a clean fresh continuation trigger. JPY crosses are mixed after intraday reversals, and XAUUSDc remains volatile after a large selloff with an unusually wide latest bid/ask spread. Several pairs also showed severe rollover spread expansion in the preceding H1 bars. No setup meets the entry, spread, risk and exposure gates without chasing or forcing a trade."
+  "message": "NO_TRADE: fresh complete 18-symbol MARKET_OPEN scan GDESK-2026-09-24T00-5dbd3af8c9 reviewed. USD strength remains extended across EURUSDc, GBPUSDc, AUDUSDc and NZDUSDc, while the newest completed H1 bars do not provide a clean fresh continuation entry without chasing. JPY crosses remain mixed after reversals, and XAUUSDc is still volatile after the prior selloff. Rollover spread expansion was severe on several symbols in the preceding hours. No setup meets the quality, entry, spread, risk and exposure gates without forcing a trade."
 }
