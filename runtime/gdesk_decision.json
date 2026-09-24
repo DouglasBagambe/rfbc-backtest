@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260924T121727Z-NO-TRADE",
-  "generated_at": "2026-09-24T12:17:27Z",
+  "decision_id": "GDESK-20260924T132132Z-NO-TRADE",
+  "generated_at": "2026-09-24T13:21:32Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: Fresh complete 18-symbol MARKET_OPEN Dukascopy H1 BID/ASK scan reviewed. No new setup has sufficient structure, entry quality, and independent exposure to justify risk without chasing or duplicating existing exposure."
+  "message": "NO_TRADE: Fresh complete 18-symbol MARKET_OPEN Dukascopy H1 BID/ASK scan reviewed. Several pairs show short-term movement, but none offers a sufficiently clean, non-chasing H1 entry with defensible stop/target structure to justify 0.25%-0.5% risk."
 }
