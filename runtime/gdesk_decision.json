@@ -1,7 +1,37 @@
 {
-  "decision_id": "GDESK-20260924T142208Z-NO-TRADE",
-  "generated_at": "2026-09-24T14:22:08Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: Fresh complete 18-symbol MARKET_OPEN Dukascopy H1 BID/ASK scan GDESK-2026-09-24T14-93956d94b0 reviewed. USDCHF showed the strongest intraday expansion but is extended after the 07:00 UTC impulse and lacks a clean non-chasing H1 entry; USD/CAD and JPY crosses are mixed, gold remains volatile and whipsaw-prone, and no setup offers sufficiently clean entry/stop/target structure to justify 0.25%-0.5% risk."
+  "decision_id": "GDESK-20260924T151705Z-USDCHFC-BUY-STOP",
+  "generated_at": "2026-09-24T15:17:05Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "USDCHFc",
+      "side": "BUY",
+      "order_type": "BUY_STOP",
+      "entry": 0.82905,
+      "stop": 0.82725,
+      "target": 0.83265,
+      "volume": 0.01,
+      "risk_pct": 0.5,
+      "valid_until": "2026-09-24T17:15:00Z",
+      "cancel_condition": "Cancel if not triggered by valid_until, or if a completed H1 candle closes back below 0.82725 before entry.",
+      "confidence": "medium-high",
+      "setup_name": "H1 bullish breakout continuation",
+      "regime": "bullish expansion after consolidation",
+      "session": "London/New York overlap",
+      "news_proximity": "not supplied in market context",
+      "exposure_note": "Adds 0.5% long-USD / short-CHF directional risk; no other proposed trades in this decision, so proposed aggregate risk is 0.5% and within the stated exposure cap subject to server-side existing-account checks.",
+      "reasoning": "USDCHFc produced the clearest fresh continuation setup in the complete 18-symbol scan: after the 07:00 UTC upside expansion, price held a multi-hour consolidation around 0.8272-0.8278 and the 14:00 UTC completed H1 bar closed strongly at 0.828905 near its high, breaking above that consolidation. A stop entry above 0.8290 avoids buying unless continuation confirms; the stop is below the consolidation base and the target is 2R. Other USD and JPY candidates were either more extended, mixed, or offered weaker structure, so no correlated second trade is proposed.",
+      "context": {
+        "scan_id": "GDESK-2026-09-24T15-32aff9b56b",
+        "generated_at": "2026-09-24T15:04:18.945374+00:00",
+        "latest_completed_bar": "2026-09-24T14:00:00+00:00",
+        "source": "Dukascopy BID/ASK",
+        "timeframe": "H1 completed bars",
+        "market_state": "MARKET_OPEN",
+        "freshness": "FRESH"
+      }
+    }
+  ],
+  "message": "TRADE: USDCHFc BUY_STOP 0.82905, SL 0.82725, TP 0.83265, 0.5% risk. Fresh H1 breakout continuation; server-side portfolio gates remain authoritative."
 }
