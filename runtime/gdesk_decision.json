@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260924T212049Z-NO-TRADE",
-  "generated_at": "2026-09-24T21:20:49Z",
+  "decision_id": "GDESK-20260924T222137Z-NO-TRADE",
+  "generated_at": "2026-09-24T22:21:37Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol Dukascopy H1 BID/ASK scan found no genuinely qualified setup. The latest completed H1 bars are in the daily rollover/liquidity-transition window with materially widened closing spreads across much of the universe, while directional structure is mixed or correlated. No clean asymmetric entry justifies new risk; wait for the next completed H1 scan."
+  "message": "NO_TRADE: complete fresh 18-symbol Dukascopy H1 BID/ASK scan found no genuinely qualified setup. The latest completed bars are in the daily rollover/liquidity-transition window and closing spreads are materially widened across much of the universe, including extreme widening on several FX crosses; directional structure is mixed and correlated. No clean asymmetric entry justifies 0.25%-0.5% risk. Wait for the next completed H1 scan."
 }
