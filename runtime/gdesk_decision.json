@@ -1,36 +1,7 @@
 {
-  "decision_id": "GDESK-20260924T072000Z-USDJPY-BREAKOUT",
-  "generated_at": "2026-09-24T07:20:00Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "USDJPYc",
-      "side": "BUY",
-      "order_type": "BUY_STOP",
-      "entry": 158.50,
-      "stop": 158.16,
-      "target": 159.18,
-      "volume": 0.01,
-      "risk_pct": 0.5,
-      "valid_until": "2026-09-24T09:00:00Z",
-      "cancel_condition": "Cancel if an H1 bar closes below 158.16 before entry, if price gaps through 158.60 without filling, or when valid_until is reached.",
-      "confidence": "MEDIUM_HIGH",
-      "setup_name": "H1 JPY-breakout continuation",
-      "regime": "Bullish momentum after Asian-session reversal and two-hour continuation",
-      "session": "London morning",
-      "news_proximity": "Not assessed from supplied market-only context; server-side/live execution safeguards must reject if a conflicting high-impact event is imminent.",
-      "exposure_note": "Adds 0.5% long-USD/short-JPY directional risk; no other proposed trade in this scan, so proposed aggregate risk is 0.5% and within the 1.0% currency-direction cap.",
-      "reasoning": "USDJPYc reversed from the 157.84-157.90 area and printed consecutive strong completed H1 advances: 157.890 to 158.2225, then 158.224 to 158.439, with the latest bar closing near its 158.488 high. A BUY_STOP at 158.50 requires confirmation above the current swing high rather than chasing the close. The 158.16 stop sits below the latest impulse-bar low and the 159.18 target gives approximately 2R. Other JPY crosses show the same rebound, so only USDJPYc is proposed to avoid correlated JPY exposure.",
-      "context": {
-        "scan_id": "GDESK-2026-09-24T07-af40eae531",
-        "source": "Dukascopy BID/ASK",
-        "generated_at": "2026-09-24T07:04:01.387744+00:00",
-        "latest_completed_bar": "2026-09-24T06:00:00+00:00",
-        "market_state": "MARKET_OPEN",
-        "freshness": "FRESH"
-      }
-    }
-  ],
-  "message": "TRADE: USDJPYc BUY_STOP 158.50, SL 158.16, TP 159.18, 0.5% risk. Fresh complete 18-symbol MARKET_OPEN scan reviewed; one JPY-breakout continuation selected and correlated JPY crosses excluded."
+  "decision_id": "GDESK-20260924T081705Z-NO-TRADE",
+  "generated_at": "2026-09-24T08:17:05Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: Fresh complete 18-symbol MARKET_OPEN scan reviewed. No new independent setup clears the quality and portfolio gates. The prior USDJPYc BUY_STOP 158.50 remains untriggered and valid under its existing rules; no duplicate JPY/USD exposure is added."
 }
