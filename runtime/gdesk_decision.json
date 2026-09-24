@@ -1,34 +1,7 @@
 {
-  "decision_id": "GDESK-20260924T101724Z-XAUUSD-SELL-STOP",
-  "generated_at": "2026-09-24T10:17:24Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "XAUUSDc",
-      "side": "SELL",
-      "order_type": "SELL_STOP",
-      "entry": 4250.50,
-      "stop": 4268.00,
-      "target": 4215.50,
-      "volume": 0.01,
-      "risk_pct": 0.5,
-      "valid_until": "2026-09-24T13:00:00Z",
-      "cancel_condition": "Cancel if an H1 candle closes above 4268.00 before entry, or if the order remains unfilled at 13:00 UTC.",
-      "confidence": "medium-high",
-      "setup_name": "H1 bearish continuation breakdown",
-      "regime": "bearish momentum / lower-high continuation",
-      "session": "London",
-      "news_proximity": "not supplied in Render market context",
-      "exposure_note": "Short XAUUSD; independent of the existing FX directional exposure. Proposed risk is 0.5%; server-side portfolio gates remain authoritative.",
-      "reasoning": "XAUUSDc has sustained a clear H1 bearish sequence from the 4299 area, with the 08:00 UTC candle breaking sharply to 4261.43 and the 09:00 UTC candle extending to 4255.55 while printing a 4250.745 low. A sell stop at 4250.50 requires fresh downside confirmation below that low rather than chasing the completed candle. The stop is above the 09:00 candle high and broken intraday structure, while the 4215.50 target preserves 2R reward-to-risk.",
-      "context": {
-        "scan_id": "GDESK-2026-09-24T10-a24d262586",
-        "generated_at": "2026-09-24T10:01:03.555569+00:00",
-        "latest_completed_bar": "2026-09-24T09:00:00+00:00",
-        "source": "Dukascopy BID/ASK"
-      }
-    }
-  ],
-  "message": "TRADE: XAUUSDc SELL_STOP 4250.50, SL 4268.00, TP 4215.50. Fresh complete 18-symbol MARKET_OPEN scan reviewed; gold bearish continuation is the cleanest independent setup and remains subject to server-side portfolio gates."
+  "decision_id": "GDESK-20260924T112123Z-NO-TRADE",
+  "generated_at": "2026-09-24T11:21:23Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: Fresh complete 18-symbol MARKET_OPEN scan reviewed. No new independent setup is clean enough to add under current portfolio constraints; the prior XAUUSDc sell-stop decision remains the relevant gold exposure and no duplicate symbol trade is proposed."
 }
