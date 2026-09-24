@@ -1,34 +1,34 @@
 {
-  "decision_id": "GDESK-20260924T091858Z-USDCHF-BUY-STOP",
-  "generated_at": "2026-09-24T09:18:58Z",
+  "decision_id": "GDESK-20260924T101724Z-XAUUSD-SELL-STOP",
+  "generated_at": "2026-09-24T10:17:24Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "USDCHFc",
-      "side": "BUY",
-      "order_type": "BUY_STOP",
-      "entry": 0.82810,
-      "stop": 0.82595,
-      "target": 0.83240,
+      "symbol": "XAUUSDc",
+      "side": "SELL",
+      "order_type": "SELL_STOP",
+      "entry": 4250.50,
+      "stop": 4268.00,
+      "target": 4215.50,
       "volume": 0.01,
       "risk_pct": 0.5,
-      "valid_until": "2026-09-24T12:00:00Z",
-      "cancel_condition": "Cancel if an H1 candle closes below 0.82595 before entry, or if the order remains unfilled at 12:00 UTC.",
+      "valid_until": "2026-09-24T13:00:00Z",
+      "cancel_condition": "Cancel if an H1 candle closes above 4268.00 before entry, or if the order remains unfilled at 13:00 UTC.",
       "confidence": "medium-high",
-      "setup_name": "H1 breakout continuation",
-      "regime": "bullish breakout / USD strength",
+      "setup_name": "H1 bearish continuation breakdown",
+      "regime": "bearish momentum / lower-high continuation",
       "session": "London",
       "news_proximity": "not supplied in Render market context",
-      "exposure_note": "Long USD / short CHF. Prior USDJPYc BUY_STOP is still pending, so combined proposed USD directional risk is 1.0%, within the 1.0% currency cap if both are accepted; server-side portfolio gates remain authoritative.",
-      "reasoning": "USDCHFc broke sharply above its prior H1 range at 07:00 UTC and held the breakout with a second higher close at 08:00 UTC (0.82791) near the session high. A stop entry above 0.82810 requires continuation confirmation rather than chasing the completed candle. The stop sits back below the breakout structure and the 0.83240 target preserves 2R reward-to-risk.",
+      "exposure_note": "Short XAUUSD; independent of the existing FX directional exposure. Proposed risk is 0.5%; server-side portfolio gates remain authoritative.",
+      "reasoning": "XAUUSDc has sustained a clear H1 bearish sequence from the 4299 area, with the 08:00 UTC candle breaking sharply to 4261.43 and the 09:00 UTC candle extending to 4255.55 while printing a 4250.745 low. A sell stop at 4250.50 requires fresh downside confirmation below that low rather than chasing the completed candle. The stop is above the 09:00 candle high and broken intraday structure, while the 4215.50 target preserves 2R reward-to-risk.",
       "context": {
-        "scan_id": "GDESK-2026-09-24T09-b8578c37d6",
-        "generated_at": "2026-09-24T09:05:20.674278+00:00",
-        "latest_completed_bar": "2026-09-24T08:00:00+00:00",
+        "scan_id": "GDESK-2026-09-24T10-a24d262586",
+        "generated_at": "2026-09-24T10:01:03.555569+00:00",
+        "latest_completed_bar": "2026-09-24T09:00:00+00:00",
         "source": "Dukascopy BID/ASK"
       }
     }
   ],
-  "message": "TRADE: USDCHFc BUY_STOP 0.82810, SL 0.82595, TP 0.83240. Fresh complete 18-symbol MARKET_OPEN scan reviewed; breakout continuation is the cleanest independent setup and remains subject to server-side portfolio gates."
+  "message": "TRADE: XAUUSDc SELL_STOP 4250.50, SL 4268.00, TP 4215.50. Fresh complete 18-symbol MARKET_OPEN scan reviewed; gold bearish continuation is the cleanest independent setup and remains subject to server-side portfolio gates."
 }
