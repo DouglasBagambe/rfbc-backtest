@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260924T031855Z-NO-TRADE",
-  "generated_at": "2026-09-24T03:18:55Z",
+  "decision_id": "GDESK-20260924T042245Z-NO-TRADE",
+  "generated_at": "2026-09-24T04:22:45Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: fresh complete 18-symbol MARKET_OPEN scan GDESK-2026-09-24T03-ea7b9608d9 reviewed from Dukascopy completed H1 BID/ASK bars. Broad JPY strength remains evident across USDJPYc, AUDJPYc, EURJPYc, GBPJPYc, CADJPYc and CHFJPYc, but the 00Z-01Z selloff is already extended and the 02Z bars show rebounds or stabilization, making fresh continuation entries chase-prone without a confirmed pullback/rejection. EURUSDc, GBPUSDc and AUDUSDc also bounced from recent lows rather than presenting clean continuation triggers. XAUUSDc remains highly volatile with a sharp 01Z drop and 02Z rebound, not a controlled low-risk setup. No setup clears the quality, entry, risk and exposure gates without forcing a trade."
+  "message": "NO_TRADE: fresh complete 18-symbol MARKET_OPEN scan GDESK-2026-09-24T04-eab67172ce reviewed from Dukascopy completed H1 BID/ASK bars. JPY crosses remain broadly below yesterday's levels but the 02Z-03Z bars are rebounding/stabilizing after the sharp 00Z-01Z selloff, so continuation entries would be chase-prone. GBPUSDc, EURUSDc and AUDUSDc retain bearish structure but are trading close to recent lows without a clean confirmed pullback/rejection or breakout trigger; XAUUSDc remains volatile and two-sided after the 01Z drop and 02Z rebound. No setup clears the quality, entry, risk and exposure gates without forcing a trade."
 }
