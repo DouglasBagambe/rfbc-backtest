@@ -1,31 +1,31 @@
 {
-  "decision_id": "GDESK-20260924T161904Z-EURAUDC-BUY-STOP",
-  "generated_at": "2026-09-24T16:19:04Z",
+  "decision_id": "GDESK-20260924T172101Z-USDCADC-BUY-STOP",
+  "generated_at": "2026-09-24T17:21:01Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "EURAUDc",
+      "symbol": "USDCADc",
       "side": "BUY",
       "order_type": "BUY_STOP",
-      "entry": 1.62245,
-      "stop": 1.61970,
-      "target": 1.62795,
+      "entry": 1.41420,
+      "stop": 1.41255,
+      "target": 1.41750,
       "volume": 0.01,
       "risk_pct": 0.5,
-      "valid_until": "2026-09-24T18:15:00Z",
-      "cancel_condition": "Cancel if not triggered by valid_until, or if a completed H1 candle closes below 1.61970 before entry.",
+      "valid_until": "2026-09-24T19:15:00Z",
+      "cancel_condition": "Cancel if not triggered by valid_until, or if a completed H1 candle closes below 1.41255 before entry.",
       "confidence": "medium-high",
       "setup_name": "H1 bullish breakout continuation",
-      "regime": "bullish expansion from intraday range",
-      "session": "London/New York overlap",
+      "regime": "bullish intraday expansion with confirmation pullback",
+      "session": "New York session",
       "news_proximity": "not supplied in market context",
-      "exposure_note": "Adds 0.5% long-EUR / short-AUD directional risk. No second trade is proposed, keeping proposed aggregate risk at 0.5%; existing account exposure remains subject to server-side gates.",
-      "reasoning": "EURAUDc showed the cleanest independent continuation structure in the complete 18-symbol scan. The 14:00 and 15:00 UTC completed H1 bars expanded upward from the prior range, with the latest close at 1.621555 and a high at 1.62239. A BUY_STOP at 1.62245 requires a fresh break above that high rather than chasing the current close. The stop sits below the breakout impulse base near 1.61970 and the target is 2R. Correlated AUDUSD/NZDUSD shorts and additional EUR/AUD crosses were excluded to avoid stacking the same AUD-short theme.",
+      "exposure_note": "Adds 0.5% long-USD / short-CAD directional risk. No additional trade is proposed, keeping proposed aggregate risk at 0.5%; existing account exposure remains subject to server-side gates.",
+      "reasoning": "USDCADc has the cleanest fresh continuation structure after scanning the complete 18-symbol universe. Price advanced persistently from the 09:00 UTC area through 15:00 UTC, reaching 1.414965, then the 16:00 UTC completed bar pulled back to 1.413445 without breaking the rising intraday structure. A BUY_STOP at 1.41420 requires renewed strength above the latest completed-bar high rather than buying the pullback blindly. The stop is below the 16:00 UTC low at 1.412565 and the target is 2R. Other correlated USD and CAD expressions were excluded to avoid stacking the same directional exposure.",
       "context": {
-        "scan_id": "GDESK-2026-09-24T16-26870ffd9f",
-        "generated_at": "2026-09-24T16:04:59.654681+00:00",
-        "latest_completed_bar": "2026-09-24T15:00:00+00:00",
+        "scan_id": "GDESK-2026-09-24T17-71c8a60d07",
+        "generated_at": "2026-09-24T17:00:36.952592+00:00",
+        "latest_completed_bar": "2026-09-24T16:00:00+00:00",
         "source": "Dukascopy BID/ASK",
         "timeframe": "H1 completed bars",
         "market_state": "MARKET_OPEN",
@@ -33,5 +33,5 @@
       }
     }
   ],
-  "message": "TRADE: EURAUDc BUY_STOP 1.62245, SL 1.61970, TP 1.62795, 0.5% risk. Fresh H1 breakout continuation; server-side portfolio gates remain authoritative."
+  "message": "TRADE: USDCADc BUY_STOP 1.41420, SL 1.41255, TP 1.41750, 0.5% risk. Fresh H1 continuation setup; server-side portfolio gates remain authoritative."
 }
