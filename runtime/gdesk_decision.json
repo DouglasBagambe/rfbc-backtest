@@ -1,35 +1,7 @@
 {
-  "decision_id": "GDESK-20260925T112000Z-XAUUSD-BUY-STOP",
-  "generated_at": "2026-09-25T11:20:00Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "XAUUSDc",
-      "side": "BUY",
-      "order_type": "BUY_STOP",
-      "entry": 4312.00,
-      "stop": 4293.50,
-      "target": 4349.00,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-09-25T13:00:00Z",
-      "cancel_condition": "Cancel if an H1 candle closes below 4293.50 before entry, if the order is not triggered by 13:00 UTC, or if material high-impact USD news invalidates the breakout before trigger.",
-      "confidence": "MEDIUM_HIGH",
-      "setup_name": "London gold continuation breakout",
-      "regime": "Bullish intraday momentum / range breakout",
-      "session": "London",
-      "news_proximity": "Unknown from supplied market context; cancel on material high-impact USD news before trigger.",
-      "exposure_note": "Adds XAU-long exposure at 0.25% proposed initial risk. No duplicate XAUUSDc decision is present in the prior runtime mailbox; server-side existing-account and aggregate exposure gates remain authoritative.",
-      "reasoning": "XAUUSDc accelerated from 4263.07 at 04:00 UTC to 4311.10 at 10:00 UTC. The 08:00 bar broke higher to 4293.45, 09:00 consolidated near the highs, and the 10:00 bar expanded again to a 4311.71 high and closed at 4311.10. A buy-stop at 4312.00 requires confirmation above that completed-H1 high rather than chasing. The stop at 4293.50 sits below the latest breakout leg and the target at 4349.00 gives approximately 2R reward-to-risk.",
-      "context": {
-        "scan_id": "GDESK-2026-09-25T11-a546c4df5d",
-        "context_generated_at": "2026-09-25T11:02:20.248125+00:00",
-        "latest_completed_bar": "2026-09-25T10:00:00+00:00",
-        "source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars"
-      }
-    }
-  ],
-  "message": "TRADE: XAUUSDc BUY_STOP 4312.00, SL 4293.50, TP 4349.00, 0.25% risk. Breakout confirmation required; server-side portfolio gates remain authoritative."
+  "decision_id": "GDESK-20260925T122000Z-NO-TRADE",
+  "generated_at": "2026-09-25T12:20:00Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: complete fresh 18-symbol scan reviewed. JPY crosses are already extended after sustained downside, while XAUUSD has pulled back after the prior breakout impulse and does not offer a clean fresh entry on the completed 11:00 UTC bar. No new setup meets the desk's risk/reward and confirmation threshold without chasing."
 }
