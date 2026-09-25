@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260925T151923Z-NO-TRADE",
-  "generated_at": "2026-09-25T15:19:23Z",
+  "decision_id": "GDESK-20260925T162100Z-NO-TRADE",
+  "generated_at": "2026-09-25T16:21:00Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: all 18 symbols were reviewed on fresh completed H1 Dukascopy BID/ASK context. JPY strength remains the clearest theme, but the move is already extended and EURJPYc already has a still-valid prior G_DESK sell-stop signal; other pairs do not offer a clean enough fresh entry with acceptable structure/reward to justify additional risk."
+  "message": "NO_TRADE: all 18 symbols were reviewed on fresh completed H1 Dukascopy BID/ASK context for scan GDESK-2026-09-25T16-1c191f8766. JPY strength remains the dominant theme, but the move is extended after a broad intraday decline and late rebounds make fresh entries unattractive; the prior EURJPYc sell-stop signal remains the relevant existing setup. No additional independent setup offers clean enough structure and reward to justify new risk into Friday evening."
 }
