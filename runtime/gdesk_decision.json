@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260925T192032Z-NO-TRADE",
-  "generated_at": "2026-09-25T19:20:32Z",
+  "decision_id": "GDESK-20260925T202020Z-NO-TRADE",
+  "generated_at": "2026-09-25T20:20:20Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: reviewed all 18 symbols using fresh completed H1 Dukascopy BID/ASK context for scan GDESK-2026-09-25T19-02eddddf33. JPY strength remains the clearest directional theme, but the JPY crosses are materially extended after the day's decline and are consolidating near lows, so fresh shorts would be chase entries. EURUSD and GBPUSD have rebounded but lack a clean continuation trigger; AUDUSD, NZDUSD, USDCHF and the European crosses are mixed. XAUUSD remains volatile after a sharp intraday reversal and recovery. With Friday liquidity winding down, no setup offers sufficiently clean structure and reward to justify new risk."
+  "message": "NO_TRADE: reviewed all 18 symbols using fresh completed H1 Dukascopy BID/ASK context for scan GDESK-2026-09-25T20-49a4721ab2. JPY strength remains the dominant directional theme, but GBPJPY, EURJPY, CADJPY, CHFJPY, AUDJPY and USDJPY are already materially extended after the day's decline and are consolidating/rebounding near session lows, making new shorts chase entries. EURUSD and GBPUSD retain intraday recovery structure but have stalled and pulled back without a clean continuation trigger. AUDUSD, NZDUSD, USDCHF and the European crosses remain mixed. XAUUSD is volatile and two-sided after its sharp intraday reversal and recovery. With late-Friday liquidity and no clean asymmetric entry, no setup meets the quality threshold for new risk."
 }
