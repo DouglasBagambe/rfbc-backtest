@@ -1,36 +1,36 @@
 {
-  "decision_id": "GDESK-20260925T132123Z-GBPUSD-BUY-STOP",
-  "generated_at": "2026-09-25T13:21:23Z",
+  "decision_id": "GDESK-20260925T142011Z-EURJPY-SELL-STOP",
+  "generated_at": "2026-09-25T14:20:11Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "GBPUSDc",
-      "side": "BUY",
-      "order_type": "BUY_STOP",
-      "entry": 1.32585,
-      "stop": 1.32475,
-      "target": 1.32860,
+      "symbol": "EURJPYc",
+      "side": "SELL",
+      "order_type": "SELL_STOP",
+      "entry": 178.90,
+      "stop": 179.62,
+      "target": 177.46,
       "volume": 0.01,
       "risk_pct": 0.5,
-      "valid_until": "2026-09-25T14:30:00Z",
-      "cancel_condition": "Cancel if not triggered by 14:30 UTC, or if a completed H1 bar closes below 1.32475 before entry.",
-      "confidence": "medium-high",
-      "setup_name": "H1 bullish continuation breakout",
-      "regime": "bullish intraday trend",
+      "valid_until": "2026-09-25T15:30:00Z",
+      "cancel_condition": "Cancel if not triggered by 15:30 UTC, or if a completed H1 bar closes above 179.62 before entry.",
+      "confidence": "high",
+      "setup_name": "H1 JPY-strength continuation breakdown",
+      "regime": "strong bearish intraday trend",
       "session": "London/New York overlap",
       "news_proximity": "not supplied in Render market context",
-      "exposure_note": "0.5% proposed GBP-long/USD-short risk; no other proposed trade in this decision, so aggregate proposed risk is 0.5% and currency directional exposure remains within the 1.0% cap.",
-      "reasoning": "GBPUSD has advanced persistently from the 03:00 UTC low through the 12:00 UTC close, with successive higher closes from 06:00 onward and the 12:00 bar closing near its high. A stop entry above the 12:00 high avoids chasing the current close and requires fresh continuation confirmation. The stop sits below the 12:00 bar low/near-term breakout base, with a 2.5R target.",
+      "exposure_note": "0.5% proposed EUR-short/JPY-long risk; this is the only proposed trade, so aggregate proposed risk is 0.5% and directional currency exposure remains within the 1.0% cap.",
+      "reasoning": "EURJPY shows a broad, persistent H1 decline from roughly 180.73 to 179.05, confirmed by simultaneous weakness across GBPJPY, CADJPY, CHFJPY, AUDJPY and USDJPY. The latest completed 13:00 UTC bar accelerated lower and closed near its low. A sell-stop below 178.92 requires fresh continuation rather than chasing the completed-bar close; the stop sits above the latest bar high/near-term breakdown base and the target is 2R.",
       "context": {
-        "scan_id": "GDESK-2026-09-25T13-84778c7fd9",
-        "generated_at": "2026-09-25T13:03:37.953970+00:00",
-        "latest_completed_bar": "2026-09-25T12:00:00+00:00",
+        "scan_id": "GDESK-2026-09-25T14-69d7720ffd",
+        "generated_at": "2026-09-25T14:04:18.650663+00:00",
+        "latest_completed_bar": "2026-09-25T13:00:00+00:00",
         "source": "Dukascopy BID/ASK",
         "market_state": "MARKET_OPEN",
         "freshness": "FRESH"
       }
     }
   ],
-  "message": "TRADE: GBPUSDc BUY_STOP 1.32585, SL 1.32475, TP 1.32860. Continuation entry only; cancel if untriggered by 14:30 UTC or H1 closes below the breakout base."
+  "message": "TRADE: EURJPYc SELL_STOP 178.90, SL 179.62, TP 177.46. Broad JPY-strength continuation; cancel if untriggered by 15:30 UTC or H1 closes above 179.62."
 }
