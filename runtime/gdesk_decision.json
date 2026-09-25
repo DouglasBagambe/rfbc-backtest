@@ -1,7 +1,36 @@
 {
-  "decision_id": "GDESK-20260925T122000Z-NO-TRADE",
-  "generated_at": "2026-09-25T12:20:00Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol scan reviewed. JPY crosses are already extended after sustained downside, while XAUUSD has pulled back after the prior breakout impulse and does not offer a clean fresh entry on the completed 11:00 UTC bar. No new setup meets the desk's risk/reward and confirmation threshold without chasing."
+  "decision_id": "GDESK-20260925T132123Z-GBPUSD-BUY-STOP",
+  "generated_at": "2026-09-25T13:21:23Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "GBPUSDc",
+      "side": "BUY",
+      "order_type": "BUY_STOP",
+      "entry": 1.32585,
+      "stop": 1.32475,
+      "target": 1.32860,
+      "volume": 0.01,
+      "risk_pct": 0.5,
+      "valid_until": "2026-09-25T14:30:00Z",
+      "cancel_condition": "Cancel if not triggered by 14:30 UTC, or if a completed H1 bar closes below 1.32475 before entry.",
+      "confidence": "medium-high",
+      "setup_name": "H1 bullish continuation breakout",
+      "regime": "bullish intraday trend",
+      "session": "London/New York overlap",
+      "news_proximity": "not supplied in Render market context",
+      "exposure_note": "0.5% proposed GBP-long/USD-short risk; no other proposed trade in this decision, so aggregate proposed risk is 0.5% and currency directional exposure remains within the 1.0% cap.",
+      "reasoning": "GBPUSD has advanced persistently from the 03:00 UTC low through the 12:00 UTC close, with successive higher closes from 06:00 onward and the 12:00 bar closing near its high. A stop entry above the 12:00 high avoids chasing the current close and requires fresh continuation confirmation. The stop sits below the 12:00 bar low/near-term breakout base, with a 2.5R target.",
+      "context": {
+        "scan_id": "GDESK-2026-09-25T13-84778c7fd9",
+        "generated_at": "2026-09-25T13:03:37.953970+00:00",
+        "latest_completed_bar": "2026-09-25T12:00:00+00:00",
+        "source": "Dukascopy BID/ASK",
+        "market_state": "MARKET_OPEN",
+        "freshness": "FRESH"
+      }
+    }
+  ],
+  "message": "TRADE: GBPUSDc BUY_STOP 1.32585, SL 1.32475, TP 1.32860. Continuation entry only; cancel if untriggered by 14:30 UTC or H1 closes below the breakout base."
 }
