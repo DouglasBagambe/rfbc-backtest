@@ -1,7 +1,35 @@
 {
-  "decision_id": "GDESK-20260925T091808Z-NO-TRADE",
-  "generated_at": "2026-09-25T09:18:08Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol Dukascopy H1 BID/ASK scan GDESK-2026-09-25T09-0d2f205297 found no genuinely qualified setup. JPY crosses remain in broader intraday declines but the latest completed bars are rebounding, so fresh shorts would chase extension. EURUSDc, GBPUSDc and AUDUSDc are recovering but remain close to recent resistance without a confirmed continuation break. CAD crosses and GBP/CAD are directional but correlated and extended enough that current entries lack clean asymmetric invalidation. XAUUSDc printed a strong bullish hour into the recent 4295-4297 area, but buying directly beneath that resistance after the impulse is poor risk/reward and a breakout is not yet confirmed on completed H1 data. No setup clears the quality threshold without forcing exposure."
+  "decision_id": "GDESK-20260925T102108Z-GBPCAD-BUY-STOP",
+  "generated_at": "2026-09-25T10:21:08Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "GBPCADc",
+      "side": "BUY",
+      "order_type": "BUY_STOP",
+      "entry": 1.87310,
+      "stop": 1.87140,
+      "target": 1.87650,
+      "volume": 0.01,
+      "risk_pct": 0.25,
+      "valid_until": "2026-09-25T12:00:00Z",
+      "cancel_condition": "Cancel if an H1 candle closes below 1.87140 before entry, if the order is not triggered by 12:00 UTC, or if GBP/CAD breaks the setup on material high-impact news before trigger.",
+      "confidence": "MEDIUM_HIGH",
+      "setup_name": "London continuation breakout",
+      "regime": "Bullish intraday trend / higher-high continuation",
+      "session": "London",
+      "news_proximity": "Unknown from supplied market context; cancel on material high-impact GBP/CAD news before trigger.",
+      "exposure_note": "Adds GBP-long/CAD-short exposure only; proposed initial risk 0.25%, below the 2.0% aggregate cap and 1.0% per-currency directional cap before server-side existing-account checks.",
+      "reasoning": "GBPCADc has advanced persistently from 1.86838 at 03:00 UTC to 1.87283 at 09:00 UTC, with the 08:00 and 09:00 completed H1 bars extending higher and the latest bar closing near its high. A buy-stop above 1.873065 recent resistance requires continuation confirmation rather than chasing at market. The 1.87140 stop sits beneath the latest breakout structure, while 1.87650 provides approximately 2R reward-to-risk.",
+      "context": {
+        "scan_id": "GDESK-2026-09-25T10-25d0c9f2ef",
+        "context_generated_at": "2026-09-25T10:01:39.454004+00:00",
+        "latest_completed_bar": "2026-09-25T09:00:00+00:00",
+        "source": "Dukascopy BID/ASK",
+        "timeframe": "H1 completed bars"
+      }
+    }
+  ],
+  "message": "TRADE: GBPCADc BUY_STOP 1.87310, SL 1.87140, TP 1.87650, 0.25% risk. Continuation requires a clean break above the latest H1 resistance; server-side portfolio gates remain authoritative."
 }
