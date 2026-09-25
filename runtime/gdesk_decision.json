@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260925T081853Z-NO-TRADE",
-  "generated_at": "2026-09-25T08:18:53Z",
+  "decision_id": "GDESK-20260925T091808Z-NO-TRADE",
+  "generated_at": "2026-09-25T09:18:08Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol Dukascopy H1 BID/ASK scan GDESK-2026-09-25T08-0f3bc49915 found no genuinely qualified setup. JPY crosses remain broadly bearish but are already extended after a multi-hour decline and the latest completed hour is rebounding, making fresh shorts poor chase entries. EURUSDc and GBPUSDc are rebounding into nearby resistance without a confirmed breakout; AUDUSDc/NZDUSDc recovery lacks clean continuation; USDCHFc and USDCADc are mixed near recent ranges; EURGBPc is compressed; EURAUDc/GBPAUDc/EURCADc/GBPCADc remain uneven; XAUUSDc is volatile and range-bound after sharp swings. No clean asymmetric entry justifies forcing correlated or late exposure."
+  "message": "NO_TRADE: complete fresh 18-symbol Dukascopy H1 BID/ASK scan GDESK-2026-09-25T09-0d2f205297 found no genuinely qualified setup. JPY crosses remain in broader intraday declines but the latest completed bars are rebounding, so fresh shorts would chase extension. EURUSDc, GBPUSDc and AUDUSDc are recovering but remain close to recent resistance without a confirmed continuation break. CAD crosses and GBP/CAD are directional but correlated and extended enough that current entries lack clean asymmetric invalidation. XAUUSDc printed a strong bullish hour into the recent 4295-4297 area, but buying directly beneath that resistance after the impulse is poor risk/reward and a breakout is not yet confirmed on completed H1 data. No setup clears the quality threshold without forcing exposure."
 }
