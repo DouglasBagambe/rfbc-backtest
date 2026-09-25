@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260925T042150Z-NO-TRADE",
-  "generated_at": "2026-09-25T04:21:50Z",
+  "decision_id": "GDESK-20260925T051730Z-NO-TRADE",
+  "generated_at": "2026-09-25T05:17:30Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol Dukascopy H1 BID/ASK scan GDESK-2026-09-25T04-b4dfba0c93 found no genuinely qualified setup. JPY strength remains broad across USDJPY, AUDJPY, CADJPY, CHFJPY, GBPJPY and EURJPY, but the latest completed H1 bars are already extended into fresh lows and the signals are highly correlated, making a new entry a chase rather than clean asymmetry. USDCHF has upward momentum but is near a fresh local high without a clean pullback trigger. EURUSD, GBPUSD, AUDUSD and NZDUSD remain weak/mixed; the remaining crosses lack a sufficiently clean independent trigger. XAUUSD reversed lower after the Asian rebound and remains too volatile for a clean 0.25%-0.5% risk entry from the supplied completed bars. No trade is preferable to forcing correlated or late momentum exposure."
+  "message": "NO_TRADE: complete fresh 18-symbol Dukascopy H1 BID/ASK scan GDESK-2026-09-25T05-0e89dfe5cf found no genuinely qualified setup. Broad JPY strength persists across USDJPY, AUDJPY, CADJPY, CHFJPY, GBPJPY and EURJPY, but those moves are highly correlated and already extended into recent lows, so entering now would be chasing rather than taking clean asymmetry. USDCHF is pushing recent highs but lacks a clean pullback or breakout confirmation beyond the local 0.82935 area. EURUSD, GBPUSD, AUDUSD and NZDUSD are weak-to-mixed without a clean independent trigger; EURGBP is compressed; EURAUD, GBPAUD, EURCAD and GBPCAD are choppy after reversals. XAUUSD sold off sharply from the Asian rebound and remains too volatile for a clean 0.25%-0.5% risk entry from completed H1 bars. No trade is preferable to forcing correlated or late momentum exposure."
 }
