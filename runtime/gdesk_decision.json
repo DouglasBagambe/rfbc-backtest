@@ -1,7 +1,6 @@
 {
-  "decision_id": "GDESK-20260925T172000Z-NO-TRADE",
-  "generated_at": "2026-09-25T17:20:00Z",
+  "decision_id": "GDESK-20260925T182122Z-NO-TRADE",
+  "generated_at": "2026-09-25T18:21:22Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: reviewed all 18 symbols on fresh completed H1 Dukascopy BID/ASK context for scan GDESK-2026-09-25T17-29e0064be3. Broad JPY strength remains the clearest theme, but the move is already extended and several crosses are consolidating or rebounding after the selloff. USD and cross-market structures are mixed, while gold is volatile and lacks a clean low-risk entry. No new independent setup offers sufficiently clean structure and reward to justify fresh risk into Friday evening."
-}
+  "message": "NO_TRADE: reviewed all 18 symbols using fresh completed H1 Dukascopy BID/ASK context for scan GDESK-2026-09-25T18-3f5638d4b5. JPY strength remains the dominant directional theme, but USDJPY, AUDJPY, CADJPY, EURJPY, CHFJPY and GBPJPY are already materially extended from earlier-session levels and are now consolidating or rebounding, making fresh shorts poor chase entries. USD majors and crosses are mixed without a clean independent trigger, and XAUUSD remains volatile after a sharp intraday reversal. With Friday liquidity winding down, no setup offers sufficiently clean structure and reward to justify new risk."
