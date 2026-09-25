@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260925T022012Z-NO-TRADE",
-  "generated_at": "2026-09-25T02:20:12Z",
+  "decision_id": "GDESK-20260925T031722Z-NO-TRADE",
+  "generated_at": "2026-09-25T03:17:22Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol Dukascopy H1 BID/ASK scan GDESK-2026-09-25T02-b5cdbce052 found no genuinely qualified setup. JPY strength is broad across USDJPY, AUDJPY, CADJPY, CHFJPY, GBPJPY and EURJPY, but the move is already extended into recent H1 lows and the crosses are highly correlated, making a fresh market entry poor asymmetry. USD majors remain mixed, while XAUUSD is rebounding inside a volatile prior-session range rather than presenting a clean breakout or pullback trigger. No 0.25%-0.5% risk setup qualifies without chasing or forcing an entry. Wait for the next completed H1 scan."
+  "message": "NO_TRADE: complete fresh 18-symbol Dukascopy H1 BID/ASK scan GDESK-2026-09-25T03-fa34876027 found no genuinely qualified setup. Broad JPY strength continued through the latest completed H1 bar across USDJPY, AUDJPY, CADJPY, CHFJPY, GBPJPY and EURJPY, but those moves are correlated and already extended into fresh intraday lows, so entering now would chase. EURUSD, GBPUSD, AUDUSD and NZDUSD remain weak/mixed without a clean trigger; USDCAD and USDCHF lack convincing follow-through; EUR/GBP/AUD/CAD crosses are mixed; XAUUSD remains volatile inside the prior-session range after its rebound. No 0.25%-0.5% risk setup offers clean enough asymmetry without forcing an entry. Wait for the next completed H1 scan."
 }
