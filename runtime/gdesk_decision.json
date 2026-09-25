@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260925T062055Z-NO-TRADE",
-  "generated_at": "2026-09-25T06:20:55Z",
+  "decision_id": "GDESK-20260925T072048Z-NO-TRADE",
+  "generated_at": "2026-09-25T07:20:48Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18-symbol Dukascopy H1 BID/ASK scan GDESK-2026-09-25T06-f266f0a6d9 found no genuinely qualified setup. JPY strength remains broad across USDJPY, AUDJPY, CADJPY, CHFJPY, GBPJPY and EURJPY, but the moves are highly correlated and already extended into fresh intraday lows, making immediate shorts chase entries rather than clean asymmetric setups. USDCHF is holding near recent highs without a confirmed clean breakout; major USD pairs are mixed or recovering from weakness; EURGBP remains compressed; EURAUD, GBPAUD, EURCAD and GBPCAD are choppy; XAUUSD remains volatile after a sharp selloff and partial rebound. No trade is preferable to forcing late or correlated exposure."
+  "message": "NO_TRADE: complete fresh 18-symbol Dukascopy H1 BID/ASK scan GDESK-2026-09-25T07-915d9acc48 found no genuinely qualified setup. Broad JPY strength is confirmed across USDJPYc, AUDJPYc, CADJPYc, CHFJPYc, GBPJPYc and EURJPYc, but all are strongly correlated and already pressing fresh intraday lows after multi-hour declines, so new shorts would be chase entries rather than clean asymmetric setups. EURUSDc, GBPUSDc, AUDUSDc and NZDUSDc are rebounding but lack a confirmed breakout; USDCHFc is firm but not cleanly extended through resistance; EURGBPc remains compressed; EURAUDc, GBPAUDc, EURCADc and GBPCADc are mixed/choppy; XAUUSDc is volatile inside the prior selloff/rebound range. No trade is preferable to forcing late or correlated exposure."
 }
