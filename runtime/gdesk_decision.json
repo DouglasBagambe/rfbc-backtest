@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260925T222148Z-NO-TRADE",
-  "generated_at": "2026-09-25T22:21:48Z",
+  "decision_id": "GDESK-20260925T231916Z-NO-TRADE",
+  "generated_at": "2026-09-25T23:19:16Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: reviewed all 18 symbols from fresh MARKET_OPEN scan GDESK-2026-09-25T22-7a1c5e675a using completed Dukascopy H1 BID/ASK bars. The strongest directional theme is broad JPY strength, but USDJPY, AUDJPY, EURJPY, GBPJPY, CADJPY and CHFJPY are already extended after the intraday decline and are consolidating near session lows. EURUSD/GBPUSD recovery structure has stalled, other crosses are mixed, and XAUUSD remains volatile/two-sided. The latest completed 20:00 UTC bars also show severe late-Friday spread widening across essentially the whole universe, including unusually large spreads in GBPUSD, GBPAUD, GBPCAD, XAUUSD and JPY crosses. Execution quality is therefore materially degraded and no clean asymmetric setup justifies new risk."
+  "message": "NO_TRADE: reviewed all 18 symbols from fresh MARKET_OPEN scan GDESK-2026-09-25T23-3e0ee4732e using completed Dukascopy H1 BID/ASK bars. JPY strength remains the clearest directional theme, but USDJPY, AUDJPY, EURJPY, GBPJPY, CADJPY and CHFJPY are already extended after the intraday decline and are consolidating near session lows. EURUSD/GBPUSD recovery structure has stalled, other crosses remain mixed, and XAUUSD is volatile/two-sided. The latest completed 20:00 UTC bars show severe late-Friday spread widening across the universe, materially degrading execution quality. No clean asymmetric setup justifies new risk."
 }
