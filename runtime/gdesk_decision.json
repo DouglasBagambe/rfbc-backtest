@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260925T231916Z-NO-TRADE",
-  "generated_at": "2026-09-25T23:19:16Z",
-  "result": "NO_TRADE",
+  "decision_id": "GDESK-20260926T001933Z-SYSTEM-FAILURE",
+  "generated_at": "2026-09-26T00:19:33Z",
+  "result": "SYSTEM_FAILURE",
   "decisions": [],
-  "message": "NO_TRADE: reviewed all 18 symbols from fresh MARKET_OPEN scan GDESK-2026-09-25T23-3e0ee4732e using completed Dukascopy H1 BID/ASK bars. JPY strength remains the clearest directional theme, but USDJPY, AUDJPY, EURJPY, GBPJPY, CADJPY and CHFJPY are already extended after the intraday decline and are consolidating near session lows. EURUSD/GBPUSD recovery structure has stalled, other crosses remain mixed, and XAUUSD is volatile/two-sided. The latest completed 20:00 UTC bars show severe late-Friday spread widening across the universe, materially degrading execution quality. No clean asymmetric setup justifies new risk."
+  "message": "SYSTEM_FAILURE: newest current-hour context scan GDESK-2026-09-26T00-df0105170e reports MARKET_CLOSED with freshness MARKET_CLOSED, so the required MARKET_OPEN/FRESH precondition is not satisfied. No trading decision was produced."
 }
