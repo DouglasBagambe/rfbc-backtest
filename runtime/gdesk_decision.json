@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260926T122018Z-SYSTEM-FAILURE",
-  "generated_at": "2026-09-26T12:20:18Z",
+  "decision_id": "GDESK-20260926T132058Z-SYSTEM-FAILURE",
+  "generated_at": "2026-09-26T13:20:58Z",
   "result": "SYSTEM_FAILURE",
   "decisions": [],
-  "message": "SYSTEM_FAILURE: current-hour scan GDESK-2026-09-26T12-641ad4f843 reports MARKET_CLOSED with freshness MARKET_CLOSED; MARKET_OPEN/FRESH context is unavailable. No trading decision was produced."
+  "message": "SYSTEM_FAILURE: current-hour scan GDESK-2026-09-26T13-fbc176a4de reports MARKET_CLOSED with freshness MARKET_CLOSED; MARKET_OPEN/FRESH context is unavailable. No trading decision was produced."
 }
