@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260927T202056049Z-SYSTEM-FAILURE",
-  "generated_at": "2026-09-27T20:20:56.049Z",
+  "decision_id": "GDESK-20260927T212006247Z-SYSTEM-FAILURE",
+  "generated_at": "2026-09-27T21:20:06.247Z",
   "result": "SYSTEM_FAILURE",
   "decisions": [],
-  "message": "SYSTEM_FAILURE: no current-hour gdesk_context_ready event was published. Render failed fetching EURGBP BID from Dukascopy at 2026-09-27T20:03:22.979083Z; context is incomplete, so no trading decision was produced."
+  "message": "SYSTEM_FAILURE: current-hour context is MARKET_CLOSED, not MARKET_OPEN/FRESH. Scan GDESK-2026-09-27T21-ffd04e3fc6 was rejected; no trading decision was produced."
 }
