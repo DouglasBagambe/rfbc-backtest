@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260927T172100000Z-SYSTEM-FAILURE",
-  "generated_at": "2026-09-27T17:21:00.000Z",
+  "decision_id": "GDESK-20260927T181818064Z-SYSTEM-FAILURE",
+  "generated_at": "2026-09-27T18:18:18.064Z",
   "result": "SYSTEM_FAILURE",
   "decisions": [],
-  "message": "SYSTEM_FAILURE: no current-hour gdesk_context_ready event was produced. Render logged gdesk_context_publish_failure at 2026-09-27T17:09:29.939547Z: dukascopy_fetch_failed:GBPUSD:ask:RuntimeError. Context is incomplete; no trading decision was produced."
+  "message": "SYSTEM_FAILURE: newest current-hour Render context is MARKET_CLOSED, not required MARKET_OPEN/FRESH. Scan GDESK-2026-09-27T18-5296dd1212 generated at 2026-09-27T18:08:55.156143Z; no trading decision was produced."
 }
