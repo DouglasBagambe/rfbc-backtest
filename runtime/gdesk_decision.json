@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260928T022315771Z-NO-TRADE",
-  "generated_at": "2026-09-28T02:23:15.771Z",
+  "decision_id": "GDESK-20260928T032356578Z-NO-TRADE",
+  "generated_at": "2026-09-28T03:23:56.578Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-28T02-692a4d8217; all 18/18 symbols analyzed. XAUUSD bearish breakout is already extended and fails no-chase; JPY rebounds lack confirmed range breaks; remaining markets are range-bound or spread-inefficient."
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-28T03-5be4436530; all 18/18 symbols analyzed. XAUUSD bearish continuation is already extended and fails no-chase; no other symbol has a confirmed, spread-efficient H1 breakout."
 }
