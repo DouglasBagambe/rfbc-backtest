@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260928T222156374Z-SYSTEM-FAILURE",
-  "generated_at": "2026-09-28T22:21:56.374Z",
-  "result": "SYSTEM_FAILURE",
+  "decision_id": "GDESK-20260928T232441268Z-NO-TRADE",
+  "generated_at": "2026-09-28T23:24:41.268Z",
+  "result": "NO_TRADE",
   "decisions": [],
-  "message": "SYSTEM_FAILURE: Scan GDESK-2026-09-28T22-54162b7ecf is incomplete. XAUUSD.x latest_completed_bar is 2026-09-28T20:00:00Z while the current scan requires 2026-09-28T21:00:00Z; no trading decision was produced."
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-28T23-7bb68ec78c; all 18/18 symbols analyzed from synchronized completed Dukascopy H1 BID/ASK bars. No prior-20-hour breakout was confirmed, and near-edge candidates lacked sufficient momentum and spread-adjusted entry quality; no trade was forced."
 }
