@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260928T032356578Z-NO-TRADE",
-  "generated_at": "2026-09-28T03:23:56.578Z",
+  "decision_id": "GDESK-20260928T042259192Z-NO-TRADE",
+  "generated_at": "2026-09-28T04:22:59.192Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-28T03-5be4436530; all 18/18 symbols analyzed. XAUUSD bearish continuation is already extended and fails no-chase; no other symbol has a confirmed, spread-efficient H1 breakout."
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-28T04-b163f0b636; all 18/18 symbols analyzed. No symbol confirmed a clean H1 breakout; XAUUSD remains strongly bearish but is extended at the range low, so no-chase applies."
 }
