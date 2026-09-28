@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260928T051920884Z-NO-TRADE",
-  "generated_at": "2026-09-28T05:19:20.884Z",
+  "decision_id": "GDESK-20260928T062458990Z-NO-TRADE",
+  "generated_at": "2026-09-28T06:24:58.990Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-28T05-c62a2aff34; all 18/18 symbols analyzed from completed Dukascopy H1 BID/ASK bars. No confirmed breakout qualified; no-chase and spread discipline applied."
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-28T06-663f057344; all 18/18 symbols analyzed from completed Dukascopy H1 BID/ASK bars. USDCHFc breakout lacked sufficient confirmation and XAUUSDc was already extended, so no-chase discipline rejected both."
 }
