@@ -1,7 +1,37 @@
 {
-  "decision_id": "GDESK-20260928T111922000Z-NO-TRADE",
-  "generated_at": "2026-09-28T11:19:22.000Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-28T11-9cca308fd6; all 18/18 symbols analyzed from completed Dukascopy H1 BID/ASK bars. JPY crosses and XAUUSD were already extended, while the remaining candidates lacked a confirmed breakout or clean risk-to-reward entry. No setup qualified without chasing."
+  "decision_id": "GDESK-20260928T122237126Z-TRADE-USDCHFX",
+  "generated_at": "2026-09-28T12:22:37.126Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "USDCHF.x",
+      "side": "BUY",
+      "order_type": "BUY_STOP",
+      "entry": 0.8324,
+      "stop": 0.8312,
+      "target": 0.8354,
+      "volume": 0.01,
+      "risk_pct": 0.25,
+      "valid_until": "2026-09-28T15:00:00Z",
+      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes below 0.83120 before entry, or if the live spread exceeds 0.00015 at trigger.",
+      "confidence": 0.66,
+      "setup_name": "H1 20-bar breakout continuation",
+      "regime": "bullish_trend_breakout",
+      "session": "London-New York overlap",
+      "news_proximity": "UNKNOWN_NOT_PROVIDED",
+      "exposure_note": "Adds 0.25% long USD / short CHF directional risk; proposed aggregate risk is 0.25%, subject to server-side duplicate, account-risk, and exposure enforcement.",
+      "reasoning": "USDCHF is the only clean full-universe breakout: the latest completed H1 close at 0.83184 is above the prior 20-bar high at 0.831755, with MA5 > MA10 > MA20 and acceptable spread at roughly 7.6% of ATR14. A buy-stop above the latest H1 high requires continuation confirmation and avoids chasing the close; stop is below the breakout shelf and target is 2.5R.",
+      "context": {
+        "scan_id": "GDESK-2026-09-28T12-760aca851d",
+        "source": "Dukascopy BID/ASK",
+        "context_generated_at": "2026-09-28T12:00:24.411161+00:00",
+        "latest_completed_bar_at": "2026-09-28T11:00:00+00:00",
+        "ready_event_at": "2026-09-28T12:00:24.499857+00:00",
+        "timeframe": "H1 completed bars",
+        "universe_count": 18
+      }
+    }
+  ],
+  "message": "TRADE: USDCHF.x BUY_STOP at 0.83240, SL 0.83120, TP 0.83540, 0.25% risk. Valid fresh MARKET_OPEN scan; all 18/18 symbols analyzed. Server-side controls remain authoritative."
 }
