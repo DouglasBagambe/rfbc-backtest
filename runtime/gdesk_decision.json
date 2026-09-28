@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260928T161903421Z-NO-TRADE",
-  "generated_at": "2026-09-28T16:19:03.421Z",
+  "decision_id": "GDESK-20260928T171955975Z-NO-TRADE",
+  "generated_at": "2026-09-28T17:19:55.975Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-28T16-1a99261551; all 18/18 symbols analyzed from completed Dukascopy H1 BID/ASK bars. No symbol produced a fresh confirmed breakout with acceptable entry quality, correlation, and exposure; existing moves were consolidating or already extended."
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-28T17-58ffd77eb5; all 18/18 symbols analyzed from completed Dukascopy H1 BID/ASK bars. No symbol produced a confirmed breakout with acceptable entry quality; trends were consolidating and no trade was forced."
 }
