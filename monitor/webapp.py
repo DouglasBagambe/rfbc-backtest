@@ -239,6 +239,7 @@ def fx101_open():
 @app.get("/fx101/health")
 def fx101_health():
     try:
+        active_accounts = [a for a in fx101.list_accounts() if a["status"] == "active"]
         open_trades = len(fx101.list_trades("WHERE state IN ('PLACED','OPEN')"))
         return jsonify({
             "ok": True,
@@ -250,6 +251,8 @@ def fx101_health():
             "gdesk_market_data": "dukascopy_h1_bid_ask",
             "lifecycle_price_data": "dukascopy_m1_bid_ask",
             "execution": "manual",
+            "active_account_routes": [{"name": a["name"], "broker": a["broker"], "per_trade_risk_cap": a["per_trade_risk_cap"]} for a in active_accounts],
+            "rfbc_execution_enabled": os.getenv("RFBC_EXECUTION_ENABLED", "0") == "1",
         })
     except Exception as exc:
         fx101.log("fx101_health_db_error", error=type(exc).__name__, detail=str(exc)[:200])
@@ -304,6 +307,7 @@ def check():
 
 
 if __name__ == "__main__":
+    fx101.activate_goat_challenge_profile()
     webhook_url = os.getenv("TELEGRAM_WEBHOOK_URL", "").strip()
     if webhook_url:
         ok, status = fx101.register_telegram_webhook(webhook_url)

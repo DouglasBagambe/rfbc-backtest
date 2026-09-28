@@ -12,6 +12,8 @@ import requests
 DESK_SYMBOLS = {"EURUSDc", "GBPUSDc", "GBPJPYc", "USDCADc", "EURJPYc"}
 RFBC_SYMBOLS = {"USDJPYc", "AUDJPYc"}
 ALL_SYMBOLS = DESK_SYMBOLS | RFBC_SYMBOLS
+GOAT_CHALLENGE_ACCOUNT_ID = "goat-5k-2step-standard"
+GOAT_CHALLENGE_NAME = "GOAT • $5K 2-Step Standard"
 DB_PATH = Path(os.getenv("FX101_DB_PATH", "monitor/fx101.sqlite3"))
 LOG = logging.getLogger("fx101")
 _SCHEMA_LOCK = threading.Lock()
@@ -94,6 +96,38 @@ def create_account(data: dict[str, Any]) -> dict[str, Any]:
     stamp=now(); aid=str(data.get("id") or uuid.uuid4()); balance=float(data["tracked_balance"]); c=db()
     is_default=1 if not c.execute("SELECT 1 FROM accounts WHERE is_default=1").fetchone() else 0
     c.execute("""INSERT INTO accounts (id,name,broker,account_type,base_currency,tracked_balance,tracked_equity,initial_balance,high_water_mark,status,is_default,min_lot,max_lot,volume_step,per_trade_risk_cap,aggregate_risk_cap,daily_loss_limit,weekly_loss_limit,max_drawdown,max_positions,allowed_symbols,prop_rules,notes,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",(aid,data["name"],data["broker"],data["account_type"],data["base_currency"],balance,data.get("tracked_equity"),balance,balance,"active",is_default,data.get("min_lot"),data.get("max_lot"),data.get("volume_step"),float(data.get("per_trade_risk_cap",.5)),float(data.get("aggregate_risk_cap",1.0)),data.get("daily_loss_limit"),data.get("weekly_loss_limit"),data.get("max_drawdown"),int(data.get("max_positions",1)),json.dumps(data.get("allowed_symbols",[])),json.dumps(data.get("prop_rules",{})),data.get("notes"),stamp,stamp)); c.commit(); return get_account(aid)
+
+def activate_goat_challenge_profile() -> dict[str, Any]:
+    """Make the explicitly selected GOAT challenge the sole live routing target.
+
+    This is tracked account state, not a broker connection.  Symbol/tick
+    specifications deliberately remain unconfigured until captured from the
+    GOAT MT5 terminal, so the bot cannot invent an executable lot size.
+    """
+    stamp = now(); c = db()
+    rules = {
+        "firm": "Goat Funded Trader",
+        "plan": "2 Steps Standard",
+        "challenge_size_usd": 5000.0,
+        "phase_targets_pct": [10.0, 5.0],
+        "firm_daily_loss_limit_pct": 5.0,
+        "firm_max_loss_limit_pct": 10.0,
+        "lot_sizing": "blocked_until_goat_mt5_symbol_specs_are_verified",
+        "excluded_accounts": ["Exness", "GOAT Pay Later Challenge"],
+    }
+    # The operating limits are intentionally inside the firm's stated limits.
+    values = (GOAT_CHALLENGE_ACCOUNT_ID, GOAT_CHALLENGE_NAME, "Goat Funded Trader", "prop", "USD", 5000.0, 5000.0,
+              5000.0, 5000.0, "active", 1, None, None, None, 1.25, 2.5, 2.5, None, 7.5, 2,
+              json.dumps([]), json.dumps(rules), "Only active trading route. Pay Later is excluded.", stamp, stamp)
+    c.execute("UPDATE accounts SET status='inactive', is_default=0, updated_at=? WHERE id<>? AND status='active'", (stamp, GOAT_CHALLENGE_ACCOUNT_ID))
+    existing = c.execute("SELECT id FROM accounts WHERE id=?", (GOAT_CHALLENGE_ACCOUNT_ID,)).fetchone()
+    if existing:
+        c.execute("""UPDATE accounts SET name=?,broker=?,account_type=?,base_currency=?,tracked_balance=?,tracked_equity=?,initial_balance=?,high_water_mark=?,status=?,is_default=?,min_lot=?,max_lot=?,volume_step=?,per_trade_risk_cap=?,aggregate_risk_cap=?,daily_loss_limit=?,weekly_loss_limit=?,max_drawdown=?,max_positions=?,allowed_symbols=?,prop_rules=?,notes=?,updated_at=? WHERE id=?""",
+                  (GOAT_CHALLENGE_NAME, "Goat Funded Trader", "prop", "USD", 5000.0, 5000.0, 5000.0, 5000.0, "active", 1, None, None, None, 1.25, 2.5, 2.5, None, 7.5, 2, json.dumps([]), json.dumps(rules), "Only active trading route. Pay Later is excluded.", stamp, GOAT_CHALLENGE_ACCOUNT_ID))
+    else:
+        c.execute("""INSERT INTO accounts (id,name,broker,account_type,base_currency,tracked_balance,tracked_equity,initial_balance,high_water_mark,status,is_default,min_lot,max_lot,volume_step,per_trade_risk_cap,aggregate_risk_cap,daily_loss_limit,weekly_loss_limit,max_drawdown,max_positions,allowed_symbols,prop_rules,notes,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""", values)
+    c.commit()
+    return get_account(GOAT_CHALLENGE_ACCOUNT_ID)
 
 def get_account(account_id: str) -> dict[str, Any]:
     x=db().execute("SELECT * FROM accounts WHERE id=?",(account_id,)).fetchone()
@@ -205,6 +239,21 @@ def stats_text() -> str:
 def accounts_text() -> str:
     accounts=list_accounts()
     if not accounts: return "ACCOUNTS\n\nNo tracked account is configured. Add an account through the authenticated admin route before signals can be accepted. Tracked balance is not broker-live."
+    active=[a for a in accounts if a["status"] == "active"]
+    if len(active) == 1 and active[0]["id"] == GOAT_CHALLENGE_ACCOUNT_ID:
+        a=active[0]
+        return "\n".join([
+            "ACCOUNT • LIVE ROUTE",
+            "GOAT $5K • 2-Step Standard",
+            "Balance / equity: $5,000 tracked",
+            "Per setup: 1.25% • $62.50 max initial risk",
+            "Combined open risk: 2.50% • $125 max",
+            "Day lock: −2.50% • −$125",
+            "Firm guardrails: 5% daily • 10% overall",
+            "Excluded: Exness • GOAT Pay Later",
+            "Execution: manual MT5",
+            "Lot size: blocked until GOAT MT5 symbol specs are verified.",
+        ])
     return "\n\n".join(["ACCOUNTS"]+[f"{a['name']}\nTracked balance: {a['tracked_balance']} {a['base_currency']}\nStatus: {a['status'].title()}{' • Default' if a['is_default'] else ''}" for a in accounts])
 
 def send_signal(t: dict[str, Any]) -> tuple[bool,str]: return telegram_send(card(t), [[{"text":"PLACED","callback_data":f"placed:{t['trade_id']}"},{"text":"SKIPPED","callback_data":f"skipped:{t['trade_id']}"}],[{"text":"WHY?","callback_data":f"why:{t['trade_id']}"},{"text":"CANCEL","callback_data":f"cancel:{t['trade_id']}"}]])
@@ -309,7 +358,7 @@ def receive_update(update: dict[str,Any]) -> str:
         telegram_send(f"TODAY\n\nTrades: {len(items)}  •  Open: {sum(x['state'] in ('PLACED','OPEN') for x in items)}\nNet R: {net:.2f}\nG DESK: {sum(x['source']=='G_DESK' for x in items)}  •  RFBC: {sum(x['source']=='RFBC' for x in items)}")
     elif text.startswith("/stats"): telegram_send(stats_text())
     elif text.startswith("/accounts"): telegram_send(accounts_text())
-    elif text.startswith("/help"): telegram_send("G DESK is interpreted by connected ChatGPT subscription automation. RFBC is frozen deterministic logic. Trades are always placed manually in MT5. PLACED starts tracking; it never sends a broker order. Tracked balances require manual reconciliation.")
+    elif text.startswith("/help"): telegram_send("GOAT $5K 2-Step Standard is the only live route. Exness and GOAT Pay Later are excluded. Trades are placed manually in MT5; the bot never sends broker orders. It will not invent a lot size before GOAT MT5 symbol specifications are verified.")
     elif text.startswith("/history"):
         arg=text.split(maxsplit=1)[1].upper() if len(text.split(maxsplit=1))>1 else ""; items=list_trades("WHERE state NOT IN ('SIGNALLED') ORDER BY created_at DESC LIMIT 8"); items=[x for x in items if not arg or arg in (x['symbol'],x['source'],x['state'])]; telegram_send("HISTORY\n\n"+"\n".join(f"{x['symbol']} • {x['state']} • {x.get('result_r') if x.get('result_r') is not None else '—'}R" for x in items) if items else "HISTORY\n\nNo matching tracked trades.")
     elif text.startswith("/gdesk"): telegram_send("G DESK\n\nAnalysis owner: ChatGPT subscription automation\nMarket context: Dukascopy completed H1 BID/ASK\nExecution: Manual")

@@ -128,6 +128,7 @@ def main() -> None:
     price_failures = 0
     warned_price_outage = False
     rfbc_every = max(60, int(os.getenv("FX101_RFBC_SCAN_SECONDS", "300")))
+    rfbc_enabled = os.getenv("RFBC_EXECUTION_ENABLED", "0").strip() == "1"
     mode = os.getenv("G_DESK_RUNTIME_MODE", "api").strip()
     fx101.db()
     fx101.log("worker_started", poll_seconds=poll, gdesk_mode=mode, price_provider="dukascopy_m1")
@@ -162,7 +163,7 @@ def main() -> None:
                 except Exception as exc:
                     fx101.log("hourly_desk_scan_failure", error=type(exc).__name__)
 
-        if time.monotonic() - last_rfbc >= rfbc_every:
+        if rfbc_enabled and time.monotonic() - last_rfbc >= rfbc_every:
             try:
                 scan_rfbc()
             except Exception as exc:

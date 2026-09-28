@@ -26,3 +26,9 @@ class Fx101Tests(unittest.TestCase):
     def test_reconciliation_preserves_tracked_balance(self):
         account=self.m.list_accounts()[0]; result=self.m.reconcile_account(account["id"], 103, "manual check")
         self.assertEqual(result["tracked_balance"], 100); self.assertEqual(result["drift"], 3)
+    def test_goat_profile_is_the_only_active_route(self):
+        goat=self.m.activate_goat_challenge_profile()
+        active=[a for a in self.m.list_accounts() if a["status"] == "active"]
+        self.assertEqual([a["id"] for a in active], [self.m.GOAT_CHALLENGE_ACCOUNT_ID])
+        self.assertEqual(goat["per_trade_risk_cap"], 1.25)
+        self.assertIn("Exness", goat["prop_rules"]["excluded_accounts"])
