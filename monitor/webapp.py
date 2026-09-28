@@ -294,6 +294,7 @@ def check():
 
 
 if __name__ == "__main__":
+    fx101.activate_goat_challenge_profile()
     webhook_url = os.getenv("TELEGRAM_WEBHOOK_URL", "").strip()
     if webhook_url:
         ok, status = fx101.register_telegram_webhook(webhook_url)

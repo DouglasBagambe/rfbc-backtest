@@ -14,7 +14,7 @@ import fx101
 import fx101_worker
 import g_desk_adapter
 
-PAUSED_RFBC_SYMBOLS = {"USDJPYc", "AUDJPYc"}
+PAUSED_RFBC_SYMBOLS = {"USDJPY.x", "AUDJPY.x"}
 
 # Preserve the frozen strategy implementation, but remove it from live runtime
 # ownership while this overlay is loaded.

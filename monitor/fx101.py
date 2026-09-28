@@ -128,6 +128,30 @@ def create_account(data: dict[str, Any]) -> dict[str, Any]:
     is_default=1 if not c.execute("SELECT 1 FROM accounts WHERE is_default=1").fetchone() else 0
     c.execute("""INSERT INTO accounts (id,name,broker,account_type,base_currency,tracked_balance,tracked_equity,initial_balance,high_water_mark,status,is_default,min_lot,max_lot,volume_step,per_trade_risk_cap,aggregate_risk_cap,daily_loss_limit,weekly_loss_limit,max_drawdown,max_positions,allowed_symbols,prop_rules,notes,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",(aid,data["name"],data["broker"],data["account_type"],data["base_currency"],balance,data.get("tracked_equity"),balance,balance,"active",is_default,data.get("min_lot"),data.get("max_lot"),data.get("volume_step"),float(data.get("per_trade_risk_cap",.5)),float(data.get("aggregate_risk_cap",1.0)),data.get("daily_loss_limit"),data.get("weekly_loss_limit"),data.get("max_drawdown"),int(data.get("max_positions",1)),json.dumps(data.get("allowed_symbols",[])),json.dumps(data.get("prop_rules",{})),data.get("notes"),stamp,stamp)); c.commit(); return get_account(aid)
 
+GOAT_CHALLENGE_ACCOUNT_ID = "goat-5k-2step-standard"
+
+def activate_goat_challenge_profile() -> dict[str, Any]:
+    """Make the paid GOAT $5K 2-Step challenge the only executable route.
+
+    This is an operating guardrail, not a broker connection: MT5 remains manual
+    and volume stays blocked until symbol specifications are verified from GOAT.
+    """
+    stamp = now()
+    c = db()
+    c.execute("UPDATE accounts SET status='inactive', is_default=0, updated_at=? WHERE id<>?", (stamp, GOAT_CHALLENGE_ACCOUNT_ID))
+    existing = c.execute("SELECT 1 FROM accounts WHERE id=?", (GOAT_CHALLENGE_ACCOUNT_ID,)).fetchone()
+    rules = {"firm_daily_loss_pct": 5.0, "firm_max_loss_pct": 10.0, "phase_one_target_pct": 10.0, "phase_two_target_pct": 5.0}
+    notes = "GOAT Funded Trader $5K 2-Step Standard only. Manual MT5. Do not calculate or place a lot until GOAT .x symbol specifications are verified."
+    values = ("GOAT $5K • 2-Step Standard", "GOAT Funded Trader", "prop", "USD", 5000.0, 5000.0, 5000.0, 5000.0,
+              1.25, 2.5, 2.5, 7.5, 2, json.dumps(rules), notes, stamp)
+    if existing:
+        c.execute("""UPDATE accounts SET name=?,broker=?,account_type=?,base_currency=?,tracked_balance=?,tracked_equity=?,initial_balance=?,high_water_mark=?,status='active',is_default=1,min_lot=NULL,max_lot=NULL,volume_step=NULL,per_trade_risk_cap=?,aggregate_risk_cap=?,daily_loss_limit=?,weekly_loss_limit=NULL,max_drawdown=?,max_positions=?,allowed_symbols='[]',prop_rules=?,notes=?,updated_at=? WHERE id=?""", values + (GOAT_CHALLENGE_ACCOUNT_ID,))
+    else:
+        c.execute("""INSERT INTO accounts (id,name,broker,account_type,base_currency,tracked_balance,tracked_equity,initial_balance,high_water_mark,status,is_default,min_lot,max_lot,volume_step,per_trade_risk_cap,aggregate_risk_cap,daily_loss_limit,weekly_loss_limit,max_drawdown,max_positions,allowed_symbols,prop_rules,notes,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                  (GOAT_CHALLENGE_ACCOUNT_ID,) + values[:8] + ("active", 1, None, None, None) + values[8:11] + (None,) + values[11:13] + ("[]",) + values[13:] + (stamp,))
+    c.commit()
+    return get_account(GOAT_CHALLENGE_ACCOUNT_ID)
+
 def get_account(account_id: str) -> dict[str, Any]:
     x=db().execute("SELECT * FROM accounts WHERE id=?",(account_id,)).fetchone()
     if not x: raise KeyError(account_id)
@@ -242,9 +266,7 @@ def stats_text() -> str:
     return "\n".join(["PERFORMANCE",f"Trades: {total}  •  Wins: {wins}  •  Losses: {losses}",f"Net R: {net:.2f}  •  Win rate: {(wins/total*100 if total else 0):.0f}%",f"Average R: {(net/total if total else 0):.2f}","Insufficient sample for reliable inference." if total<30 else "Tracked statistics only; not a prediction."])
 
 def accounts_text() -> str:
-    accounts=list_accounts()
-    if not accounts: return "ACCOUNTS\n\nNo tracked account is configured. Add an account through the authenticated admin route before signals can be accepted. Tracked balance is not broker-live."
-    return "\n\n".join(["ACCOUNTS"]+[f"{a['name']}\nTracked balance: {a['tracked_balance']} {a['base_currency']}\nStatus: {a['status'].title()}{' • Default' if a['is_default'] else ''}" for a in accounts])
+    return "\n".join(["ACCOUNT • LIVE ROUTE", "GOAT $5K • 2-Step Standard", "Balance / equity: $5,000 tracked", "Per setup: 1.25% • $62.50 max initial risk", "Combined open risk: 2.50% • $125 max", "Day lock: −2.50% • −$125", "Firm guardrails: 5% daily • 10% overall", "Excluded: Exness • GOAT Pay Later", "Execution: manual MT5", "Lot size: blocked until GOAT .x symbol specifications are verified."])
 
 def send_signal(t: dict[str, Any]) -> tuple[bool,str]: return telegram_send(card(t), [[{"text":"PLACED","callback_data":f"placed:{t['trade_id']}"},{"text":"SKIPPED","callback_data":f"skipped:{t['trade_id']}"}],[{"text":"WHY?","callback_data":f"why:{t['trade_id']}"},{"text":"CANCEL","callback_data":f"cancel:{t['trade_id']}"}]])
 

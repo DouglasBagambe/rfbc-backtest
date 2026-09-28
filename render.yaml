@@ -24,11 +24,13 @@ services:
       - key: TELEGRAM_WEBHOOK_SECRET
         sync: false
       - key: RFBC_EQUITY_USD
-        value: "10.01"
+        value: "5000"
+      - key: RFBC_EXECUTION_ENABLED
+        value: "0"
       - key: FX101_MAX_TOTAL_RISK_PCT
-        value: "1.0"
+        value: "2.5"
       - key: FX101_MAX_POSITIONS
-        value: "1"
+        value: "2"
       - key: FX101_PRICE_POLL_SECONDS
         value: "30"
       - key: FX101_STALE_SECONDS

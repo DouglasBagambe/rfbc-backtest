@@ -16,16 +16,16 @@ from datetime import datetime, timedelta, timezone
 
 from dukascopy_python import instruments
 
-os.environ["FX101_MAX_POSITIONS"] = "99"
-os.environ["FX101_MAX_TOTAL_RISK_PCT"] = "2.0"
+os.environ["FX101_MAX_POSITIONS"] = "2"
+os.environ["FX101_MAX_TOTAL_RISK_PCT"] = "2.5"
 
 import fx101
 
 REQUESTED_GDESK = [
-    "EURUSDc", "GBPUSDc", "GBPJPYc", "USDCADc", "EURJPYc",
-    "AUDUSDc", "NZDUSDc", "USDCHFc", "EURGBPc", "CADJPYc",
-    "CHFJPYc", "EURAUDc", "GBPAUDc", "EURCADc", "GBPCADc",
-    "XAUUSDc",
+    "EURUSD.x", "GBPUSD.x", "GBPJPY.x", "USDCAD.x", "EURJPY.x",
+    "AUDUSD.x", "NZDUSD.x", "USDCHF.x", "EURGBP.x", "CADJPY.x",
+    "CHFJPY.x", "EURAUD.x", "GBPAUD.x", "EURCAD.x", "GBPCAD.x",
+    "XAUUSD.x",
 ]
 CURRENCY_EXPOSURE_CAP = 1.0
 
@@ -88,7 +88,7 @@ def _portfolio_gate(decision: dict) -> list[str]:
     if any(t["symbol"] == decision["symbol"] for t in active):
         errors.append("duplicate_active_symbol")
     total = sum(float(t["risk_pct"]) for t in active) + float(decision["risk_pct"])
-    if total > 2.0 + 1e-9:
+    if total > 2.5 + 1e-9:
         errors.append("portfolio_risk_limit")
     exposure = _exposures(active)
     for currency, amount in _legs(decision["symbol"], decision["side"], float(decision["risk_pct"])).items():
@@ -108,7 +108,11 @@ def _select_account(decision: dict):
         and (not a["allowed_symbols"] or decision["symbol"] in a["allowed_symbols"])
     ]
     for account in accounts:
-        if float(decision["risk_pct"]) <= float(account["per_trade_risk_cap"]):
+        open_count = fx101.db().execute(
+            "SELECT COUNT(*) FROM trade_accounts ta JOIN trades t ON t.id=ta.trade_id WHERE ta.account_id=? AND t.state IN ('PLACED','OPEN')",
+            (account["id"],),
+        ).fetchone()[0]
+        if open_count < int(account["max_positions"]) and float(decision["risk_pct"]) <= float(account["per_trade_risk_cap"]):
             return account, "default_or_first_eligible"
     return None, "no_eligible_account"
 
@@ -118,8 +122,8 @@ fx101.select_account = _select_account
 try:
     c = fx101.db()
     c.execute(
-        "UPDATE accounts SET max_positions=?, aggregate_risk_cap=?, per_trade_risk_cap=?, allowed_symbols=?, updated_at=? WHERE id=? OR name=?",
-        (99, 2.0, 0.5, json.dumps(sorted(fx101.ALL_SYMBOLS)), fx101.now(), "exness-cent-default", "Exness Cent"),
+        "UPDATE accounts SET max_positions=?, aggregate_risk_cap=?, per_trade_risk_cap=?, allowed_symbols=?, updated_at=? WHERE id=?",
+        (2, 2.5, 1.25, json.dumps(sorted(fx101.ALL_SYMBOLS)), fx101.now(), "goat-5k-2step-standard"),
     )
     c.commit()
 except Exception as exc:
@@ -367,7 +371,7 @@ def _dashboard() -> str:
         f"Balance   {balance}",
         f"Equity    {equity}",
         "",
-        f"Open {opened}   •   Pending {pending}   •   Risk {risk:.2f}% / 2.00%",
+        f"Open {opened}   •   Pending {pending}   •   Risk {risk:.2f}% / 2.50%",
         f"Next desk scan   {fx101.next_gdesk_scan_eat()}",
         "",
         "Use the menu below. No commands needed.",
@@ -384,7 +388,7 @@ def _open_view() -> str:
         blocks.append("\n".join([
             f"{t['symbol']}  •  {_order_label(t)}  •  {state}",
             f"Entry {t['entry']}   SL {t['stop']}   TP {t['target']}",
-            f"0.01 lot   •   {t['risk_pct']}% risk",
+            f"{t['volume']} lot   •   {t['risk_pct']}% risk",
             f"Last {t.get('last_price') if t.get('last_price') is not None else '—'}",
         ]))
     return "\n\n".join(blocks)
@@ -432,22 +436,20 @@ def _performance_view() -> str:
 
 
 def _account_view() -> str:
-    accounts = fx101.list_accounts()
-    if not accounts:
-        return "ACCOUNT\n\nNo tracked account configured."
-    a = accounts[0]
     active = _active_risk_trades()
     risk = sum(float(t["risk_pct"]) for t in active)
     return "\n".join([
-        "ACCOUNT",
+        "ACCOUNT • LIVE ROUTE",
         "",
-        f"{a['name']}  •  {a['broker']}",
-        f"Balance   {_money(a.get('tracked_balance'))}",
-        f"Equity    {_money(a.get('tracked_equity'))}",
-        f"Risk      {risk:.2f}% / {float(a['aggregate_risk_cap']):.2f}%",
-        f"Per trade ≤ {float(a['per_trade_risk_cap']):.2f}%",
+        "GOAT $5K • 2-Step Standard",
+        "Balance / equity   $5,000 tracked",
+        f"Risk      {risk:.2f}% / 2.50%  •  $125 max",
+        "Per trade ≤ 1.25%  •  $62.50 max initial risk",
+        "Day lock  −2.50%  •  −$125",
+        "Excluded  Exness • GOAT Pay Later",
         "",
-        "Manual MT5 execution • tracked account",
+        "Manual MT5 • GOAT .x symbols",
+        "Lot size blocked until GOAT symbol specifications are verified.",
     ])
 
 
@@ -457,8 +459,8 @@ def _desk_view() -> str:
         "",
         f"Markets   {len(ACTIVE_GDESK)}",
         "Orders    Market • Limit • Stop • Stop Limit",
-        "Risk      0.25–0.50% per setup",
-        "Portfolio ≤ 2.00% aggregate",
+        "Risk      up to 1.25% per setup",
+        "Portfolio ≤ 2.50% aggregate",
         f"Next scan {fx101.next_gdesk_scan_eat()}",
         "",
         "Every clean setup can be sent. Weak setups are skipped.",
@@ -562,8 +564,8 @@ fx101.log(
     "gdesk_runtime_policy_loaded",
     active_symbols=ACTIVE_GDESK,
     skipped_symbols=SKIPPED_GDESK,
-    max_positions=99,
-    max_total_risk_pct=2.0,
+    max_positions=2,
+    max_total_risk_pct=2.5,
     currency_exposure_cap=CURRENCY_EXPOSURE_CAP,
     compact_cards=True,
     persistent_navigation=True,

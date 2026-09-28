@@ -115,6 +115,9 @@ def prices() -> dict[str, float]:
 
 def scan_rfbc() -> None:
     """Run frozen RFBC unchanged; push only genuinely actionable events."""
+    if os.getenv("RFBC_EXECUTION_ENABLED", "0").strip() != "1":
+        fx101.log("rfbc_scan_skipped", reason="RFBC_EXECUTION_ENABLED_disabled")
+        return
     now = datetime.now(timezone.utc)
     for item in rfbc.evaluate_all(now):
         action = item.get("action") or {"kind":"none"}
