@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260928T151710279Z-NO-TRADE",
-  "generated_at": "2026-09-28T15:17:10.279Z",
+  "decision_id": "GDESK-20260928T161903421Z-NO-TRADE",
+  "generated_at": "2026-09-28T16:19:03.421Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-28T15-7603641ac2; all 18/18 symbols analyzed from completed Dukascopy H1 BID/ASK bars. XAUUSD's downside breakout was already extended and unsuitable to chase; no other symbol produced a clean, non-duplicate setup with acceptable exposure."
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-28T16-1a99261551; all 18/18 symbols analyzed from completed Dukascopy H1 BID/ASK bars. No symbol produced a fresh confirmed breakout with acceptable entry quality, correlation, and exposure; existing moves were consolidating or already extended."
 }
