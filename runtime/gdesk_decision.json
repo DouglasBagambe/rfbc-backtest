@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260928T082101000Z-NO-TRADE",
-  "generated_at": "2026-09-28T08:21:01.000Z",
+  "decision_id": "GDESK-20260928T091932176Z-NO-TRADE",
+  "generated_at": "2026-09-28T09:19:32.176Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-28T08-5b6531df9c; all 18/18 symbols analyzed from completed Dukascopy H1 BID/ASK bars. GBPUSDc, EURGBPc, CHFJPYc, GBPAUDc, GBPCADc, and XAUUSDc breakouts were already extended or correlated; no-chase and exposure controls rejected entry."
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-28T09-edbe6e96f8; all 18/18 symbols analyzed from completed Dukascopy H1 BID/ASK bars. GBP/JPY, EURGBPc, GBPAUDc, GBPCADc, and XAUUSDc moves were already extended and heavily correlated; no-chase and exposure controls rejected entry."
 }
