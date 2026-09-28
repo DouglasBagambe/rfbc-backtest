@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260927T231926000Z-SYSTEM-FAILURE",
-  "generated_at": "2026-09-27T23:19:26.000Z",
-  "result": "SYSTEM_FAILURE",
+  "decision_id": "GDESK-20260928T002258714Z-NO-TRADE",
+  "generated_at": "2026-09-28T00:22:58.714Z",
+  "result": "NO_TRADE",
   "decisions": [],
-  "message": "SYSTEM_FAILURE: current-hour context is MARKET_CLOSED, not MARKET_OPEN/FRESH. Scan GDESK-2026-09-27T23-07842459c0 was rejected; no trading decision was produced."
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-28T00-5d07c8f2e1; all 18/18 symbols analyzed. Early-week price action lacks a sufficiently confirmed, risk-efficient setup, so no order was proposed."
 }
