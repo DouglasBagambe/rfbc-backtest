@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260928T101856926Z-NO-TRADE",
-  "generated_at": "2026-09-28T10:18:56.926Z",
+  "decision_id": "GDESK-20260928T111922000Z-NO-TRADE",
+  "generated_at": "2026-09-28T11:19:22.000Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-28T10-c7cb75dfb8; all 18/18 symbols analyzed from completed Dukascopy H1 BID/ASK bars. JPY and metal moves were extended without a fresh confirmed breakout, while GBP-strength candidates lacked clean entry geometry; no-chase and directional-exposure controls rejected entry."
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-28T11-9cca308fd6; all 18/18 symbols analyzed from completed Dukascopy H1 BID/ASK bars. JPY crosses and XAUUSD were already extended, while the remaining candidates lacked a confirmed breakout or clean risk-to-reward entry. No setup qualified without chasing."
 }
