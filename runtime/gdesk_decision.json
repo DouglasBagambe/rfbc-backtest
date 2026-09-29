@@ -1,46 +1,7 @@
 {
-  "decision_id": "GDESK-20260929T202013393Z-XAUUSD-BUY-STOP",
-  "generated_at": "2026-09-29T20:20:13.393Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "XAUUSD.x",
-      "side": "BUY",
-      "order_type": "BUY_STOP",
-      "entry": 4178.2,
-      "stop": 4166.8,
-      "target": 4206.7,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-09-29T22:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until, if a completed H1 candle closes below 4167.80 before entry, or if broker-side risk/exposure checks reject the order.",
-      "confidence": 0.72,
-      "setup_name": "H1 20-hour breakout continuation",
-      "regime": "Bullish breakout with elevated volatility",
-      "session": "New York afternoon / London close transition",
-      "news_proximity": "No high-impact-news metadata supplied in context; broker/server safeguards remain authoritative.",
-      "exposure_note": "Proposed XAU long risk is 0.25%; aggregate proposed risk is 0.25%. No duplicate active XAUUSD proposal and metal directional exposure remains below the 1.0% cap; existing account risk is enforced server-side.",
-      "reasoning": "The completed 19:00 UTC H1 bar closed at 4177.29 above the prior 20-hour high of 4175.865, following a strong 18:00 UTC bullish expansion. A buy stop at 4178.20 requires continuation above the signal high; the 4166.80 stop sits below the signal-bar low and the 4206.70 target provides 2.5R. No other symbol produced a comparable confirmed breakout.",
-      "context": {
-        "scan_id": "GDESK-2026-09-29T20-e3854f4a5a",
-        "ready_generated_at": "2026-09-29T20:05:24.902048+00:00",
-        "symbol_generated_at": "2026-09-29T20:05:24.902048+00:00",
-        "latest_completed_bar": "2026-09-29T19:00:00+00:00",
-        "source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars",
-        "universe_count": 18,
-        "signal_bar": {
-          "open": 4170.875,
-          "high": 4177.6,
-          "low": 4167.83,
-          "close": 4177.29,
-          "spread": 0.67
-        },
-        "prior_20h_high": 4175.865,
-        "atr14": 13.68892857
-      }
-    }
-  ],
-  "message": "TRADE: XAUUSD.x BUY_STOP 4178.20, SL 4166.80, TP 4206.70, 0.25% risk, valid to 22:00 UTC. Valid FRESH MARKET_OPEN scan; all 18/18 symbols analyzed."
+  "decision_id": "GDESK-20260929T212313972Z-NO-TRADE",
+  "generated_at": "2026-09-29T21:23:13.972Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-29T21-f7d8d66515; all 18/18 symbols analyzed. The prior XAUUSD.x BUY_STOP at 4178.20 triggered during the completed 20:00 UTC H1 bar and remains between its 4166.80 stop and 4206.70 target, so duplicate XAU exposure is prohibited. No other symbol produced a qualified setup."
 }
