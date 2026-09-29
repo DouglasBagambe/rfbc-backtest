@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260929T021927917Z-NO-TRADE",
-  "generated_at": "2026-09-29T02:19:27.917Z",
+  "decision_id": "GDESK-20260929T032536076Z-NO-TRADE",
+  "generated_at": "2026-09-29T03:25:36.076Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-29T02-f362033761; all 18/18 symbols analyzed from synchronized completed Dukascopy H1 BID/ASK bars. No new prior-20-hour breakout qualified, and USDCAD.x was not duplicated while its existing proposal remains valid; no trade was forced."
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-29T03-aa88708a5a; all 18/18 symbols analyzed from synchronized completed Dukascopy H1 BID/ASK bars. No new prior-20-hour breakout qualified, and USDCAD.x was not duplicated during its existing validity window; no trade was forced."
 }
