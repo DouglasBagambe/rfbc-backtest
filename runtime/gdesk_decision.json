@@ -1,36 +1,7 @@
 {
-  "decision_id": "GDESK-20260929T082141339Z-TRADE-EURUSD",
-  "generated_at": "2026-09-29T08:21:41.339Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "EURUSD.x",
-      "side": "SELL",
-      "order_type": "SELL_STOP",
-      "entry": 1.1342,
-      "stop": 1.13565,
-      "target": 1.13058,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-09-29T11:00:00Z",
-      "cancel_condition": "Cancel if not triggered by valid_until, if any completed H1 candle closes above 1.135315 before entry, or if broker spread at trigger exceeds 0.00012.",
-      "confidence": 0.72,
-      "setup_name": "H1 20-bar bearish breakout continuation",
-      "regime": "Bearish trend with downside range expansion",
-      "session": "London open",
-      "news_proximity": "Not provided in the supplied Render context; server-side event-risk controls remain authoritative.",
-      "exposure_note": "Single EUR-short/USD-long proposal at 0.25% risk. Even if the earlier 0.25% USDCHF and 0.25% USDCAD proposals were triggered, aggregate USD-long directional exposure would be 0.75%, below the 1.0% cap; EUR-short exposure is 0.25%. Server-side active-risk and duplicate-symbol checks remain authoritative.",
-      "reasoning": "The 07:00 UTC completed H1 candle closed at 1.134965 below the prior 20-hour low of 1.135315 with MA5 below MA10 below MA20 and a 1.51-ATR bearish body. Because the candle rejected from 1.13427, entry is placed below that low at 1.13420 to require renewed continuation rather than chase the close. The stop is above reclaimed breakout structure at 1.13565 and the target provides approximately 2.5R.",
-      "context": {
-        "scan_id": "GDESK-2026-09-29T08-aedacd6feb",
-        "ready_generated_at": "2026-09-29T08:04:58.408683+00:00",
-        "symbol_generated_at": "2026-09-29T08:04:58.408683+00:00",
-        "latest_completed_bar": "2026-09-29T07:00:00+00:00",
-        "source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars"
-      }
-    }
-  ],
-  "message": "TRADE: EURUSD.x SELL_STOP 1.13420, SL 1.13565, TP 1.13058, risk 0.25%, valid through 11:00 UTC. All 18/18 symbols were analyzed; no correlated companion trade was proposed."
+  "decision_id": "GDESK-20260929T092104145Z-SYSTEM-FAILURE",
+  "generated_at": "2026-09-29T09:21:04.145Z",
+  "result": "SYSTEM_FAILURE",
+  "decisions": [],
+  "message": "SYSTEM_FAILURE: Scan GDESK-2026-09-29T09-707e8ae177 is marked FRESH/MARKET_OPEN but is incomplete: EURUSD.x and GBPUSD.x lack the completed 08:00 UTC H1 bar and stop at 07:00 UTC. No trading decision produced."
 }
