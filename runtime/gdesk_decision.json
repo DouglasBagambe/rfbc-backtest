@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260929T061636349Z-NO-TRADE",
-  "generated_at": "2026-09-29T06:16:36.349Z",
+  "decision_id": "GDESK-20260929T072254816Z-NO-TRADE",
+  "generated_at": "2026-09-29T07:22:54.816Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-29T06-306457d8e3; all 18/18 symbols analyzed. AUD-linked breakouts were rejected as correlated 2.47-3.13 ATR event-like overextensions, and USDCAD was not duplicated while its existing proposal remains valid."
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-29T07-708024c97f; all 18/18 symbols analyzed. No symbol produced a confirmed 20-hour breakout, and the prior AUD impulse retraced without a qualified continuation entry."
 }
