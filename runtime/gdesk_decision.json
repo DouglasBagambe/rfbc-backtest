@@ -1,7 +1,36 @@
 {
-  "decision_id": "GDESK-20260929T032536076Z-NO-TRADE",
-  "generated_at": "2026-09-29T03:25:36.076Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-29T03-aa88708a5a; all 18/18 symbols analyzed from synchronized completed Dukascopy H1 BID/ASK bars. No new prior-20-hour breakout qualified, and USDCAD.x was not duplicated during its existing validity window; no trade was forced."
+  "decision_id": "GDESK-20260929T042044264Z-TRADE-USDCHF",
+  "generated_at": "2026-09-29T04:20:44.264Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "USDCHF.x",
+      "side": "BUY",
+      "order_type": "BUY_STOP",
+      "entry": 0.83305,
+      "stop": 0.83195,
+      "target": 0.8358,
+      "volume": 0.01,
+      "risk_pct": 0.25,
+      "valid_until": "2026-09-29T07:00:00Z",
+      "cancel_condition": "Cancel if not triggered by valid_until, if any completed H1 candle closes below 0.83275 before entry, or if broker spread at trigger exceeds 0.00015.",
+      "confidence": 0.76,
+      "setup_name": "H1 20-bar bullish breakout continuation",
+      "regime": "Bullish trend with confirmed range expansion",
+      "session": "Asia-to-London transition",
+      "news_proximity": "Not provided in the supplied Render context; server-side event-risk controls remain authoritative.",
+      "exposure_note": "Single USD-long/CHF-short proposal at 0.25% risk; absolute directional exposure is 0.25% per currency, below the 1.0% cap. No correlated companion trade is proposed; server-side active-risk and duplicate-symbol checks remain authoritative.",
+      "reasoning": "The 03:00 UTC completed H1 candle closed at 0.83293 above the prior 20-hour high of 0.832775, with bullish trend alignment, a 0.74-ATR body, and a close near the candle high. Entry is placed above the breakout candle high of 0.833025 to require continuation; the stop is below reclaimed structure and the target provides 2.5R.",
+      "context": {
+        "scan_id": "GDESK-2026-09-29T04-7b91f50ebc",
+        "ready_generated_at": "2026-09-29T04:02:07.112553+00:00",
+        "symbol_generated_at": "2026-09-29T04:02:07.112553+00:00",
+        "latest_completed_bar": "2026-09-29T03:00:00+00:00",
+        "source": "Dukascopy BID/ASK",
+        "timeframe": "H1 completed bars"
+      }
+    }
+  ],
+  "message": "TRADE: USDCHF.x BUY_STOP 0.83305, SL 0.83195, TP 0.83580, risk 0.25%, valid through 07:00 UTC. All 18/18 symbols were analyzed; this was the only clean confirmed breakout."
 }
