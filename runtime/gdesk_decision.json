@@ -1,7 +1,36 @@
 {
-  "decision_id": "GDESK-20260929T092104145Z-SYSTEM-FAILURE",
-  "generated_at": "2026-09-29T09:21:04.145Z",
-  "result": "SYSTEM_FAILURE",
-  "decisions": [],
-  "message": "SYSTEM_FAILURE: Scan GDESK-2026-09-29T09-707e8ae177 is marked FRESH/MARKET_OPEN but is incomplete: EURUSD.x and GBPUSD.x lack the completed 08:00 UTC H1 bar and stop at 07:00 UTC. No trading decision produced."
+  "decision_id": "GDESK-20260929T102157809Z-TRADE-USDJPY",
+  "generated_at": "2026-09-29T10:21:57.809Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "USDJPY.x",
+      "side": "BUY",
+      "order_type": "BUY_STOP",
+      "entry": 157.72,
+      "stop": 157.54,
+      "target": 158.17,
+      "volume": 0.01,
+      "risk_pct": 0.25,
+      "valid_until": "2026-09-29T13:00:00Z",
+      "cancel_condition": "Cancel if not triggered by valid_until, if any completed H1 candle closes below 157.585 before entry, or if broker spread at trigger exceeds 0.015.",
+      "confidence": 0.78,
+      "setup_name": "H1 20-bar bullish breakout continuation",
+      "regime": "Bullish trend with strong range expansion",
+      "session": "London session",
+      "news_proximity": "Not provided in the supplied Render context; server-side event-risk controls remain authoritative.",
+      "exposure_note": "USDJPY adds 0.25% USD-long/JPY-short risk. Assuming the earlier 0.25% USDCHF, 0.25% USDCAD, and 0.25% EURUSD USD-long proposals are active, aggregate USD directional exposure reaches but does not exceed the 1.00% cap; JPY-short exposure is 0.25%. No other USD-correlated trade is proposed, and server-side active-risk checks remain authoritative.",
+      "reasoning": "The 09:00 UTC completed H1 candle closed at 157.7025 above the prior 20-hour high of 157.585, with MA5 above MA10 above MA20, a 1.67-ATR bullish body, and a close at the candle high. Entry is placed above the breakout high at 157.72 to require continuation; the stop is below reclaimed breakout structure at 157.54 and the target provides 2.5R.",
+      "context": {
+        "scan_id": "GDESK-2026-09-29T10-46197d4dc2",
+        "ready_generated_at": "2026-09-29T10:01:51.410338+00:00",
+        "symbol_generated_at": "2026-09-29T10:01:51.410338+00:00",
+        "latest_completed_bar": "2026-09-29T09:00:00+00:00",
+        "source": "Dukascopy BID/ASK",
+        "timeframe": "H1 completed bars"
+      }
+    }
+  ],
+  "message": "TRADE: USDJPY.x BUY_STOP 157.72, SL 157.54, TP 158.17, risk 0.25%, valid through 13:00 UTC. All 18/18 symbols were analyzed; correlated USD setups and potential duplicate symbols were excluded."
 }
