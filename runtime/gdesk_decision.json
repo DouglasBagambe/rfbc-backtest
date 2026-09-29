@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260929T182044329Z-NO-TRADE",
-  "generated_at": "2026-09-29T18:20:44.329Z",
+  "decision_id": "GDESK-20260929T191803347Z-NO-TRADE",
+  "generated_at": "2026-09-29T19:18:03.347Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-29T18-48737600cc; all 18/18 symbols analyzed. No new 20-hour breakout qualified. The prior EURJPY.x SELL_LIMIT at 178.30 remains untriggered after the 17:00 UTC H1 high of 178.229 and remains governed by its original 20:00 UTC expiry and cancellation rules."
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-29T19-4d8d1ee08d; all 18/18 symbols analyzed. The prior EURJPY.x SELL_LIMIT at 178.30 was crossed during the completed 18:00 UTC H1 bar and neither its 178.72 stop nor 177.25 target was reached. Duplicate EURJPY exposure is prohibited, and no new 20-hour breakout qualifies."
 }
