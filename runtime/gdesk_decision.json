@@ -1,7 +1,35 @@
 {
-  "decision_id": "GDESK-20260929T121721246Z-NO-TRADE",
-  "generated_at": "2026-09-29T12:17:21.246Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-29T12-204909985a; all 18/18 symbols analyzed. No symbol produced a confirmed 20-hour breakout, and the prior CADJPY pending setup is cancelled after the 11:00 UTC H1 close above 110.809."
+  "decision_id": "GDESK-20260929T132140420Z-TRADE-GBPCAD",
+  "generated_at": "2026-09-29T13:21:40.420Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "GBPCAD.x",
+      "side": "SELL",
+      "order_type": "SELL_LIMIT",
+      "entry": 1.87705,
+      "stop": 1.8793,
+      "target": 1.8714,
+      "volume": 0.01,
+      "risk_pct": 0.25,
+      "valid_until": "2026-09-29T16:00:00Z",
+      "cancel_condition": "Cancel if unfilled at valid_until; cancel earlier if a completed H1 candle closes above 1.87880, if spread exceeds 0.00040 at intended fill, if price trades at or below 1.87250 before retracing to entry, or if market context is no longer FRESH and MARKET_OPEN.",
+      "confidence": 0.78,
+      "setup_name": "H1 20-hour breakdown retest",
+      "regime": "Bearish expansion breakout",
+      "session": "London-New York overlap",
+      "news_proximity": "UNKNOWN_NOT_SUPPLIED_IN_CONTEXT",
+      "exposure_note": "Single proposal risks 0.25% and adds GBP -0.25% / CAD +0.25% directional exposure. No duplicate GBPCAD appears in the current G_DESK mailbox; server-side live-account duplicate, aggregate-risk, and exposure enforcement remains authoritative.",
+      "reasoning": "The completed 12:00 UTC H1 candle closed at 1.87554 below the prior 20-hour low of 1.877035, with a 2.39 ATR bearish body and 2.68 ATR range. Because the break is extended, the order waits for a retest of the broken floor at 1.87705 rather than chasing. Stop is above the breakout candle and preceding swing structure; target provides about 2.5R.",
+      "context": {
+        "scan_id": "GDESK-2026-09-29T13-6dda2149d6",
+        "ready_generated_at": "2026-09-29T13:06:34.295195+00:00",
+        "latest_completed_bar": "2026-09-29T12:00:00+00:00",
+        "source": "Dukascopy BID/ASK",
+        "timeframe": "H1 completed bars"
+      }
+    }
+  ],
+  "message": "TRADE: GBPCAD.x SELL_LIMIT retest at 1.87705 after a confirmed 20-hour H1 breakdown; 0.25% risk, valid through 16:00 UTC."
 }
