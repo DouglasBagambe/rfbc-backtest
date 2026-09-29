@@ -1,36 +1,36 @@
 {
-  "decision_id": "GDESK-20260929T042044264Z-TRADE-USDCHF",
-  "generated_at": "2026-09-29T04:20:44.264Z",
+  "decision_id": "GDESK-20260929T052215317Z-TRADE-USDCAD",
+  "generated_at": "2026-09-29T05:22:15.317Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "USDCHF.x",
+      "symbol": "USDCAD.x",
       "side": "BUY",
       "order_type": "BUY_STOP",
-      "entry": 0.83305,
-      "stop": 0.83195,
-      "target": 0.8358,
+      "entry": 1.41905,
+      "stop": 1.41805,
+      "target": 1.42155,
       "volume": 0.01,
       "risk_pct": 0.25,
-      "valid_until": "2026-09-29T07:00:00Z",
-      "cancel_condition": "Cancel if not triggered by valid_until, if any completed H1 candle closes below 0.83275 before entry, or if broker spread at trigger exceeds 0.00015.",
-      "confidence": 0.76,
+      "valid_until": "2026-09-29T08:00:00Z",
+      "cancel_condition": "Cancel if not triggered by valid_until, if any completed H1 candle closes below 1.41845 before entry, or if broker spread at trigger exceeds 0.00020.",
+      "confidence": 0.74,
       "setup_name": "H1 20-bar bullish breakout continuation",
       "regime": "Bullish trend with confirmed range expansion",
       "session": "Asia-to-London transition",
       "news_proximity": "Not provided in the supplied Render context; server-side event-risk controls remain authoritative.",
-      "exposure_note": "Single USD-long/CHF-short proposal at 0.25% risk; absolute directional exposure is 0.25% per currency, below the 1.0% cap. No correlated companion trade is proposed; server-side active-risk and duplicate-symbol checks remain authoritative.",
-      "reasoning": "The 03:00 UTC completed H1 candle closed at 0.83293 above the prior 20-hour high of 0.832775, with bullish trend alignment, a 0.74-ATR body, and a close near the candle high. Entry is placed above the breakout candle high of 0.833025 to require continuation; the stop is below reclaimed structure and the target provides 2.5R.",
+      "exposure_note": "USDCAD adds 0.25% USD-long/CAD-short risk. Including the existing 0.25% USDCHF USD-long proposal, proposed USD directional exposure is 0.50%; CAD short and CHF short are each 0.25%, all below the 1.0% cap. Server-side active-risk and duplicate-symbol checks remain authoritative.",
+      "reasoning": "The 04:00 UTC completed H1 candle closed at 1.41892 above the prior 20-hour high of 1.418515, extending the preceding bullish impulse with MA5 above MA10 above MA20. Its body measured 0.62 ATR and the close was in the top 10% of the candle. Entry is placed above the breakout high of 1.418995 to require continuation; the stop is below reclaimed breakout structure and the target provides 2.5R.",
       "context": {
-        "scan_id": "GDESK-2026-09-29T04-7b91f50ebc",
-        "ready_generated_at": "2026-09-29T04:02:07.112553+00:00",
-        "symbol_generated_at": "2026-09-29T04:02:07.112553+00:00",
-        "latest_completed_bar": "2026-09-29T03:00:00+00:00",
+        "scan_id": "GDESK-2026-09-29T05-a7b3cdb787",
+        "ready_generated_at": "2026-09-29T05:02:54.009592+00:00",
+        "symbol_generated_at": "2026-09-29T05:02:54.009592+00:00",
+        "latest_completed_bar": "2026-09-29T04:00:00+00:00",
         "source": "Dukascopy BID/ASK",
         "timeframe": "H1 completed bars"
       }
     }
   ],
-  "message": "TRADE: USDCHF.x BUY_STOP 0.83305, SL 0.83195, TP 0.83580, risk 0.25%, valid through 07:00 UTC. All 18/18 symbols were analyzed; this was the only clean confirmed breakout."
+  "message": "TRADE: USDCAD.x BUY_STOP 1.41905, SL 1.41805, TP 1.42155, risk 0.25%, valid through 08:00 UTC. All 18/18 symbols were analyzed; USDCHF was excluded as a duplicate."
 }
