@@ -1,36 +1,7 @@
 {
-  "decision_id": "GDESK-20260929T111742297Z-TRADE-CADJPY",
-  "generated_at": "2026-09-29T11:17:42.297Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "CADJPY.x",
-      "side": "SELL",
-      "order_type": "SELL_STOP",
-      "entry": 110.74,
-      "stop": 110.9,
-      "target": 110.34,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-09-29T14:00:00Z",
-      "cancel_condition": "Cancel if not triggered by valid_until, if any completed H1 candle closes above 110.809 before entry, or if broker spread at trigger exceeds 0.025.",
-      "confidence": 0.76,
-      "setup_name": "H1 20-bar bearish breakout continuation",
-      "regime": "Bearish trend with strong downside range expansion",
-      "session": "London session",
-      "news_proximity": "Not provided in the supplied Render context; server-side event-risk controls remain authoritative.",
-      "exposure_note": "CADJPY adds 0.25% CAD-short/JPY-long risk. Including the earlier 0.25% USDCAD CAD-short proposal, aggregate CAD-short directional exposure is 0.50%, below the 1.0% cap. The prior USDJPY pending setup is cancelled by its completed H1 close below 157.585; no other correlated trade is proposed. Server-side active-risk checks remain authoritative.",
-      "reasoning": "The 10:00 UTC completed H1 candle closed at 110.7575 below the prior 20-hour low of 110.809, with MA5 below MA10 below MA20, a 1.87-ATR bearish body, and a close in the bottom 2% of the candle. Entry is placed below the breakout low at 110.74 to require continuation; the stop is above reclaimed breakout structure at 110.90 and the target provides 2.5R.",
-      "context": {
-        "scan_id": "GDESK-2026-09-29T11-b7d0744d61",
-        "ready_generated_at": "2026-09-29T11:03:26.817797+00:00",
-        "symbol_generated_at": "2026-09-29T11:03:26.817797+00:00",
-        "latest_completed_bar": "2026-09-29T10:00:00+00:00",
-        "source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars"
-      }
-    }
-  ],
-  "message": "TRADE: CADJPY.x SELL_STOP 110.74, SL 110.90, TP 110.34, risk 0.25%, valid through 14:00 UTC. All 18/18 symbols were analyzed; the prior USDJPY pending setup is cancelled by its H1 invalidation condition."
+  "decision_id": "GDESK-20260929T121721246Z-NO-TRADE",
+  "generated_at": "2026-09-29T12:17:21.246Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-29T12-204909985a; all 18/18 symbols analyzed. No symbol produced a confirmed 20-hour breakout, and the prior CADJPY pending setup is cancelled after the 11:00 UTC H1 close above 110.809."
 }
