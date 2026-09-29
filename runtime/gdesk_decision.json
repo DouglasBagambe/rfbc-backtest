@@ -1,35 +1,7 @@
 {
-  "decision_id": "GDESK-20260929T172522710Z-TRADE-EURJPY",
-  "generated_at": "2026-09-29T17:25:22.710Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "EURJPY.x",
-      "side": "SELL",
-      "order_type": "SELL_LIMIT",
-      "entry": 178.3,
-      "stop": 178.72,
-      "target": 177.25,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-09-29T20:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until; cancel earlier if a completed H1 candle closes above 178.56, if spread exceeds 0.030 at intended fill, if price trades at or below 177.50 before retracing to entry, or if market context is no longer FRESH and MARKET_OPEN.",
-      "confidence": 0.81,
-      "setup_name": "H1 20-hour breakdown retest",
-      "regime": "Bearish expansion with broad JPY strength",
-      "session": "New York session",
-      "news_proximity": "UNKNOWN_NOT_SUPPLIED_IN_CONTEXT",
-      "exposure_note": "Single proposal risks 0.25% and adds EUR -0.25% / JPY +0.25% directional exposure. Correlated EURCAD and CHFJPY breakdowns were rejected. No duplicate EURJPY appears in the current G_DESK mailbox; server-side live-account duplicate, aggregate-risk, and exposure enforcement remains authoritative.",
-      "reasoning": "The completed 16:00 UTC H1 candle closed at 178.1645 below the prior 20-hour low of 178.303, with a 1.38 ATR bearish body and 1.51 ATR range. GBPJPY, CHFJPY, and AUDJPY also weakened, confirming broad JPY strength. The order waits for a retest of the broken floor at 178.30; stop is above the breakout candle and preceding swing structure, while target provides 2.5R.",
-      "context": {
-        "scan_id": "GDESK-2026-09-29T17-1e0bac4f6f",
-        "ready_generated_at": "2026-09-29T17:05:58.226307+00:00",
-        "latest_completed_bar": "2026-09-29T16:00:00+00:00",
-        "source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars"
-      }
-    }
-  ],
-  "message": "TRADE: EURJPY.x SELL_LIMIT retest at 178.30 after a confirmed 20-hour H1 breakdown with broad JPY strength; 0.25% risk, valid through 20:00 UTC."
+  "decision_id": "GDESK-20260929T182044329Z-NO-TRADE",
+  "generated_at": "2026-09-29T18:20:44.329Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-29T18-48737600cc; all 18/18 symbols analyzed. No new 20-hour breakout qualified. The prior EURJPY.x SELL_LIMIT at 178.30 remains untriggered after the 17:00 UTC H1 high of 178.229 and remains governed by its original 20:00 UTC expiry and cancellation rules."
 }
