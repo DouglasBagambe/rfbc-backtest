@@ -1,7 +1,35 @@
 {
-  "decision_id": "GDESK-20260929T142321556Z-SYSTEM-FAILURE",
-  "generated_at": "2026-09-29T14:23:21.556Z",
-  "result": "SYSTEM_FAILURE",
-  "decisions": [],
-  "message": "SYSTEM_FAILURE: Scan GDESK-2026-09-29T14-b8b208dfe0 is incomplete/stale. NZDUSD.x reports latest_completed_bar 2026-09-29T12:00:00Z while the current 14:00 UTC scan requires the completed 13:00 UTC H1 bar. No trading decision produced."
+  "decision_id": "GDESK-20260929T151712858Z-TRADE-XAUUSD",
+  "generated_at": "2026-09-29T15:17:12.858Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "XAUUSD.x",
+      "side": "BUY",
+      "order_type": "BUY_LIMIT",
+      "entry": 4164.5,
+      "stop": 4150.5,
+      "target": 4199.5,
+      "volume": 0.01,
+      "risk_pct": 0.25,
+      "valid_until": "2026-09-29T18:00:00Z",
+      "cancel_condition": "Cancel if unfilled at valid_until; cancel earlier if a completed H1 candle closes below 4157.30, if spread exceeds 1.50 at intended fill, if price reaches or exceeds 4190.00 before retracing to entry, or if market context is no longer FRESH and MARKET_OPEN.",
+      "confidence": 0.8,
+      "setup_name": "H1 20-hour breakout retest",
+      "regime": "Bullish expansion breakout",
+      "session": "London-New York overlap",
+      "news_proximity": "UNKNOWN_NOT_SUPPLIED_IN_CONTEXT",
+      "exposure_note": "Single proposal risks 0.25% and adds XAU +0.25% / USD -0.25% directional exposure. GBPUSD and NZDUSD shorts were rejected to avoid increasing long-USD correlation. No duplicate XAUUSD appears in the current G_DESK mailbox; server-side live-account duplicate, aggregate-risk, and exposure enforcement remains authoritative.",
+      "reasoning": "The completed 14:00 UTC H1 candle closed at 4170.58 above the prior 20-hour high of 4164.505, with a 0.99 ATR bullish body, 1.37 ATR range, and normal 0.59 close spread. The order waits for a retest of the broken high at 4164.50 instead of chasing. Stop is below the preceding 13:00 UTC range support; target provides 2.5R.",
+      "context": {
+        "scan_id": "GDESK-2026-09-29T15-f541539426",
+        "ready_generated_at": "2026-09-29T15:09:39.934970+00:00",
+        "latest_completed_bar": "2026-09-29T14:00:00+00:00",
+        "source": "Dukascopy BID/ASK",
+        "timeframe": "H1 completed bars"
+      }
+    }
+  ],
+  "message": "TRADE: XAUUSD.x BUY_LIMIT retest at 4164.50 after a confirmed 20-hour H1 breakout; 0.25% risk, valid through 18:00 UTC."
 }
