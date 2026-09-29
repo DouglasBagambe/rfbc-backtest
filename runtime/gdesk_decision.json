@@ -1,36 +1,7 @@
 {
-  "decision_id": "GDESK-20260929T012212064Z-TRADE-USDCAD",
-  "generated_at": "2026-09-29T01:22:12.064Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "USDCAD.x",
-      "side": "BUY",
-      "order_type": "BUY_STOP",
-      "entry": 1.41855,
-      "stop": 1.41715,
-      "target": 1.42205,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-09-29T04:00:00Z",
-      "cancel_condition": "Cancel if not triggered by valid_until, if any completed H1 candle closes below 1.41755 before entry, or if the broker spread at trigger exceeds 0.00020.",
-      "confidence": 0.72,
-      "setup_name": "H1 20-bar bullish breakout continuation",
-      "regime": "Bullish trend with confirmed range expansion",
-      "session": "Asia",
-      "news_proximity": "Not provided in the supplied Render context; server-side event-risk controls remain authoritative.",
-      "exposure_note": "Single USD-long/CAD-short proposal at 0.25% risk; absolute directional exposure is 0.25% per currency, below the 1.0% cap. No duplicate symbol is proposed; server-side active-risk and duplicate checks remain authoritative.",
-      "reasoning": "The 00:00 UTC completed H1 candle closed at 1.418165 above the prior 20-hour high of 1.417855 with bullish moving-average alignment. Entry is placed above the breakout candle high (1.418495) to require continuation; the stop sits below the reclaimed breakout structure, and the target provides 2.5R.",
-      "context": {
-        "scan_id": "GDESK-2026-09-29T01-3a54a45c98",
-        "ready_generated_at": "2026-09-29T01:05:04.496181+00:00",
-        "symbol_generated_at": "2026-09-29T01:05:04.496181+00:00",
-        "latest_completed_bar": "2026-09-29T00:00:00+00:00",
-        "source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars"
-      }
-    }
-  ],
-  "message": "TRADE: USDCAD.x BUY_STOP 1.41855, SL 1.41715, TP 1.42205, risk 0.25%, valid through 04:00 UTC. All 18/18 symbols were analyzed; this was the only confirmed, trend-aligned breakout."
+  "decision_id": "GDESK-20260929T021927917Z-NO-TRADE",
+  "generated_at": "2026-09-29T02:19:27.917Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-29T02-f362033761; all 18/18 symbols analyzed from synchronized completed Dukascopy H1 BID/ASK bars. No new prior-20-hour breakout qualified, and USDCAD.x was not duplicated while its existing proposal remains valid; no trade was forced."
 }
