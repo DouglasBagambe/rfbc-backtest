@@ -1,37 +1,7 @@
 {
-  "decision_id": "GDESK-20260930T202658483Z-TRADE",
-  "generated_at": "2026-09-30T20:26:58.483Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "EURUSD.x",
-      "side": "SELL",
-      "order_type": "SELL_STOP",
-      "entry": 1.1322,
-      "stop": 1.1341,
-      "target": 1.12745,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-09-30T21:00:00Z",
-      "cancel_condition": "Cancel if unfilled by valid_until; cancel early if a completed H1 candle closes above 1.13375, broker spread exceeds 0.00020, or server risk/exposure validation fails.",
-      "confidence": 0.71,
-      "setup_name": "H1 20-bar range breakdown continuation",
-      "regime": "BEARISH_RANGE_BREAKDOWN",
-      "session": "NEW_YORK_LATE",
-      "news_proximity": "UNKNOWN_CONTEXT_HAS_NO_NEWS_FEED",
-      "exposure_note": "Adds 0.25% EUR-short/USD-long risk. Proposed decision risk is 0.25%; estimated post-order directional exposure is USD +0.75%, CAD -0.75%, JPY +0.50%, EUR -0.25%, with every currency and metal within the 1.0% absolute cap. Existing account state is revalidated server-side.",
-      "reasoning": "EURUSD closed below the prior 20-bar low by 0.19 ATR after three consecutive lower H1 closes. The close was near the latest bar low, SMA5 is below SMA20, RSI 39.8 is not oversold, and spread was only 0.03 ATR. A sell stop below 1.132235 confirms continuation; the stop sits above the recent 1.134085 swing high and the target is 2.5R.",
-      "context": {
-        "scan_id": "GDESK-2026-09-30T20-40ad445644",
-        "ready_generated_at": "2026-09-30T20:02:42.207819+00:00",
-        "symbol_event_at": "2026-09-30T20:02:42.207858+00:00",
-        "symbol_generated_at": "2026-09-30T20:02:42.207819+00:00",
-        "latest_completed_bar": "2026-09-30T19:00:00+00:00",
-        "source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars"
-      }
-    }
-  ],
-  "message": "TRADE: EURUSD.x SELL_STOP 1.13220, SL 1.13410, TP 1.12745, 0.25% risk; all 18/18 current-scan symbols were complete and analyzed."
+  "decision_id": "GDESK-20260930T232305965Z-NO_TRADE",
+  "generated_at": "2026-09-30T23:23:05.965Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: All 18/18 current-scan symbols were complete and analyzed. No new setup qualified: breakout candidates were overextended or lacked clean confirmation, and no trade was forced."
 }
