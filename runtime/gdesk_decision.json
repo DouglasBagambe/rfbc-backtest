@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260930T052411864Z-NO-TRADE",
-  "generated_at": "2026-09-30T05:24:11.864Z",
+  "decision_id": "GDESK-20260930T062716873Z-NO-TRADE",
+  "generated_at": "2026-09-30T06:27:16.873Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-30T05-f01c037644; all 18/18 symbols analyzed through the completed 04:00 UTC Dukascopy H1 BID/ASK bar. No fresh 20-hour breakout qualifies. Existing CADJPY.x, EURJPY.x, XAUUSD.x, and GBPCAD.x exposures remain between their known stops and targets, so duplicate and correlated additions are rejected."
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-30T06-0f95d26294; all 18/18 symbols analyzed through the completed 05:00 UTC Dukascopy H1 BID/ASK bar. EURGBP.x made only a marginal 20-hour downside break, but the close was already oversold and its spread was excessive relative to H1 ATR, failing no-chase and execution-quality gates. No other setup qualifies."
 }
