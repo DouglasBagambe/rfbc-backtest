@@ -1,38 +1,7 @@
 {
-  "decision_id": "GDESK-20260930T162624889Z-TRADE",
-  "generated_at": "2026-09-30T16:26:24.889Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "USDCAD.x",
-      "side": "BUY",
-      "order_type": "BUY_STOP",
-      "entry": 1.4213,
-      "stop": 1.4194,
-      "target": 1.42605,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-09-30T19:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes below 1.41950 before entry, if executable spread exceeds 0.00030, or if server-side duplicate-symbol, account-risk, or directional-exposure validation rejects it.",
-      "confidence": 0.76,
-      "setup_name": "H1 20-hour bullish breakout continuation",
-      "regime": "bullish range expansion",
-      "session": "New York",
-      "news_proximity": "UNKNOWN_NOT_SUPPLIED_IN_RENDER_CONTEXT; risk held to 0.25%",
-      "exposure_note": "Adds 0.25% long USD and short CAD exposure. Including the known AUDUSD short and two CAD-short positions, inferred USD-long exposure becomes 0.50% and CAD-short exposure 0.75%, both within the 1.0% limit. Proposed aggregate risk is 0.25%; server-side live checks remain authoritative.",
-      "reasoning": "The completed 15:00 UTC H1 candle closed at 1.421150, 0.90 ATR above the prior 20-hour high of 1.420025, with SMA5 above SMA20, RSI14 at 58.7, and a 0.00008 spread versus 0.001244 ATR14. A buy stop above the 1.421245 breakout high requires continuation; the stop is below the breakout candle low and the target is 2.5R. No other symbol produced a non-duplicate confirmed breakout.",
-      "context": {
-        "scan_id": "GDESK-2026-09-30T16-bf9e5c492c",
-        "ready_generated_at": "2026-09-30T16:01:07.880188+00:00",
-        "ready_event_at": "2026-09-30T16:01:07.905366+00:00",
-        "symbol_generated_at": "2026-09-30T16:01:07.880188+00:00",
-        "symbol_event_at": "2026-09-30T16:01:07.881058+00:00",
-        "latest_completed_bar": "2026-09-30T15:00:00+00:00",
-        "timeframe": "H1 completed bars",
-        "source": "Dukascopy BID/ASK"
-      }
-    }
-  ],
-  "message": "TRADE: USDCAD.x BUY_STOP 1.42130, stop 1.41940, target 1.42605, 0.25% risk, valid through 19:00 UTC. All 18/18 symbols were analyzed; no additional setup qualified."
+  "decision_id": "GDESK-20260930T171737065Z-NO_TRADE",
+  "generated_at": "2026-09-30T17:17:37.065Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: All 18/18 current-scan symbols were complete and analyzed. USDCAD.x was the only qualified breakout but was rejected as a duplicate active symbol; no other setup passed confirmation and exposure gates."
 }
