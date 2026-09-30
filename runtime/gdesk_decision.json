@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260930T112205467Z-NO_TRADE",
-  "generated_at": "2026-09-30T11:22:05.467Z",
+  "decision_id": "GDESK-20260930T132619788Z-NO_TRADE",
+  "generated_at": "2026-09-30T13:26:19.788Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: All 18/18 current-scan symbols were complete and analyzed. No new setup passed the quality, duplicate-symbol, and exposure gates; fresh GBP breakouts were overextended, while GBPJPY.x is already active from the prior valid signal."
+  "message": "NO_TRADE: All 18/18 current-scan symbols were complete and analyzed. XAUUSD.x was the only qualified fresh breakout but was rejected as a duplicate active symbol; all other candidates failed confirmation or extension gates."
 }
