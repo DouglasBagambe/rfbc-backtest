@@ -1,37 +1,37 @@
 {
-  "decision_id": "GDESK-20260930T092525822Z-TRADE",
-  "generated_at": "2026-09-30T09:25:25.822Z",
+  "decision_id": "GDESK-20260930T101903605Z-TRADE",
+  "generated_at": "2026-09-30T10:19:03.605Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "USDCHF.x",
-      "side": "SELL",
-      "order_type": "SELL_STOP",
-      "entry": 0.8324,
-      "stop": 0.83395,
-      "target": 0.82852,
+      "symbol": "GBPJPY.x",
+      "side": "BUY",
+      "order_type": "BUY_STOP",
+      "entry": 208.65,
+      "stop": 208.28,
+      "target": 209.575,
       "volume": 0.01,
       "risk_pct": 0.25,
-      "valid_until": "2026-09-30T12:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes above 0.83380 before entry, if executable spread exceeds 0.00015, or if server-side duplicate-symbol/account-risk/exposure validation rejects it.",
-      "confidence": 0.7,
-      "setup_name": "H1 20-hour bearish breakout confirmation",
-      "regime": "bearish range expansion",
+      "valid_until": "2026-09-30T13:00:00Z",
+      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes below 208.34 before entry, if executable spread exceeds 0.040, or if server-side duplicate-symbol/account-risk/exposure validation rejects it.",
+      "confidence": 0.73,
+      "setup_name": "H1 20-hour bullish breakout confirmation",
+      "regime": "bullish range expansion",
       "session": "London",
       "news_proximity": "UNKNOWN_NOT_SUPPLIED_IN_RENDER_CONTEXT; risk held to 0.25%",
-      "exposure_note": "Adds 0.25% short USD and long CHF exposure; proposed aggregate risk is 0.25%, and absolute directional exposure to each added currency is 0.25%, within limits. The prior known USDCHF long had already reached its target; server-side duplicate and live account-risk checks remain authoritative.",
-      "reasoning": "The completed 08:00 UTC H1 bar closed at 0.832545 below the prior 20-hour low of 0.832705, with a bearish body from 0.83361 and a 0.83249 low. Spread was 0.00007 versus 0.000933 ATR14, and RSI14 near 41 confirms downside momentum without oversold exhaustion. A sell stop below the bar low requires continuation; the stop is beyond the breakout candle high and the target is approximately 2.5R.",
+      "exposure_note": "Adds 0.25% long GBP and short JPY exposure; proposed aggregate risk is 0.25%. Against the two known 0.25% JPY-long exposures, this leaves net JPY exposure at 0.25% and GBP exposure at 0.25%, within the 1.0% limit. Server-side duplicate and live account-risk checks remain authoritative.",
+      "reasoning": "The completed 09:00 UTC H1 bar closed at 208.585 above the prior 20-hour high of 208.399, with SMA5 above SMA20, RSI14 near 59, and a 0.014 spread versus 0.327 ATR14. A buy stop above the 208.6105 breakout high requires continuation; the stop sits below the breakout candle low and the target is 2.5R. More extended GBP crosses were rejected.",
       "context": {
-        "scan_id": "GDESK-2026-09-30T09-d9ff5f01da",
-        "ready_generated_at": "2026-09-30T09:02:12.813075+00:00",
-        "symbol_generated_at": "2026-09-30T09:02:12.813075+00:00",
-        "symbol_event_at": "2026-09-30T09:02:12.814568+00:00",
-        "latest_completed_bar": "2026-09-30T08:00:00+00:00",
+        "scan_id": "GDESK-2026-09-30T10-55ed3b8571",
+        "ready_generated_at": "2026-09-30T10:03:03.612779+00:00",
+        "symbol_generated_at": "2026-09-30T10:03:03.612779+00:00",
+        "symbol_event_at": "2026-09-30T10:03:03.613447+00:00",
+        "latest_completed_bar": "2026-09-30T09:00:00+00:00",
         "timeframe": "H1 completed bars",
         "source": "Dukascopy BID/ASK"
       }
     }
   ],
-  "message": "TRADE: USDCHF.x SELL_STOP 0.83240, stop 0.83395, target 0.82852, 0.25% risk, valid through 12:00 UTC. All 18/18 symbols were analyzed; active, correlated, marginal, and overextended alternatives were rejected."
+  "message": "TRADE: GBPJPY.x BUY_STOP 208.650, stop 208.280, target 209.575, 0.25% risk, valid through 13:00 UTC. All 18/18 symbols were analyzed; duplicate, active, correlated, marginal, and overextended alternatives were rejected."
 }
