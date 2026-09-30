@@ -1,7 +1,37 @@
 {
-  "decision_id": "GDESK-20260930T062716873Z-NO-TRADE",
-  "generated_at": "2026-09-30T06:27:16.873Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-30T06-0f95d26294; all 18/18 symbols analyzed through the completed 05:00 UTC Dukascopy H1 BID/ASK bar. EURGBP.x made only a marginal 20-hour downside break, but the close was already oversold and its spread was excessive relative to H1 ATR, failing no-chase and execution-quality gates. No other setup qualifies."
+  "decision_id": "GDESK-20260930T072716853Z-TRADE",
+  "generated_at": "2026-09-30T07:27:16.853Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "XAUUSD.x",
+      "side": "BUY",
+      "order_type": "BUY_STOP",
+      "entry": 4195.5,
+      "stop": 4175.5,
+      "target": 4245.5,
+      "volume": 0.01,
+      "risk_pct": 0.25,
+      "valid_until": "2026-09-30T10:00:00Z",
+      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes below 4176.35 before entry, if executable spread exceeds 1.50, or if server-side duplicate-symbol/account-risk/exposure validation rejects it.",
+      "confidence": 0.72,
+      "setup_name": "H1 20-hour bullish breakout confirmation",
+      "regime": "bullish volatility expansion",
+      "session": "London open",
+      "news_proximity": "UNKNOWN_NOT_SUPPLIED_IN_RENDER_CONTEXT; risk held to 0.25%",
+      "exposure_note": "Adds 0.25% long XAU exposure; proposed aggregate risk is 0.25% and metal directional exposure is 0.25%, both within limits. The prior known XAU long was invalidated when the 05:00 UTC bar traded below 4166.80; server-side duplicate and live account-risk checks remain authoritative.",
+      "reasoning": "The completed 06:00 UTC H1 bar closed at 4190.95 above the prior 20-hour high of 4187.79, reached 4195.19, and held a 0.75 spread versus 13.71 ATR14. RSI14 near 65 supports momentum without the extreme overextension seen in GBP breakouts. A stop entry above the breakout high requires continuation; the stop is below the breakout candle low and the target is 2.5R.",
+      "context": {
+        "scan_id": "GDESK-2026-09-30T07-482a44915a",
+        "ready_generated_at": "2026-09-30T07:04:49.910440+00:00",
+        "symbol_generated_at": "2026-09-30T07:04:49.910440+00:00",
+        "symbol_event_at": "2026-09-30T07:04:49.913428+00:00",
+        "latest_completed_bar": "2026-09-30T06:00:00+00:00",
+        "timeframe": "H1 completed bars",
+        "source": "Dukascopy BID/ASK"
+      }
+    }
+  ],
+  "message": "TRADE: XAUUSD.x BUY_STOP 4195.50, stop 4175.50, target 4245.50, 0.25% risk, valid through 10:00 UTC. All 18/18 symbols were analyzed; correlated or overextended alternatives were rejected."
 }
