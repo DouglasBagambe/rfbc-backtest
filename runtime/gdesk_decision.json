@@ -1,46 +1,7 @@
 {
-  "decision_id": "GDESK-20260930T012432911Z-CADJPY-SELL-STOP",
-  "generated_at": "2026-09-30T01:24:32.911Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "CADJPY.x",
-      "side": "SELL",
-      "order_type": "SELL_STOP",
-      "entry": 110.65,
-      "stop": 110.95,
-      "target": 109.9,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-09-30T03:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until, if a completed H1 candle closes above 110.94 before entry, or if broker-side risk/exposure checks reject the order.",
-      "confidence": 0.75,
-      "setup_name": "H1 20-hour downside breakout continuation",
-      "regime": "JPY-strength downside breakout with expanding momentum",
-      "session": "Early Asia",
-      "news_proximity": "No high-impact-news metadata supplied in context; broker/server safeguards remain authoritative.",
-      "exposure_note": "Proposed CADJPY short risk is 0.25%; aggregate proposed risk is 0.25%. Together with the known EURJPY short, absolute JPY directional exposure is 0.50%, below the 1.0% cap. CAD exposure is partly offset by the known GBPCAD short; existing account risk remains enforced server-side.",
-      "reasoning": "The completed 00:00 UTC H1 candle closed at 110.7105 below the prior 20-hour low of 110.7375 after a 0.2805-point bearish expansion. Among simultaneous JPY-cross breaks, CADJPY achieved the clearest close beyond support. A sell stop at 110.650 requires continuation below the signal low; the 110.950 stop sits above the signal high and the 109.900 target provides 2.5R.",
-      "context": {
-        "scan_id": "GDESK-2026-09-30T01-a4eda5ba75",
-        "ready_generated_at": "2026-09-30T01:06:43.220950+00:00",
-        "symbol_generated_at": "2026-09-30T01:06:43.220950+00:00",
-        "latest_completed_bar": "2026-09-30T00:00:00+00:00",
-        "source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars",
-        "universe_count": 18,
-        "signal_bar": {
-          "open": 110.9325,
-          "high": 110.938,
-          "low": 110.6575,
-          "close": 110.7105,
-          "spread": 0.009
-        },
-        "prior_20h_low": 110.7375,
-        "atr14": 0.13278571
-      }
-    }
-  ],
-  "message": "TRADE: CADJPY.x SELL_STOP 110.650, SL 110.950, TP 109.900, 0.25% risk, valid to 03:00 UTC. Valid FRESH MARKET_OPEN scan; all 18/18 symbols analyzed."
+  "decision_id": "GDESK-20260930T022342793Z-NO-TRADE",
+  "generated_at": "2026-09-30T02:23:42.793Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-30T02-ae46ed9396; all 18/18 symbols analyzed. The prior CADJPY.x SELL_STOP triggered during the completed 01:00 UTC H1 bar and remains active. New JPY/AUD breakouts printed on unusually extended expansion bars, while XAUUSD.x remains just above its existing stop; no additional correlated or chase entry qualifies."
 }
