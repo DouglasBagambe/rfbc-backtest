@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260929T232141673Z-NO-TRADE",
-  "generated_at": "2026-09-29T23:21:41.673Z",
+  "decision_id": "GDESK-20260930T002304220Z-NO-TRADE",
+  "generated_at": "2026-09-30T00:23:04.220Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-29T23-13be8cac6d; all 18/18 symbols analyzed. No new symbol produced a qualified setup. The active XAUUSD.x breakout trade remains above its 4178.20 entry and between its 4166.80 stop and 4206.70 target, so duplicate XAU exposure is prohibited."
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-30T00-faa79b4eab; all 18/18 symbols analyzed. No fresh setup qualifies. XAUUSD.x remains an active existing exposure above its 4178.20 entry and below its 4206.70 target; the latest H1 bar tested 4187.79 but closed at 4184.995 below the prior breakout high, so no duplicate or add-on order is justified."
 }
