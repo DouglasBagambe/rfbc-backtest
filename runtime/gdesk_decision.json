@@ -1,7 +1,38 @@
 {
-  "decision_id": "GDESK-20260930T132619788Z-NO_TRADE",
-  "generated_at": "2026-09-30T13:26:19.788Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: All 18/18 current-scan symbols were complete and analyzed. XAUUSD.x was the only qualified fresh breakout but was rejected as a duplicate active symbol; all other candidates failed confirmation or extension gates."
+  "decision_id": "GDESK-20260930T142453011Z-TRADE",
+  "generated_at": "2026-09-30T14:24:53.011Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "AUDUSD.x",
+      "side": "SELL",
+      "order_type": "SELL_STOP",
+      "entry": 0.6952,
+      "stop": 0.69745,
+      "target": 0.68958,
+      "volume": 0.01,
+      "risk_pct": 0.25,
+      "valid_until": "2026-09-30T17:00:00Z",
+      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes above 0.69740 before entry, if executable spread exceeds 0.00020, or if server-side duplicate-symbol, account-risk, or directional-exposure validation rejects it.",
+      "confidence": 0.7,
+      "setup_name": "H1 20-hour bearish breakout continuation",
+      "regime": "bearish range expansion",
+      "session": "London-New York overlap",
+      "news_proximity": "UNKNOWN_NOT_SUPPLIED_IN_RENDER_CONTEXT; risk held to 0.25%",
+      "exposure_note": "Adds 0.25% short AUD and long USD directional exposure; proposed aggregate risk is 0.25%, within the 2.0% cap and the 1.0% per-currency limit. Server-side live account-risk, duplicate, and exposure checks remain authoritative.",
+      "reasoning": "The completed 13:00 UTC H1 candle closed at 0.695775 below the prior 20-hour low of 0.695870, with SMA5 below SMA20, RSI14 at 31.3, and a 0.00007 spread versus 0.001252 ATR14. A sell stop below the 0.695290 breakdown low requires continuation; the stop is above the breakout candle high and the target is approximately 2.5R. EURAUD and GBPAUD were rejected as overextended, while XAUUSD was rejected as a duplicate active symbol.",
+      "context": {
+        "scan_id": "GDESK-2026-09-30T14-b93b40b5c5",
+        "ready_generated_at": "2026-09-30T14:05:41.099411+00:00",
+        "ready_event_at": "2026-09-30T14:05:41.103353+00:00",
+        "symbol_generated_at": "2026-09-30T14:05:41.099411+00:00",
+        "symbol_event_at": "2026-09-30T14:05:41.100693+00:00",
+        "latest_completed_bar": "2026-09-30T13:00:00+00:00",
+        "timeframe": "H1 completed bars",
+        "source": "Dukascopy BID/ASK"
+      }
+    }
+  ],
+  "message": "TRADE: AUDUSD.x SELL_STOP 0.69520, stop 0.69745, target 0.68958, 0.25% risk, valid through 17:00 UTC. All 18/18 symbols were analyzed; duplicate and overextended alternatives were rejected."
 }
