@@ -1,38 +1,38 @@
 {
-  "decision_id": "GDESK-20260930T152414042Z-TRADE",
-  "generated_at": "2026-09-30T15:24:14.042Z",
+  "decision_id": "GDESK-20260930T162624889Z-TRADE",
+  "generated_at": "2026-09-30T16:26:24.889Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "EURCAD.x",
+      "symbol": "USDCAD.x",
       "side": "BUY",
       "order_type": "BUY_STOP",
-      "entry": 1.61265,
-      "stop": 1.6101,
-      "target": 1.61903,
+      "entry": 1.4213,
+      "stop": 1.4194,
+      "target": 1.42605,
       "volume": 0.01,
       "risk_pct": 0.25,
-      "valid_until": "2026-09-30T18:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes below 1.61020 before entry, if executable spread exceeds 0.00030, or if server-side duplicate-symbol, account-risk, or directional-exposure validation rejects it.",
-      "confidence": 0.72,
+      "valid_until": "2026-09-30T19:00:00Z",
+      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes below 1.41950 before entry, if executable spread exceeds 0.00030, or if server-side duplicate-symbol, account-risk, or directional-exposure validation rejects it.",
+      "confidence": 0.76,
       "setup_name": "H1 20-hour bullish breakout continuation",
       "regime": "bullish range expansion",
-      "session": "London-New York overlap",
+      "session": "New York",
       "news_proximity": "UNKNOWN_NOT_SUPPLIED_IN_RENDER_CONTEXT; risk held to 0.25%",
-      "exposure_note": "Adds 0.25% long EUR and short CAD exposure. Including the known 0.25% CAD-short position, absolute CAD exposure would be 0.50%; EUR exposure is offset by the known 0.25% EUR-short position. Proposed aggregate risk is 0.25%, and all remain within stated limits; server-side live checks are authoritative.",
-      "reasoning": "The completed 14:00 UTC H1 candle closed at 1.612510, 0.56 ATR above the prior 20-hour high of 1.611860, with SMA5 above SMA20, RSI14 at 69.1, and a 0.00012 spread versus 0.001164 ATR14. A buy stop above the 1.612575 breakout high requires continuation; the stop is below the breakout candle low and the target is approximately 2.5R. GBPCAD was rejected as overextended.",
+      "exposure_note": "Adds 0.25% long USD and short CAD exposure. Including the known AUDUSD short and two CAD-short positions, inferred USD-long exposure becomes 0.50% and CAD-short exposure 0.75%, both within the 1.0% limit. Proposed aggregate risk is 0.25%; server-side live checks remain authoritative.",
+      "reasoning": "The completed 15:00 UTC H1 candle closed at 1.421150, 0.90 ATR above the prior 20-hour high of 1.420025, with SMA5 above SMA20, RSI14 at 58.7, and a 0.00008 spread versus 0.001244 ATR14. A buy stop above the 1.421245 breakout high requires continuation; the stop is below the breakout candle low and the target is 2.5R. No other symbol produced a non-duplicate confirmed breakout.",
       "context": {
-        "scan_id": "GDESK-2026-09-30T15-a926ee203d",
-        "ready_generated_at": "2026-09-30T15:04:55.304664+00:00",
-        "ready_event_at": "2026-09-30T15:04:55.307973+00:00",
-        "symbol_generated_at": "2026-09-30T15:04:55.304664+00:00",
-        "symbol_event_at": "2026-09-30T15:04:55.307168+00:00",
-        "latest_completed_bar": "2026-09-30T14:00:00+00:00",
+        "scan_id": "GDESK-2026-09-30T16-bf9e5c492c",
+        "ready_generated_at": "2026-09-30T16:01:07.880188+00:00",
+        "ready_event_at": "2026-09-30T16:01:07.905366+00:00",
+        "symbol_generated_at": "2026-09-30T16:01:07.880188+00:00",
+        "symbol_event_at": "2026-09-30T16:01:07.881058+00:00",
+        "latest_completed_bar": "2026-09-30T15:00:00+00:00",
         "timeframe": "H1 completed bars",
         "source": "Dukascopy BID/ASK"
       }
     }
   ],
-  "message": "TRADE: EURCAD.x BUY_STOP 1.61265, stop 1.61010, target 1.61903, 0.25% risk, valid through 18:00 UTC. All 18/18 symbols were analyzed; overextended and non-confirming alternatives were rejected."
+  "message": "TRADE: USDCAD.x BUY_STOP 1.42130, stop 1.41940, target 1.42605, 0.25% risk, valid through 19:00 UTC. All 18/18 symbols were analyzed; no additional setup qualified."
 }
