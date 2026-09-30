@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20260930T022342793Z-NO-TRADE",
-  "generated_at": "2026-09-30T02:23:42.793Z",
+  "decision_id": "GDESK-20260930T032529889Z-NO-TRADE",
+  "generated_at": "2026-09-30T03:25:29.889Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-30T02-ae46ed9396; all 18/18 symbols analyzed. The prior CADJPY.x SELL_STOP triggered during the completed 01:00 UTC H1 bar and remains active. New JPY/AUD breakouts printed on unusually extended expansion bars, while XAUUSD.x remains just above its existing stop; no additional correlated or chase entry qualifies."
+  "message": "NO_TRADE: Valid FRESH MARKET_OPEN scan GDESK-2026-09-30T03-d98b071c40; all 18/18 symbols analyzed. No fresh 20-hour breakout qualifies. Existing CADJPY.x, EURJPY.x, XAUUSD.x, and GBPCAD.x exposures remain between their known stops and targets, so duplicate and correlated additions are rejected."
 }
