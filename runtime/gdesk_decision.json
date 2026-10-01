@@ -1,37 +1,7 @@
 {
-  "decision_id": "GDESK-20261001T002217375Z-TRADE",
-  "generated_at": "2026-10-01T00:22:17.375Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "GBPJPY.x",
-      "side": "BUY",
-      "order_type": "BUY_STOP",
-      "entry": 209.03,
-      "stop": 208.7,
-      "target": 209.855,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-10-01T01:00:00Z",
-      "cancel_condition": "Cancel if unfilled by valid_until; cancel early if a completed H1 candle closes below 208.80, broker spread exceeds 0.060, or server risk/exposure validation fails.",
-      "confidence": 0.73,
-      "setup_name": "H1 20-bar range breakout continuation",
-      "regime": "BULLISH_RANGE_BREAKOUT",
-      "session": "ASIA_EARLY",
-      "news_proximity": "UNKNOWN_CONTEXT_HAS_NO_NEWS_FEED",
-      "exposure_note": "Adds 0.25% GBP-long/JPY-short risk. Proposed decision risk is 0.25%; even if prior qualifying positions remain active, estimated aggregate risk is no more than 1.75% and projected absolute directional exposure remains within 1.0% for every currency and metal. Existing account state is revalidated server-side.",
-      "reasoning": "GBPJPY closed 0.38 ATR above the prior 20-bar high after breaking out from a four-hour consolidation. The breakout candle closed near its high, SMA5 is above SMA20, RSI 61.0 supports momentum without being overextended, and the latest spread was 0.08 ATR. A buy stop above 209.008 confirms continuation; the stop is below the consolidation floor and the target is 2.5R.",
-      "context": {
-        "scan_id": "GDESK-2026-10-01T00-7074cb9bb0",
-        "ready_generated_at": "2026-10-01T00:02:16.713499+00:00",
-        "symbol_event_at": "2026-10-01T00:02:16.714054+00:00",
-        "symbol_generated_at": "2026-10-01T00:02:16.713499+00:00",
-        "latest_completed_bar": "2026-09-30T23:00:00+00:00",
-        "source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars"
-      }
-    }
-  ],
-  "message": "TRADE: GBPJPY.x BUY_STOP 209.030, SL 208.700, TP 209.855, 0.25% risk; all 18/18 current-scan symbols were complete and analyzed."
+  "decision_id": "GDESK-20261001T011652001Z-SYSTEM_FAILURE",
+  "generated_at": "2026-10-01T01:16:52.001Z",
+  "result": "SYSTEM_FAILURE",
+  "decisions": [],
+  "message": "SYSTEM_FAILURE: Current-hour ready event was FRESH and MARKET_OPEN, but 9/18 symbol events were incomplete/stale: GBPUSD.x, GBPJPY.x, USDCAD.x, EURJPY.x, AUDUSD.x, NZDUSD.x, USDCHF.x, EURGBP.x, and CADJPY.x ended at 2026-09-30T23:00:00Z instead of the required 2026-10-01T00:00:00Z bar. No trading decision was produced."
 }
