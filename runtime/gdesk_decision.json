@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261001T011652001Z-SYSTEM_FAILURE",
-  "generated_at": "2026-10-01T01:16:52.001Z",
-  "result": "SYSTEM_FAILURE",
+  "decision_id": "GDESK-20261001T042739620Z-NO_TRADE",
+  "generated_at": "2026-10-01T04:27:39.620Z",
+  "result": "NO_TRADE",
   "decisions": [],
-  "message": "SYSTEM_FAILURE: Current-hour ready event was FRESH and MARKET_OPEN, but 9/18 symbol events were incomplete/stale: GBPUSD.x, GBPJPY.x, USDCAD.x, EURJPY.x, AUDUSD.x, NZDUSD.x, USDCHF.x, EURGBP.x, and CADJPY.x ended at 2026-09-30T23:00:00Z instead of the required 2026-10-01T00:00:00Z bar. No trading decision was produced."
+  "message": "NO_TRADE: The complete 18-symbol 04:00 UTC package was valid, FRESH, and MARKET_OPEN. AUDJPY was the only material 20-hour breakout but was already 0.51 ATR beyond resistance with RSI 91.8; the remaining symbols lacked a clean, non-extended H1 trigger. No setup met the production entry standard."
 }
