@@ -1,7 +1,36 @@
 {
-  "decision_id": "GDESK-20261001T051856854Z-NO_TRADE",
-  "generated_at": "2026-10-01T05:18:56.854Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: The complete 18-symbol 05:00 UTC package was valid, FRESH, and MARKET_OPEN. USDJPY and USDCAD breakouts were already severely overbought (RSI 92.4 and 91.7), while EURUSD downside continuation would duplicate an existing symbol exposure. No clean, non-extended H1 setup qualified."
+  "decision_id": "GDESK-20261001T061745588Z-TRADE",
+  "generated_at": "2026-10-01T06:17:45.588Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "GBPUSD.x",
+      "side": "SELL",
+      "order_type": "SELL_STOP",
+      "entry": 1.32445,
+      "stop": 1.3257,
+      "target": 1.32133,
+      "volume": 0.01,
+      "risk_pct": 0.25,
+      "valid_until": "2026-10-01T07:00:00Z",
+      "cancel_condition": "Cancel if not triggered by 2026-10-01T07:00:00Z, if a completed H1 candle closes above 1.32570 before entry, if the live spread exceeds 0.00015 at trigger, or if high-impact GBP/USD news is due within 30 minutes.",
+      "confidence": 0.73,
+      "setup_name": "H1 20-bar downside breakout continuation",
+      "regime": "Bearish H1 trend; price below falling 5-hour and 20-hour means",
+      "session": "London open",
+      "news_proximity": "UNVERIFIED: no economic-calendar feed was supplied in the Render context",
+      "exposure_note": "Adds 0.25% short-GBP/long-USD directional risk; single proposed decision, no duplicate GBPUSD symbol identified, and proposed currency exposure remains below 1.0%. Existing account exposure is enforced server-side.",
+      "reasoning": "GBPUSD closed at 1.32456 after five consecutive broadly lower closes, finishing 0.52 ATR below the prior 20-hour low with the 5-hour mean below the 20-hour mean. A sell stop below the completed 05:00 UTC bar avoids chasing the close; the stop sits above the recent breakdown structure and the target is approximately 2.5R.",
+      "context": {
+        "scan_id": "GDESK-2026-10-01T06-8aa29524fc",
+        "context_generated_at": "2026-10-01T06:06:06.105174+00:00",
+        "latest_completed_bar": "2026-10-01T05:00:00+00:00",
+        "ready_event_at": "2026-10-01T06:06:06.108985+00:00",
+        "data_source": "Dukascopy BID/ASK",
+        "timeframe": "H1 completed bars"
+      }
+    }
+  ],
+  "message": "TRADE: GBPUSD.x SELL_STOP 1.32445, stop 1.32570, target 1.32133, 0.25% risk; valid through 07:00 UTC. All 18 symbols were complete and analyzed."
 }
