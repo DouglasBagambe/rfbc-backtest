@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261001T042739620Z-NO_TRADE",
-  "generated_at": "2026-10-01T04:27:39.620Z",
+  "decision_id": "GDESK-20261001T051856854Z-NO_TRADE",
+  "generated_at": "2026-10-01T05:18:56.854Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: The complete 18-symbol 04:00 UTC package was valid, FRESH, and MARKET_OPEN. AUDJPY was the only material 20-hour breakout but was already 0.51 ATR beyond resistance with RSI 91.8; the remaining symbols lacked a clean, non-extended H1 trigger. No setup met the production entry standard."
+  "message": "NO_TRADE: The complete 18-symbol 05:00 UTC package was valid, FRESH, and MARKET_OPEN. USDJPY and USDCAD breakouts were already severely overbought (RSI 92.4 and 91.7), while EURUSD downside continuation would duplicate an existing symbol exposure. No clean, non-extended H1 setup qualified."
 }
