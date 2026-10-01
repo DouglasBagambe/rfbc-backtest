@@ -1,36 +1,36 @@
 {
-  "decision_id": "GDESK-20261001T061745588Z-TRADE",
-  "generated_at": "2026-10-01T06:17:45.588Z",
+  "decision_id": "GDESK-20261001T072602018Z-TRADE",
+  "generated_at": "2026-10-01T07:26:02.018Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "GBPUSD.x",
+      "symbol": "EURAUD.x",
       "side": "SELL",
       "order_type": "SELL_STOP",
-      "entry": 1.32445,
-      "stop": 1.3257,
-      "target": 1.32133,
+      "entry": 1.62715,
+      "stop": 1.6297,
+      "target": 1.62078,
       "volume": 0.01,
       "risk_pct": 0.25,
-      "valid_until": "2026-10-01T07:00:00Z",
-      "cancel_condition": "Cancel if not triggered by 2026-10-01T07:00:00Z, if a completed H1 candle closes above 1.32570 before entry, if the live spread exceeds 0.00015 at trigger, or if high-impact GBP/USD news is due within 30 minutes.",
-      "confidence": 0.73,
+      "valid_until": "2026-10-01T08:00:00Z",
+      "cancel_condition": "Cancel if not triggered by 2026-10-01T08:00:00Z, if a completed H1 candle closes above 1.62970 before entry, if the live spread exceeds 0.00030 at trigger, or if high-impact EUR/AUD news is due within 30 minutes.",
+      "confidence": 0.7,
       "setup_name": "H1 20-bar downside breakout continuation",
-      "regime": "Bearish H1 trend; price below falling 5-hour and 20-hour means",
-      "session": "London open",
+      "regime": "Bearish H1 trend; price below declining 5-hour and 20-hour means",
+      "session": "London session",
       "news_proximity": "UNVERIFIED: no economic-calendar feed was supplied in the Render context",
-      "exposure_note": "Adds 0.25% short-GBP/long-USD directional risk; single proposed decision, no duplicate GBPUSD symbol identified, and proposed currency exposure remains below 1.0%. Existing account exposure is enforced server-side.",
-      "reasoning": "GBPUSD closed at 1.32456 after five consecutive broadly lower closes, finishing 0.52 ATR below the prior 20-hour low with the 5-hour mean below the 20-hour mean. A sell stop below the completed 05:00 UTC bar avoids chasing the close; the stop sits above the recent breakdown structure and the target is approximately 2.5R.",
+      "exposure_note": "Adds 0.25% short-EUR/long-AUD directional risk; one proposed decision and proposed absolute exposure is 0.25% per currency, below the 1.0% cap. Existing account risk and duplicate-symbol status are enforced server-side.",
+      "reasoning": "EURAUD closed at 1.62804 after a persistent five-bar decline, below both its 5-hour and 20-hour means and 0.25 ATR under the prior 20-hour low. The sell stop is placed below the completed 06:00 UTC bar to require renewed downside confirmation, with the stop above that bar's high and an approximately 2.5R target.",
       "context": {
-        "scan_id": "GDESK-2026-10-01T06-8aa29524fc",
-        "context_generated_at": "2026-10-01T06:06:06.105174+00:00",
-        "latest_completed_bar": "2026-10-01T05:00:00+00:00",
-        "ready_event_at": "2026-10-01T06:06:06.108985+00:00",
+        "scan_id": "GDESK-2026-10-01T07-8d052c1c01",
+        "context_generated_at": "2026-10-01T07:03:18.628390+00:00",
+        "latest_completed_bar": "2026-10-01T06:00:00+00:00",
+        "ready_event_at": "2026-10-01T07:03:18.701114+00:00",
         "data_source": "Dukascopy BID/ASK",
         "timeframe": "H1 completed bars"
       }
     }
   ],
-  "message": "TRADE: GBPUSD.x SELL_STOP 1.32445, stop 1.32570, target 1.32133, 0.25% risk; valid through 07:00 UTC. All 18 symbols were complete and analyzed."
+  "message": "TRADE: EURAUD.x SELL_STOP 1.62715, stop 1.62970, target 1.62078, 0.25% risk; valid through 08:00 UTC. All 18 symbols were complete and analyzed."
 }
