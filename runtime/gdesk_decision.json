@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261002T152355259Z-NO_TRADE",
-  "generated_at": "2026-10-02T15:23:55.259Z",
+  "decision_id": "GDESK-20261002T161901606Z-NO_TRADE",
+  "generated_at": "2026-10-02T16:19:01.606Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: The complete 18-symbol 15:00 UTC package was valid, FRESH, and MARKET_OPEN. EURUSD, GBPUSD, GBPJPY, and AUDJPY held only marginal breakout closes, while EURCAD and GBPCAD remained extended with overbought momentum. XAUUSD reversed sharply and the earlier AUDUSD breakout failed to hold. No clean, non-chasing Friday setup qualified."
+  "message": "NO_TRADE: The complete 18-symbol 16:00 UTC package was valid, FRESH, and MARKET_OPEN. USDCAD produced the only fresh trend-aligned breakout, but the late-Friday entry window was too poor to justify a new order. XAUUSD broke support only after an extended multi-hour reversal, and the remaining symbols stayed inside structure or failed earlier breakouts."
 }
