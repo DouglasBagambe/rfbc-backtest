@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261001T092525293Z-NO_TRADE",
-  "generated_at": "2026-10-01T09:25:25.293Z",
+  "decision_id": "GDESK-20261002T081814834Z-NO_TRADE",
+  "generated_at": "2026-10-02T08:18:14.834Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: The complete 18-symbol 09:00 UTC package was valid, FRESH, and MARKET_OPEN. GBPUSD, GBPCAD, EURUSD, and EURCAD were already 0.61-1.03 ATR beyond 20-hour support in a synchronized impulse, while EURAUD was excluded as a likely active duplicate. No fresh, non-extended H1 setup qualified."
+  "message": "NO_TRADE: The complete 18-symbol 08:00 UTC package was valid, FRESH, and MARKET_OPEN. No symbol produced a confirmed, non-extended 20-hour H1 breakout; the leading trends remained inside prior structure or showed poor entry quality. No setup qualified."
 }
