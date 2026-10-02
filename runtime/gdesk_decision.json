@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261002T161901606Z-NO_TRADE",
-  "generated_at": "2026-10-02T16:19:01.606Z",
+  "decision_id": "GDESK-20261002T172346399Z-NO_TRADE",
+  "generated_at": "2026-10-02T17:23:46.399Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: The complete 18-symbol 16:00 UTC package was valid, FRESH, and MARKET_OPEN. USDCAD produced the only fresh trend-aligned breakout, but the late-Friday entry window was too poor to justify a new order. XAUUSD broke support only after an extended multi-hour reversal, and the remaining symbols stayed inside structure or failed earlier breakouts."
+  "message": "NO_TRADE: The complete 18-symbol 17:00 UTC package was valid, FRESH, and MARKET_OPEN. GBPCAD was the only fresh boundary break, but it was severely overextended (RSI 95.4) with relatively elevated spread and no acceptable late-Friday entry. All other symbols remained inside structure, lacked confirmation, or were reversing after earlier moves."
 }
