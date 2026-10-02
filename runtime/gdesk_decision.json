@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261002T211947884Z-NO_TRADE",
-  "generated_at": "2026-10-02T21:19:47.884Z",
-  "result": "NO_TRADE",
+  "decision_id": "GDESK-20261002T222048826Z-SYSTEM_FAILURE",
+  "generated_at": "2026-10-02T22:20:48.826Z",
+  "result": "SYSTEM_FAILURE",
   "decisions": [],
-  "message": "NO_TRADE: The complete 18-symbol 21:00 UTC package was valid, FRESH, and MARKET_OPEN, but late-Friday liquidity had deteriorated sharply. Closing spreads were approximately 23%-117% of H1 ATR across the universe, invalidating execution quality. No symbol offered a genuinely qualified setup before the weekend cutoff."
+  "message": "SYSTEM_FAILURE: Scan GDESK-2026-10-02T22-d2cacc0afb is current-hour and marked FRESH/MARKET_OPEN, but all 18 symbol events are stale: each ends at the 20:00 UTC bar instead of including the required 21:00 UTC completed bar. No trading decision was produced."
 }
