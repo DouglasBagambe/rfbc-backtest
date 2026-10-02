@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261002T182659541Z-SYSTEM_FAILURE",
-  "generated_at": "2026-10-02T18:26:59.541Z",
-  "result": "SYSTEM_FAILURE",
+  "decision_id": "GDESK-20261002T192307160Z-NO_TRADE",
+  "generated_at": "2026-10-02T19:23:07.160Z",
+  "result": "NO_TRADE",
   "decisions": [],
-  "message": "SYSTEM_FAILURE: Scan GDESK-2026-10-02T18-62584f8ed0 is current-hour and marked FRESH/MARKET_OPEN, but its universe is temporally incomplete: 14 of 18 symbols end at the 16:00 UTC bar while only USDCHF, CADJPY, AUDJPY, and USDJPY include the required 17:00 UTC completed bar. No trading decision was produced."
+  "message": "NO_TRADE: The complete 18-symbol 19:00 UTC package was valid, FRESH, and MARKET_OPEN. GBPCAD was the only confirmed boundary break, but it was severely overextended (RSI 95.7) with elevated spread and an unacceptable late-Friday entry profile. All other symbols remained inside structure or lacked clean confirmation."
 }
