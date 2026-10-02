@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261002T081814834Z-NO_TRADE",
-  "generated_at": "2026-10-02T08:18:14.834Z",
+  "decision_id": "GDESK-20261002T092741833Z-NO_TRADE",
+  "generated_at": "2026-10-02T09:27:41.833Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: The complete 18-symbol 08:00 UTC package was valid, FRESH, and MARKET_OPEN. No symbol produced a confirmed, non-extended 20-hour H1 breakout; the leading trends remained inside prior structure or showed poor entry quality. No setup qualified."
+  "message": "NO_TRADE: The complete 18-symbol 09:00 UTC package was valid, FRESH, and MARKET_OPEN. No symbol produced a confirmed, non-extended H1 setup: EURAUD and GBPAUD only probed prior lows without clean close-through confirmation, while NZDUSD and XAUUSD rejected nearby prior highs. No setup qualified."
 }
