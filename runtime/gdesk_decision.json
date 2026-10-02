@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261002T132811437Z-NO_TRADE",
-  "generated_at": "2026-10-02T13:28:11.437Z",
+  "decision_id": "GDESK-20261002T141709087Z-NO_TRADE",
+  "generated_at": "2026-10-02T14:17:09.087Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: The complete 18-symbol 13:00 UTC package was valid, FRESH, and MARKET_OPEN. Several instruments broke prior H1 structure, but the qualifying moves were already extended: AUDUSD, XAUUSD, EURAUD, GBPAUD, and USDJPY closed roughly 1–2.2 ATR beyond their levels after large impulse candles. GBPUSD and NZDUSD also lacked a clean non-chasing entry. No setup qualified."
+  "message": "NO_TRADE: The complete 18-symbol 14:00 UTC package was valid, FRESH, and MARKET_OPEN. EURUSD, GBPUSD, and AUDUSD closed only marginally beyond resistance after the prior impulse, while EURCAD, GBPCAD, and AUDJPY were already extended by roughly 0.9–1.3 ATR. XAUUSD sharply rejected its breakout. Friday entry quality did not justify chasing or stacking correlated exposure."
 }
