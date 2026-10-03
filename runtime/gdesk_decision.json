@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261002T231950237Z-SYSTEM_FAILURE",
-  "generated_at": "2026-10-02T23:19:50.237Z",
+  "decision_id": "GDESK-20261003T002410280Z-SYSTEM_FAILURE",
+  "generated_at": "2026-10-03T00:24:10.280Z",
   "result": "SYSTEM_FAILURE",
   "decisions": [],
-  "message": "SYSTEM_FAILURE: Scan GDESK-2026-10-02T23-c47e352d75 is current-hour and marked FRESH/MARKET_OPEN, but all 18 symbol events remain stale at the 20:00 UTC bar; the required 21:00 and 22:00 UTC completed bars are absent. No trading decision was produced."
+  "message": "SYSTEM_FAILURE: Current-hour scan GDESK-2026-10-03T00-4cf71d1813 reports MARKET_CLOSED with freshness MARKET_CLOSED, failing the required MARKET_OPEN/FRESH precondition. No trading decision was produced."
 }
