@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261004T232318478Z-SYSTEM_FAILURE",
-  "generated_at": "2026-10-04T23:23:18.478Z",
-  "result": "SYSTEM_FAILURE",
+  "decision_id": "GDESK-20261005T001638466Z-NO_TRADE",
+  "generated_at": "2026-10-05T00:16:38.466Z",
+  "result": "NO_TRADE",
   "decisions": [],
-  "message": "SYSTEM_FAILURE: Current-hour scan GDESK-2026-10-04T23-4cbc71e302 reports MARKET_CLOSED with freshness MARKET_CLOSED, failing the required MARKET_OPEN/FRESH precondition. No trading decision was produced."
+  "message": "NO_TRADE: Scan GDESK-2026-10-05T00-3f0094c2d9 was complete and fresh across 18/18 symbols. Only three post-reopen H1 bars were available; spreads were still normalizing and marginal range probes lacked confirmation, so no setup qualified."
 }
