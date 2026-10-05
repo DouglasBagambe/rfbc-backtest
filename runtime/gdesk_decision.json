@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261005T162315500Z-NO_TRADE",
-  "generated_at": "2026-10-05T16:23:15.500Z",
+  "decision_id": "GDESK-20261005T171811612Z-NO_TRADE",
+  "generated_at": "2026-10-05T17:18:11.612Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-05T16-7767c6a337 analyzed through the completed 15:00 UTC Dukascopy H1 bars; no genuinely qualified fresh setup met momentum, breakout, duplication, and exposure requirements."
+  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-05T17-826f2ac353 analyzed through the completed 16:00 UTC Dukascopy H1 bars; all moves remained range-bound or duplicated earlier symbol exposure, so no genuinely qualified fresh setup was selected."
 }
