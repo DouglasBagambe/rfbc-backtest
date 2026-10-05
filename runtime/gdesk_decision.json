@@ -1,36 +1,36 @@
 {
-  "decision_id": "GDESK-20261005T122645173Z-TRADE",
-  "generated_at": "2026-10-05T12:26:45.173Z",
+  "decision_id": "GDESK-20261005T133529274Z-TRADE",
+  "generated_at": "2026-10-05T13:35:29.274Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "GBPJPY.x",
-      "side": "BUY",
-      "order_type": "BUY_STOP",
-      "entry": 209.34,
-      "stop": 208.74,
-      "target": 210.84,
+      "symbol": "GBPCAD.x",
+      "side": "SELL",
+      "order_type": "SELL_STOP",
+      "entry": 1.88285,
+      "stop": 1.8863,
+      "target": 1.8742,
       "volume": 0.01,
       "risk_pct": 0.25,
-      "valid_until": "2026-10-05T14:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until; cancel earlier if a completed H1 candle closes below 208.74, spread exceeds 0.040, a high-impact GBP or JPY event is due within 30 minutes, or an active GBPJPY position/order already exists.",
-      "confidence": 0.8,
-      "setup_name": "H1 10-bar bullish range breakout",
-      "regime": "Bullish momentum expansion",
+      "valid_until": "2026-10-05T15:00:00Z",
+      "cancel_condition": "Cancel if unfilled at valid_until; cancel earlier if a completed H1 candle closes above 1.88630, spread exceeds 0.00040, a high-impact GBP or CAD event is due within 30 minutes, or an active GBPCAD position/order already exists.",
+      "confidence": 0.76,
+      "setup_name": "H1 10-bar bearish range breakout",
+      "regime": "Bearish momentum expansion",
       "session": "London",
-      "news_proximity": "UNKNOWN_FROM_CONTEXT; no economic-calendar field was supplied, so the pending order must be cancelled if high-impact GBP/JPY news is due within 30 minutes.",
-      "exposure_note": "New risk is 0.25%, long GBP and short JPY. If the earlier USDCAD position and GBPAUD pending order both remain active, combined account risk is 0.75%. Gross GBP exposure is 0.50% (one long, one short), and every currency remains below the 1.0% cap.",
-      "reasoning": "The completed 11:00 UTC H1 candle advanced about 1.5 ATR and closed roughly 0.8 ATR beyond the prior six-bar high while also clearing the ten-bar high. Short- and medium-term H1 averages are bullish. A buy stop above the signal high requires follow-through and avoids chasing the completed impulse. Correlated CADJPY, AUDJPY, and USDJPY breakouts were rejected.",
+      "news_proximity": "UNKNOWN_FROM_CONTEXT; no economic-calendar field was supplied, so the pending order must be cancelled if high-impact GBP/CAD news is due within 30 minutes.",
+      "exposure_note": "New risk is 0.25%, short GBP and long CAD. Including the latest known USDCAD, GBPAUD, and GBPJPY setups if all remain active, proposed aggregate risk is 1.00%; same-direction currency exposure peaks at 0.50% in CAD and 0.50% short GBP, within the 1.0% cap. Existing broker-side risk remains enforced server-side.",
+      "reasoning": "The completed 12:00 UTC H1 candle fell about 1.36 ATR, closed near its low, and finished below both the prior six-bar and ten-bar lows. The H1 fast average is below the medium average. A sell stop below the signal low requires fresh downside continuation; no market entry is chased. GBPJPY was not duplicated because its earlier buy stop remains valid and unfilled.",
       "context": {
-        "scan_id": "GDESK-2026-10-05T12-cbc029a01d",
-        "context_generated_at": "2026-10-05T12:03:22.102534+00:00",
-        "ready_event_at": "2026-10-05T12:03:22.106577+00:00",
-        "latest_completed_bar": "2026-10-05T11:00:00+00:00",
+        "scan_id": "GDESK-2026-10-05T13-87f86b4508",
+        "context_generated_at": "2026-10-05T13:04:09.711247+00:00",
+        "ready_event_at": "2026-10-05T13:04:09.714933+00:00",
+        "latest_completed_bar": "2026-10-05T12:00:00+00:00",
         "source": "Dukascopy BID/ASK",
         "timeframe": "H1 completed bars"
       }
     }
   ],
-  "message": "TRADE: GBPJPY.x BUY_STOP selected from complete fresh scan GDESK-2026-10-05T12-cbc029a01d. Strongest qualified JPY breakout; correlated alternatives rejected; new risk 0.25%."
+  "message": "TRADE: GBPCAD.x SELL_STOP selected from complete fresh scan GDESK-2026-10-05T13-87f86b4508. Qualified bearish H1 range break; GBPJPY duplicate avoided; new risk 0.25%."
 }
