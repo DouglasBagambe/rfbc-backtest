@@ -1,37 +1,7 @@
 {
-  "decision_id": "GDESK-20261005T021801591Z-TRADE-USDCADX",
-  "generated_at": "2026-10-05T02:18:01.591Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "USDCAD.x",
-      "side": "BUY",
-      "order_type": "BUY_STOP",
-      "entry": 1.4265,
-      "stop": 1.42575,
-      "target": 1.42838,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-10-05T05:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes at or below 1.42575 before entry, if the live spread exceeds 0.00025 at trigger, or if a high-impact USD or CAD event is identified within 60 minutes of trigger.",
-      "confidence": 0.68,
-      "setup_name": "H1 prior-range upside breakout continuation",
-      "regime": "bullish_trend_breakout",
-      "session": "Asia open",
-      "news_proximity": "UNKNOWN_NOT_PROVIDED",
-      "exposure_note": "Adds 0.25% long USD / short CAD directional risk. Including the still-valid EURGBP decision, proposed aggregate risk is 0.50%; maximum absolute exposure is 0.25% on EUR, GBP, USD, and CAD, subject to server-side duplicate, account-risk, and exposure enforcement.",
-      "reasoning": "USDCAD closed at 1.426465, 0.24 ATR14 above the prior 23-bar high at 1.426155, with MA5 above MA10 above MA20. The latest H1 candle closed at 99% of its range and the closing spread was about 0.10 ATR. A buy stop above the breakout high at 1.42647 requires continuation, while the stop is below the breakout candle low and the target provides approximately 2.5R. EURGBP was rejected despite stronger continuation because its prior sell-stop remains valid, preventing a duplicate symbol order.",
-      "context": {
-        "scan_id": "GDESK-2026-10-05T02-976c74b434",
-        "source": "Dukascopy BID/ASK",
-        "context_generated_at": "2026-10-05T02:00:47.511243+00:00",
-        "latest_completed_bar_at": "2026-10-05T01:00:00+00:00",
-        "ready_event_at": "2026-10-05T02:00:47.6007079Z",
-        "timeframe": "H1 completed bars",
-        "universe_count": 18
-      }
-    }
-  ],
-  "message": "TRADE: USDCAD.x BUY_STOP at 1.42650, SL 1.42575, TP 1.42838, 0.25% risk. Valid FRESH MARKET_OPEN scan; all 18/18 symbols analyzed. Duplicate EURGBP setup rejected; proposed aggregate risk with its still-valid order is 0.50%."
+  "decision_id": "GDESK-20261005T031709565Z-NO_TRADE",
+  "generated_at": "2026-10-05T03:17:09.565Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: Scan GDESK-2026-10-05T03-92d92ab448 was complete and fresh across 18/18 symbols. The latest H1 bar was a broad 1-3 ATR impulse across multiple USD and EUR pairs; leading breakouts were already extended, while EURGBP and USDCAD duplicated preceding decisions. No non-chasing setup qualified."
 }
