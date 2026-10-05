@@ -1,36 +1,7 @@
 {
-  "decision_id": "GDESK-20261005T143316995Z-TRADE",
-  "generated_at": "2026-10-05T14:33:16.995Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "GBPUSD.x",
-      "side": "SELL",
-      "order_type": "SELL_STOP",
-      "entry": 1.31885,
-      "stop": 1.32225,
-      "target": 1.31035,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-10-05T16:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until; cancel earlier if a completed H1 candle closes above 1.32225, spread exceeds 0.00025, a high-impact GBP or USD event is due within 30 minutes, or an active GBPUSD position/order already exists.",
-      "confidence": 0.77,
-      "setup_name": "H1 confirmed bearish range breakdown",
-      "regime": "Bearish momentum expansion",
-      "session": "London-New York overlap",
-      "news_proximity": "UNKNOWN_FROM_CONTEXT; no economic-calendar field was supplied, so the pending order must be cancelled if high-impact GBP/USD news is due within 30 minutes.",
-      "exposure_note": "New risk is 0.25%, short GBP and long USD. Including the latest known USDCAD, GBPAUD, and GBPCAD setups if all remain active, proposed aggregate risk is 1.00%; same-direction exposure peaks at 0.75% short GBP and 0.50% long CAD, within the 1.0% cap. Existing broker-side risk remains enforced server-side.",
-      "reasoning": "The completed 13:00 UTC H1 candle fell about 1.06 ATR, closed below the prior six-bar low, and left the fast H1 average below the medium average. Entry is below both the signal low and the nearby ten-bar floor, so the order requires a confirmed continuation rather than chasing the completed candle. GBPCAD was not duplicated because its prior sell stop traded through its entry.",
-      "context": {
-        "scan_id": "GDESK-2026-10-05T14-ec270e6fe4",
-        "context_generated_at": "2026-10-05T14:04:51.703158+00:00",
-        "ready_event_at": "2026-10-05T14:04:51.706806+00:00",
-        "latest_completed_bar": "2026-10-05T13:00:00+00:00",
-        "source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars"
-      }
-    }
-  ],
-  "message": "TRADE: GBPUSD.x SELL_STOP selected from complete fresh scan GDESK-2026-10-05T14-ec270e6fe4. Confirmed bearish H1 continuation required; GBPCAD duplicate avoided; new risk 0.25%."
+  "decision_id": "GDESK-20261005T152249367Z-SYSTEM_FAILURE",
+  "generated_at": "2026-10-05T15:22:49.367Z",
+  "result": "SYSTEM_FAILURE",
+  "decisions": [],
+  "message": "SYSTEM_FAILURE: scan GDESK-2026-10-05T15-b09a218f2d is current, MARKET_OPEN, and FRESH, but 7/18 symbol events are incomplete for the expected 14:00 UTC completed H1 bar (GBPJPY.x, EURJPY.x, GBPUSD.x, EURUSD.x, AUDUSD.x, USDCAD.x, NZDUSD.x). No trade decision produced."
 }
