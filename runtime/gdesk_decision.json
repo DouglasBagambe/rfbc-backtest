@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261005T191823121Z-NO_TRADE",
-  "generated_at": "2026-10-05T19:18:23.121Z",
+  "decision_id": "GDESK-20261005T202124282Z-NO_TRADE",
+  "generated_at": "2026-10-05T20:21:24.282Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-05T19-d8c356ee7d analyzed through the completed 18:00 UTC Dukascopy H1 bars; isolated short-range breaks lacked momentum and broader confirmation, so no genuinely qualified fresh setup met the entry, duplication, and exposure rules."
+  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-05T20-494a86194b analyzed through the completed 19:00 UTC Dukascopy H1 bars; EURCAD's short-range breakout lacked sufficient impulse and established trend confirmation for a late-session entry, and no other symbol qualified."
 }
