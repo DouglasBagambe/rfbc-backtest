@@ -1,36 +1,7 @@
 {
-  "decision_id": "GDESK-20261005T092047742Z-TRADE",
-  "generated_at": "2026-10-05T09:20:47.742Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "USDCAD.x",
-      "side": "SELL",
-      "order_type": "SELL_STOP",
-      "entry": 1.4242,
-      "stop": 1.42635,
-      "target": 1.419,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-10-05T12:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until; cancel earlier if a completed H1 candle closes above 1.42635, spread exceeds 0.00020, a high-impact USD or CAD event is due within 30 minutes, or an active USDCAD position/order already exists.",
-      "confidence": 0.79,
-      "setup_name": "H1 10-bar bearish range breakout",
-      "regime": "Bearish momentum expansion",
-      "session": "London",
-      "news_proximity": "UNKNOWN_FROM_CONTEXT; no economic-calendar field was supplied, so the pending order must be cancelled if high-impact USD/CAD news is due within 30 minutes.",
-      "exposure_note": "Proposed risk 0.25%; short USD and long CAD directional exposure 0.25% each. No correlated USD-short or CAD-long companion trade is proposed; aggregate proposed risk is 0.25%.",
-      "reasoning": "The completed 08:00 UTC H1 candle fell about 1.4 ATR and closed roughly 1.0 ATR below the prior ten-bar low. Price also closed below the short and medium H1 exponential averages, confirming a decisive bearish range expansion. A sell stop below the signal low requires continuation and avoids chasing the completed impulse.",
-      "context": {
-        "scan_id": "GDESK-2026-10-05T09-b4fea0924f",
-        "context_generated_at": "2026-10-05T09:01:13.511050+00:00",
-        "ready_event_at": "2026-10-05T09:01:13.600027+00:00",
-        "latest_completed_bar": "2026-10-05T08:00:00+00:00",
-        "source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars"
-      }
-    }
-  ],
-  "message": "TRADE: USDCAD.x SELL_STOP selected from complete fresh scan GDESK-2026-10-05T09-b4fea0924f. One qualified bearish breakout; proposed aggregate risk 0.25%."
+  "decision_id": "GDESK-20261005T102632850Z-NO_TRADE",
+  "generated_at": "2026-10-05T10:26:32.850Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: Scan GDESK-2026-10-05T10-370be3b9bb was MARKET_OPEN, FRESH, and complete across 18/18 symbols. USDCAD traded through the preceding sell-stop entry and was excluded as a duplicate; AUDJPY and CADJPY were already in post-break continuation, and no fresh setup qualified."
 }
