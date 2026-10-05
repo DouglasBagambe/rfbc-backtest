@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261005T222348031Z-SYSTEM_FAILURE",
-  "generated_at": "2026-10-05T22:23:48.031Z",
-  "result": "SYSTEM_FAILURE",
+  "decision_id": "GDESK-20261005T232108428Z-NO_TRADE",
+  "generated_at": "2026-10-05T23:21:08.428Z",
+  "result": "NO_TRADE",
   "decisions": [],
-  "message": "SYSTEM_FAILURE: scan GDESK-2026-10-05T22-18803bd066 is incomplete because XAUUSD.x reports latest_completed_bar 2026-10-05T20:00:00Z while the current scan requires the completed 21:00 UTC H1 bar; no trading decision produced."
+  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-05T23-decbc29af0 analyzed through the completed 22:00 UTC Dukascopy H1 bars; all symbols closed inside their six- and ten-hour reference ranges, so no genuinely qualified setup was present."
 }
