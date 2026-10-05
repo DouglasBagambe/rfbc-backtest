@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261005T051834772Z-NO_TRADE",
-  "generated_at": "2026-10-05T05:18:34.772Z",
+  "decision_id": "GDESK-20261005T062743021Z-NO_TRADE",
+  "generated_at": "2026-10-05T06:27:43.021Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: Scan GDESK-2026-10-05T05-7ec923ca5c was complete and fresh across 18/18 symbols. USDJPY duplicated the preceding still-valid decision; the broader universe was consolidating or retracing after the prior impulse, and XAUUSD's intrabar range break lacked a confirming close. No fresh setup qualified."
+  "message": "NO_TRADE: Scan GDESK-2026-10-05T06-e9484059fb was complete and fresh across 18/18 symbols. The universe remained in post-impulse consolidation or retracement with no confirmed fresh range breakout; the preceding USDJPY setup was invalidated by the latest completed H1 bar trading below its stop. No setup qualified."
 }
