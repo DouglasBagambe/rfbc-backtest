@@ -1,37 +1,7 @@
 {
-  "decision_id": "GDESK-20261005T041705956Z-TRADE-USDJPYX",
-  "generated_at": "2026-10-05T04:17:05.956Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "USDJPY.x",
-      "side": "BUY",
-      "order_type": "BUY_STOP",
-      "entry": 158.13,
-      "stop": 157.9,
-      "target": 158.705,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-10-05T07:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes at or below 157.900 before entry, if the live spread exceeds 0.015 at trigger, or if a high-impact USD or JPY event is identified within 60 minutes of trigger.",
-      "confidence": 0.69,
-      "setup_name": "H1 prior-range upside breakout continuation",
-      "regime": "bullish_trend_breakout",
-      "session": "Asia",
-      "news_proximity": "UNKNOWN_NOT_PROVIDED",
-      "exposure_note": "Adds 0.25% long USD / short JPY directional risk. Proposed aggregate risk is 0.25%; allowing for the preceding USDCAD decision if still active, maximum known USD directional exposure is 0.50%, subject to server-side duplicate, account-risk, and exposure enforcement.",
-      "reasoning": "USDJPY closed at 158.113, 0.38 ATR14 above the prior 23-bar high at 158.029, with MA5 above MA10 above MA20. After the initial breakout impulse, the latest H1 candle added a controlled 0.53 ATR bullish body and closed at its high while spread remained near 0.03 ATR. A buy stop at 158.130 requires continuation; the stop is below the breakout-continuation candle low and the target provides 2.5R. More extended EUR and USD moves were rejected to avoid chasing.",
-      "context": {
-        "scan_id": "GDESK-2026-10-05T04-63c2cc37fe",
-        "source": "Dukascopy BID/ASK",
-        "context_generated_at": "2026-10-05T04:02:12.205386+00:00",
-        "latest_completed_bar_at": "2026-10-05T03:00:00+00:00",
-        "ready_event_at": "2026-10-05T04:02:12.215450984Z",
-        "timeframe": "H1 completed bars",
-        "universe_count": 18
-      }
-    }
-  ],
-  "message": "TRADE: USDJPY.x BUY_STOP at 158.130, SL 157.900, TP 158.705, 0.25% risk. Valid FRESH MARKET_OPEN scan; all 18/18 symbols analyzed. Extended alternatives rejected; server-side controls remain authoritative."
+  "decision_id": "GDESK-20261005T051834772Z-NO_TRADE",
+  "generated_at": "2026-10-05T05:18:34.772Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: Scan GDESK-2026-10-05T05-7ec923ca5c was complete and fresh across 18/18 symbols. USDJPY duplicated the preceding still-valid decision; the broader universe was consolidating or retracing after the prior impulse, and XAUUSD's intrabar range break lacked a confirming close. No fresh setup qualified."
 }
