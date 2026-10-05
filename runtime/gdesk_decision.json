@@ -1,37 +1,37 @@
 {
-  "decision_id": "GDESK-20261005T012600302Z-TRADE-EURGBPX",
-  "generated_at": "2026-10-05T01:26:00.302Z",
+  "decision_id": "GDESK-20261005T021801591Z-TRADE-USDCADX",
+  "generated_at": "2026-10-05T02:18:01.591Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "EURGBP.x",
-      "side": "SELL",
-      "order_type": "SELL_STOP",
-      "entry": 0.8491,
-      "stop": 0.85005,
-      "target": 0.84672,
+      "symbol": "USDCAD.x",
+      "side": "BUY",
+      "order_type": "BUY_STOP",
+      "entry": 1.4265,
+      "stop": 1.42575,
+      "target": 1.42838,
       "volume": 0.01,
       "risk_pct": 0.25,
-      "valid_until": "2026-10-05T04:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes at or above 0.85005 before entry, if the live spread exceeds 0.00020 at trigger, or if a high-impact EUR or GBP event is identified within 60 minutes of trigger.",
-      "confidence": 0.69,
-      "setup_name": "H1 prior-range downside breakout continuation",
-      "regime": "bearish_trend_breakout",
+      "valid_until": "2026-10-05T05:00:00Z",
+      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes at or below 1.42575 before entry, if the live spread exceeds 0.00025 at trigger, or if a high-impact USD or CAD event is identified within 60 minutes of trigger.",
+      "confidence": 0.68,
+      "setup_name": "H1 prior-range upside breakout continuation",
+      "regime": "bullish_trend_breakout",
       "session": "Asia open",
       "news_proximity": "UNKNOWN_NOT_PROVIDED",
-      "exposure_note": "Adds 0.25% short EUR / long GBP directional risk; proposed aggregate risk is 0.25% and absolute exposure is 0.25% to EUR and 0.25% to GBP, subject to server-side duplicate, account-risk, and exposure enforcement.",
-      "reasoning": "EURGBP closed at 0.849285, 0.41 ATR14 below the prior 23-bar low at 0.84957, with MA5 below MA10 below MA20. The latest H1 candle closed near its low with an 0.85 ATR bearish body, while the closing spread was about 0.10 ATR after post-reopen normalization. A sell stop below 0.84914 requires continuation; the stop is above the breakout candle high and the target provides approximately 2.5R. The correlated EURJPY downside move was rejected to avoid duplicate EUR-short exposure.",
+      "exposure_note": "Adds 0.25% long USD / short CAD directional risk. Including the still-valid EURGBP decision, proposed aggregate risk is 0.50%; maximum absolute exposure is 0.25% on EUR, GBP, USD, and CAD, subject to server-side duplicate, account-risk, and exposure enforcement.",
+      "reasoning": "USDCAD closed at 1.426465, 0.24 ATR14 above the prior 23-bar high at 1.426155, with MA5 above MA10 above MA20. The latest H1 candle closed at 99% of its range and the closing spread was about 0.10 ATR. A buy stop above the breakout high at 1.42647 requires continuation, while the stop is below the breakout candle low and the target provides approximately 2.5R. EURGBP was rejected despite stronger continuation because its prior sell-stop remains valid, preventing a duplicate symbol order.",
       "context": {
-        "scan_id": "GDESK-2026-10-05T01-d8ad47738b",
+        "scan_id": "GDESK-2026-10-05T02-976c74b434",
         "source": "Dukascopy BID/ASK",
-        "context_generated_at": "2026-10-05T01:04:57.213693+00:00",
-        "latest_completed_bar_at": "2026-10-05T00:00:00+00:00",
-        "ready_event_at": "2026-10-05T01:04:57.302606095Z",
+        "context_generated_at": "2026-10-05T02:00:47.511243+00:00",
+        "latest_completed_bar_at": "2026-10-05T01:00:00+00:00",
+        "ready_event_at": "2026-10-05T02:00:47.6007079Z",
         "timeframe": "H1 completed bars",
         "universe_count": 18
       }
     }
   ],
-  "message": "TRADE: EURGBP.x SELL_STOP at 0.84910, SL 0.85005, TP 0.84672, 0.25% risk. Valid FRESH MARKET_OPEN scan; all 18/18 symbols analyzed. Correlated EURJPY setup rejected; server-side controls remain authoritative."
+  "message": "TRADE: USDCAD.x BUY_STOP at 1.42650, SL 1.42575, TP 1.42838, 0.25% risk. Valid FRESH MARKET_OPEN scan; all 18/18 symbols analyzed. Duplicate EURGBP setup rejected; proposed aggregate risk with its still-valid order is 0.50%."
 }
