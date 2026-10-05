@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261005T073244172Z-NO_TRADE",
-  "generated_at": "2026-10-05T07:32:44.172Z",
+  "decision_id": "GDESK-20261005T082042237Z-NO_TRADE",
+  "generated_at": "2026-10-05T08:20:42.237Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: Scan GDESK-2026-10-05T07-c1921efc29 was MARKET_OPEN, FRESH, and complete across 18/18 symbols. No completed H1 close confirmed a fresh six- or ten-bar range breakout; edge tests remained unconfirmed and XAUUSD's strong rebound stayed below resistance. No setup qualified."
+  "message": "NO_TRADE: Scan GDESK-2026-10-05T08-b8559b1be0 was MARKET_OPEN, FRESH, and complete across 18/18 symbols. GBPAUD's range break was marginal—only about 0.03 ATR beyond the prior floor with weak trend separation—while every other symbol closed inside range. No setup qualified."
 }
