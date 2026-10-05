@@ -1,7 +1,37 @@
 {
-  "decision_id": "GDESK-20261005T001638466Z-NO_TRADE",
-  "generated_at": "2026-10-05T00:16:38.466Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: Scan GDESK-2026-10-05T00-3f0094c2d9 was complete and fresh across 18/18 symbols. Only three post-reopen H1 bars were available; spreads were still normalizing and marginal range probes lacked confirmation, so no setup qualified."
+  "decision_id": "GDESK-20261005T012600302Z-TRADE-EURGBPX",
+  "generated_at": "2026-10-05T01:26:00.302Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "EURGBP.x",
+      "side": "SELL",
+      "order_type": "SELL_STOP",
+      "entry": 0.8491,
+      "stop": 0.85005,
+      "target": 0.84672,
+      "volume": 0.01,
+      "risk_pct": 0.25,
+      "valid_until": "2026-10-05T04:00:00Z",
+      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes at or above 0.85005 before entry, if the live spread exceeds 0.00020 at trigger, or if a high-impact EUR or GBP event is identified within 60 minutes of trigger.",
+      "confidence": 0.69,
+      "setup_name": "H1 prior-range downside breakout continuation",
+      "regime": "bearish_trend_breakout",
+      "session": "Asia open",
+      "news_proximity": "UNKNOWN_NOT_PROVIDED",
+      "exposure_note": "Adds 0.25% short EUR / long GBP directional risk; proposed aggregate risk is 0.25% and absolute exposure is 0.25% to EUR and 0.25% to GBP, subject to server-side duplicate, account-risk, and exposure enforcement.",
+      "reasoning": "EURGBP closed at 0.849285, 0.41 ATR14 below the prior 23-bar low at 0.84957, with MA5 below MA10 below MA20. The latest H1 candle closed near its low with an 0.85 ATR bearish body, while the closing spread was about 0.10 ATR after post-reopen normalization. A sell stop below 0.84914 requires continuation; the stop is above the breakout candle high and the target provides approximately 2.5R. The correlated EURJPY downside move was rejected to avoid duplicate EUR-short exposure.",
+      "context": {
+        "scan_id": "GDESK-2026-10-05T01-d8ad47738b",
+        "source": "Dukascopy BID/ASK",
+        "context_generated_at": "2026-10-05T01:04:57.213693+00:00",
+        "latest_completed_bar_at": "2026-10-05T00:00:00+00:00",
+        "ready_event_at": "2026-10-05T01:04:57.302606095Z",
+        "timeframe": "H1 completed bars",
+        "universe_count": 18
+      }
+    }
+  ],
+  "message": "TRADE: EURGBP.x SELL_STOP at 0.84910, SL 0.85005, TP 0.84672, 0.25% risk. Valid FRESH MARKET_OPEN scan; all 18/18 symbols analyzed. Correlated EURJPY setup rejected; server-side controls remain authoritative."
 }
