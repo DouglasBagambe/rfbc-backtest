@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261005T152249367Z-SYSTEM_FAILURE",
-  "generated_at": "2026-10-05T15:22:49.367Z",
-  "result": "SYSTEM_FAILURE",
+  "decision_id": "GDESK-20261005T162315500Z-NO_TRADE",
+  "generated_at": "2026-10-05T16:23:15.500Z",
+  "result": "NO_TRADE",
   "decisions": [],
-  "message": "SYSTEM_FAILURE: scan GDESK-2026-10-05T15-b09a218f2d is current, MARKET_OPEN, and FRESH, but 7/18 symbol events are incomplete for the expected 14:00 UTC completed H1 bar (GBPJPY.x, EURJPY.x, GBPUSD.x, EURUSD.x, AUDUSD.x, USDCAD.x, NZDUSD.x). No trade decision produced."
+  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-05T16-7767c6a337 analyzed through the completed 15:00 UTC Dukascopy H1 bars; no genuinely qualified fresh setup met momentum, breakout, duplication, and exposure requirements."
 }
