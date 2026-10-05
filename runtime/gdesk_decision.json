@@ -1,7 +1,36 @@
 {
-  "decision_id": "GDESK-20261005T102632850Z-NO_TRADE",
-  "generated_at": "2026-10-05T10:26:32.850Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: Scan GDESK-2026-10-05T10-370be3b9bb was MARKET_OPEN, FRESH, and complete across 18/18 symbols. USDCAD traded through the preceding sell-stop entry and was excluded as a duplicate; AUDJPY and CADJPY were already in post-break continuation, and no fresh setup qualified."
+  "decision_id": "GDESK-20261005T112223140Z-TRADE",
+  "generated_at": "2026-10-05T11:22:23.140Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "GBPAUD.x",
+      "side": "SELL",
+      "order_type": "SELL_STOP",
+      "entry": 1.89875,
+      "stop": 1.90065,
+      "target": 1.894,
+      "volume": 0.01,
+      "risk_pct": 0.25,
+      "valid_until": "2026-10-05T13:00:00Z",
+      "cancel_condition": "Cancel if unfilled at valid_until; cancel earlier if a completed H1 candle closes above 1.90065, spread exceeds 0.00030, a high-impact GBP or AUD event is due within 30 minutes, or an active GBPAUD position/order already exists.",
+      "confidence": 0.77,
+      "setup_name": "H1 bearish breakout-retest continuation",
+      "regime": "Bearish trend expansion after failed retest",
+      "session": "London",
+      "news_proximity": "UNKNOWN_FROM_CONTEXT; no economic-calendar field was supplied, so the pending order must be cancelled if high-impact GBP/AUD news is due within 30 minutes.",
+      "exposure_note": "New risk is 0.25%, short GBP and long AUD. If the preceding USDCAD position remains active, combined account risk is 0.50%; each individual currency exposure remains 0.25%, below the 1.0% cap.",
+      "reasoning": "GBPAUD's earlier ten-bar bearish break held through the following H1 retest, which failed to reclaim the broken range. The completed 10:00 UTC candle then resumed lower, closed beneath both six- and ten-bar floors, and retained bearish short/medium H1 average alignment. A sell stop below the signal low requires continued acceptance below support.",
+      "context": {
+        "scan_id": "GDESK-2026-10-05T11-476eb95b40",
+        "context_generated_at": "2026-10-05T11:02:36.110628+00:00",
+        "ready_event_at": "2026-10-05T11:02:36.113730+00:00",
+        "latest_completed_bar": "2026-10-05T10:00:00+00:00",
+        "source": "Dukascopy BID/ASK",
+        "timeframe": "H1 completed bars"
+      }
+    }
+  ],
+  "message": "TRADE: GBPAUD.x SELL_STOP selected from complete fresh scan GDESK-2026-10-05T11-476eb95b40. Qualified bearish breakout-retest continuation; new risk 0.25%."
 }
