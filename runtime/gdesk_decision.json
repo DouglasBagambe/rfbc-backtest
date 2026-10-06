@@ -1,33 +1,33 @@
 {
-  "decision_id": "GDESK-20261006T082204671Z-TRADE",
-  "generated_at": "2026-10-06T08:22:04.671Z",
+  "decision_id": "GDESK-20261006T092336661Z-TRADE",
+  "generated_at": "2026-10-06T09:23:36.661Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "EURUSD.x",
+      "symbol": "GBPJPY.x",
       "side": "BUY",
       "order_type": "BUY_LIMIT",
-      "entry": 1.1229,
-      "stop": 1.12145,
-      "target": 1.12653,
+      "entry": 209.36,
+      "stop": 209.08,
+      "target": 210.06,
       "volume": 0.01,
       "risk_pct": 0.25,
-      "valid_until": "2026-10-06T11:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes below 1.12250 before entry, or if a high-impact EUR/USD event becomes imminent within 60 minutes before fill.",
-      "confidence": 0.74,
+      "valid_until": "2026-10-06T12:00:00Z",
+      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes below 209.25 before entry, or if a high-impact GBP/JPY event becomes imminent within 60 minutes before fill.",
+      "confidence": 0.75,
       "setup_name": "H1 20-bar breakout retest",
-      "regime": "bullish range expansion",
+      "regime": "bullish continuation expansion",
       "session": "London",
       "news_proximity": "UNKNOWN_NOT_PROVIDED_IN_RENDER_CONTEXT",
-      "exposure_note": "Adds 0.25% EUR-long/USD-short risk. The prior USDCAD BUY_LIMIT traded through its entry zone during the completed 07:00 UTC bar and is therefore treated as potentially active; if active, the two positions offset USD directionally, leaving 0.25% EUR-long and 0.25% CAD-short exposure. Existing account and duplicate-symbol risk remain subject to server-side enforcement.",
-      "reasoning": "EURUSD completed the 07:00 UTC H1 candle at 1.12409, 9.8 pips above the prior 20-bar high of 1.12311. The candle had a 30.6-pip body, closed near its high, and retained a tight 0.4-pip closing spread. The 1.12290 limit seeks a retest of the broken range instead of chasing a roughly 3-ATR impulse; the stop invalidates a deeper failed breakout and the target provides approximately 2.50R.",
+      "exposure_note": "Adds 0.25% GBP-long/JPY-short risk. USDCAD and EURUSD previously traded through their proposed entry zones and are treated as potentially active; modeled aggregate risk becomes 0.75%. Their opposing USD legs offset, leaving 0.25% directional exposure each to EUR, CAD, GBP, and JPY—within the 1.0% per-currency cap. Existing account and duplicate-symbol risk remain subject to server-side enforcement.",
+      "reasoning": "GBPJPY completed the 08:00 UTC H1 candle at 209.497, 15.25 pips above the prior 20-bar high of 209.3445. The candle added a 20.45-pip bullish body after the London impulse, closed near its high, and retained a tight 0.6-pip closing spread. The 209.36 limit seeks a retest of the broken range rather than chasing; the stop invalidates a return below structure and the target provides 2.50R.",
       "context": {
-        "scan_id": "GDESK-2026-10-06T08-c58cc1c67f",
-        "ready_generated_at": "2026-10-06T08:02:18.009813+00:00",
-        "ready_event_at": "2026-10-06T08:02:18.018750+00:00",
-        "symbol_generated_at": "2026-10-06T08:02:18.009813+00:00",
-        "latest_completed_bar": "2026-10-06T07:00:00+00:00",
+        "scan_id": "GDESK-2026-10-06T09-c376391eec",
+        "ready_generated_at": "2026-10-06T09:03:03.004543+00:00",
+        "ready_event_at": "2026-10-06T09:03:03.009404+00:00",
+        "symbol_generated_at": "2026-10-06T09:03:03.004543+00:00",
+        "latest_completed_bar": "2026-10-06T08:00:00+00:00",
         "market_state": "MARKET_OPEN",
         "freshness": "FRESH",
         "data_source": "Dukascopy BID/ASK",
@@ -35,5 +35,5 @@
       }
     }
   ],
-  "message": "TRADE: EURUSD.x BUY_LIMIT breakout-retest setup selected from a complete fresh 18/18-symbol scan; 0.25% proposed risk, approximately 2.50R, and no market chase."
+  "message": "TRADE: GBPJPY.x BUY_LIMIT breakout-retest setup selected from a complete fresh 18/18-symbol scan; 0.25% proposed risk, 2.50R, with modeled aggregate and currency exposure within limits."
 }
