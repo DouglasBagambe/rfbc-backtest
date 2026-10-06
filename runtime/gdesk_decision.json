@@ -1,39 +1,7 @@
 {
-  "decision_id": "GDESK-20261006T152436226Z-TRADE",
-  "generated_at": "2026-10-06T15:24:36.226Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "GBPAUD.x",
-      "side": "BUY",
-      "order_type": "BUY_LIMIT",
-      "entry": 1.90215,
-      "stop": 1.90025,
-      "target": 1.9069,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-10-06T18:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes below 1.90090 before entry, or if a high-impact GBP/AUD event becomes imminent within 60 minutes before fill.",
-      "confidence": 0.75,
-      "setup_name": "H1 20-bar breakout retest",
-      "regime": "GBP bullish trend expansion versus AUD",
-      "session": "London-New York overlap",
-      "news_proximity": "UNKNOWN_NOT_PROVIDED_IN_RENDER_CONTEXT",
-      "exposure_note": "Adds 0.25% GBP-long/AUD-short risk. XAUUSD crossed its stop during the completed 14:00 UTC bar; GBPJPY and CADJPY remain modeled active at 0.25% each. If this order fills, modeled aggregate risk is 0.75%; absolute directional exposure is 0.50% long GBP, 0.50% short JPY, and 0.25% each long CAD and short AUD—within the 1.0% cap. Existing account and duplicate-symbol risk remain subject to server-side enforcement.",
-      "reasoning": "GBPAUD completed the 14:00 UTC H1 candle at 1.902845, 0.000655 above the prior 20-bar high of 1.902190. Its 0.001665 bullish body measured about 1.01 ATR, its range measured about 1.62 ATR, it closed near the candle high, and spread was about 0.08 ATR. The 1.90215 limit seeks a retest of the broken range rather than chasing; the 1.90025 stop sits below the impulse low and the 1.90690 target provides 2.50R.",
-      "context": {
-        "scan_id": "GDESK-2026-10-06T15-20bbb552f0",
-        "ready_generated_at": "2026-10-06T15:02:33.229114+00:00",
-        "ready_event_at": "2026-10-06T15:02:33.301797+00:00",
-        "symbol_generated_at": "2026-10-06T15:02:33.229114+00:00",
-        "latest_completed_bar": "2026-10-06T14:00:00+00:00",
-        "market_state": "MARKET_OPEN",
-        "freshness": "FRESH",
-        "data_source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars"
-      }
-    }
-  ],
-  "message": "TRADE: GBPAUD.x BUY_LIMIT breakout-retest selected from a complete fresh 18/18-symbol scan; 0.25% proposed risk, 2.50R, and modeled aggregate/directional exposure within limits."
+  "decision_id": "GDESK-20261006T162432232Z-NO_TRADE",
+  "generated_at": "2026-10-06T16:24:32.232Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: complete fresh 18/18-symbol scan. GBPJPY and CADJPY remain modeled active; the GBPAUD limit filled during the completed 15:00 UTC bar without a stop breach. Modeled aggregate risk is 0.75%, and no independent new setup met breakout, retest, and correlation standards."
 }
