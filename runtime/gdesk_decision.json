@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261006T022032181Z-NO_TRADE",
-  "generated_at": "2026-10-06T02:20:32.181Z",
+  "decision_id": "GDESK-20261006T032526753Z-NO_TRADE",
+  "generated_at": "2026-10-06T03:25:26.753Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-06T02-e30dc07412 analyzed through the completed 01:00 UTC Dukascopy H1 BID/ASK bars; XAUUSD's six-hour downside break lacked ten-hour confirmation, and no other symbol produced a qualified setup."
+  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-06T03-910810f78c analyzed through the completed 02:00 UTC Dukascopy H1 BID/ASK bars; GBPUSD lacked ten-hour confirmation, gold rejected its downside break, and no other symbol produced a qualified setup."
 }
