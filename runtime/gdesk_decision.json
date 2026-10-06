@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261006T202233900Z-NO_TRADE",
-  "generated_at": "2026-10-06T20:22:33.900Z",
+  "decision_id": "GDESK-20261006T211948131Z-NO_TRADE",
+  "generated_at": "2026-10-06T21:19:48.131Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18/18-symbol scan. CADJPY reached its 111.315 target during the completed 19:00 UTC bar and is modeled closed; GBPJPY remains modeled active at 0.25% risk. XAUUSD and AUDJPY breakout probes failed to hold, and no new setup met breakout, retest, and correlation standards."
+  "message": "NO_TRADE: complete fresh 18/18-symbol scan. GBPJPY remains modeled active at 0.25% risk and its 210.060 target was not reached in the completed 20:00 UTC bar. Price action was compressed with materially widened BID/ASK spreads across several symbols, and no new setup met breakout, retest, execution-quality, and correlation standards."
 }
