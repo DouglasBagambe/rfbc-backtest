@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261006T181922728Z-NO_TRADE",
-  "generated_at": "2026-10-06T18:19:22.728Z",
+  "decision_id": "GDESK-20261006T191830544Z-NO_TRADE",
+  "generated_at": "2026-10-06T19:18:30.544Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18/18-symbol scan. GBPJPY and CADJPY remain modeled active at 0.25% each; CADJPY approached but did not reach its 111.315 target during the completed 17:00 UTC bar. Modeled aggregate risk is 0.50%, and the only fresh breakdown was rejected for concentrated CAD correlation."
+  "message": "NO_TRADE: complete fresh 18/18-symbol scan. GBPJPY and CADJPY remain modeled active at 0.25% each; CADJPY came within 0.016 of its 111.315 target during the completed 18:00 UTC bar but did not reach it. Modeled aggregate risk is 0.50%, and no new setup met breakout, retest, and correlation standards."
 }
