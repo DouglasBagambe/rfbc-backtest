@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261005T232108428Z-NO_TRADE",
-  "generated_at": "2026-10-05T23:21:08.428Z",
+  "decision_id": "GDESK-20261006T002217798Z-NO_TRADE",
+  "generated_at": "2026-10-06T00:22:17.798Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-05T23-decbc29af0 analyzed through the completed 22:00 UTC Dukascopy H1 bars; all symbols closed inside their six- and ten-hour reference ranges, so no genuinely qualified setup was present."
+  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-06T00-5f3ed403e8 analyzed through the completed 23:00 UTC Dukascopy H1 bars; all moves remained inside broader reference ranges and the sole six-hour break lacked ten-hour confirmation and sufficient momentum."
 }
