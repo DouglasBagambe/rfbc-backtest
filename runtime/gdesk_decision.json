@@ -1,33 +1,33 @@
 {
-  "decision_id": "GDESK-20261006T072008865Z-TRADE",
-  "generated_at": "2026-10-06T07:20:08.865Z",
+  "decision_id": "GDESK-20261006T082204671Z-TRADE",
+  "generated_at": "2026-10-06T08:22:04.671Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "USDCAD.x",
+      "symbol": "EURUSD.x",
       "side": "BUY",
       "order_type": "BUY_LIMIT",
-      "entry": 1.42715,
-      "stop": 1.4261,
-      "target": 1.42978,
+      "entry": 1.1229,
+      "stop": 1.12145,
+      "target": 1.12653,
       "volume": 0.01,
       "risk_pct": 0.25,
-      "valid_until": "2026-10-06T10:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes below 1.42685 before entry, or if a high-impact USD/CAD event becomes imminent within 60 minutes before fill.",
-      "confidence": 0.76,
+      "valid_until": "2026-10-06T11:00:00Z",
+      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes below 1.12250 before entry, or if a high-impact EUR/USD event becomes imminent within 60 minutes before fill.",
+      "confidence": 0.74,
       "setup_name": "H1 20-bar breakout retest",
       "regime": "bullish range expansion",
       "session": "London",
       "news_proximity": "UNKNOWN_NOT_PROVIDED_IN_RENDER_CONTEXT",
-      "exposure_note": "Adds 0.25% USD-long/CAD-short risk. The previously proposed USDJPY pending order remains untriggered and valid until 08:00 UTC; if both orders fill, absolute USD directional exposure is 0.50%, JPY 0.25%, and CAD 0.25%, within the 1.0% per-currency cap. Existing account risk remains subject to server-side enforcement.",
-      "reasoning": "The completed 06:00 UTC H1 candle closed at 1.42782, 7.65 pips above the prior 20-bar high of 1.427055, with a 9.15-pip body and 13.35-pip range. Six-hour momentum is positive and the close spread was 1.0 pip. A limit entry at 1.42715 seeks a controlled retest of the broken range rather than chasing the expansion; the stop invalidates a failed breakout and the target provides approximately 2.50R.",
+      "exposure_note": "Adds 0.25% EUR-long/USD-short risk. The prior USDCAD BUY_LIMIT traded through its entry zone during the completed 07:00 UTC bar and is therefore treated as potentially active; if active, the two positions offset USD directionally, leaving 0.25% EUR-long and 0.25% CAD-short exposure. Existing account and duplicate-symbol risk remain subject to server-side enforcement.",
+      "reasoning": "EURUSD completed the 07:00 UTC H1 candle at 1.12409, 9.8 pips above the prior 20-bar high of 1.12311. The candle had a 30.6-pip body, closed near its high, and retained a tight 0.4-pip closing spread. The 1.12290 limit seeks a retest of the broken range instead of chasing a roughly 3-ATR impulse; the stop invalidates a deeper failed breakout and the target provides approximately 2.50R.",
       "context": {
-        "scan_id": "GDESK-2026-10-06T07-04550bbade",
-        "ready_generated_at": "2026-10-06T07:00:58.810903+00:00",
-        "ready_event_at": "2026-10-06T07:00:58.899443+00:00",
-        "symbol_generated_at": "2026-10-06T07:00:58.810903+00:00",
-        "latest_completed_bar": "2026-10-06T06:00:00+00:00",
+        "scan_id": "GDESK-2026-10-06T08-c58cc1c67f",
+        "ready_generated_at": "2026-10-06T08:02:18.009813+00:00",
+        "ready_event_at": "2026-10-06T08:02:18.018750+00:00",
+        "symbol_generated_at": "2026-10-06T08:02:18.009813+00:00",
+        "latest_completed_bar": "2026-10-06T07:00:00+00:00",
         "market_state": "MARKET_OPEN",
         "freshness": "FRESH",
         "data_source": "Dukascopy BID/ASK",
@@ -35,5 +35,5 @@
       }
     }
   ],
-  "message": "TRADE: USDCAD.x BUY_LIMIT breakout-retest setup selected from a complete fresh 18/18-symbol scan; 0.25% proposed risk, approximately 2.50R, with correlated exposure kept within limits."
+  "message": "TRADE: EURUSD.x BUY_LIMIT breakout-retest setup selected from a complete fresh 18/18-symbol scan; 0.25% proposed risk, approximately 2.50R, and no market chase."
 }
