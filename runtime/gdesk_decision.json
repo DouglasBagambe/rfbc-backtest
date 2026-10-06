@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261006T012143764Z-NO_TRADE",
-  "generated_at": "2026-10-06T01:21:43.764Z",
+  "decision_id": "GDESK-20261006T022032181Z-NO_TRADE",
+  "generated_at": "2026-10-06T02:20:32.181Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-06T01-d397d79375 analyzed using synchronized completed 23:00 UTC Dukascopy H1 BID/ASK bars; no symbol confirmed a broader-range break with sufficient momentum, and the lone six-hour USDCAD break lacked ten-hour confirmation."
+  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-06T02-e30dc07412 analyzed through the completed 01:00 UTC Dukascopy H1 BID/ASK bars; XAUUSD's six-hour downside break lacked ten-hour confirmation, and no other symbol produced a qualified setup."
 }
