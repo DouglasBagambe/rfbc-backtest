@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261006T002217798Z-NO_TRADE",
-  "generated_at": "2026-10-06T00:22:17.798Z",
+  "decision_id": "GDESK-20261006T012143764Z-NO_TRADE",
+  "generated_at": "2026-10-06T01:21:43.764Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-06T00-5f3ed403e8 analyzed through the completed 23:00 UTC Dukascopy H1 bars; all moves remained inside broader reference ranges and the sole six-hour break lacked ten-hour confirmation and sufficient momentum."
+  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-06T01-d397d79375 analyzed using synchronized completed 23:00 UTC Dukascopy H1 BID/ASK bars; no symbol confirmed a broader-range break with sufficient momentum, and the lone six-hour USDCAD break lacked ten-hour confirmation."
 }
