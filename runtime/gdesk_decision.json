@@ -1,33 +1,33 @@
 {
-  "decision_id": "GDESK-20261006T121742836Z-TRADE",
-  "generated_at": "2026-10-06T12:17:42.836Z",
+  "decision_id": "GDESK-20261006T132351880Z-TRADE",
+  "generated_at": "2026-10-06T13:23:51.880Z",
   "result": "TRADE",
   "decisions": [
     {
       "source": "G_DESK",
-      "symbol": "XAUUSD.x",
+      "symbol": "CADJPY.x",
       "side": "BUY",
       "order_type": "BUY_LIMIT",
-      "entry": 4161.5,
-      "stop": 4148,
-      "target": 4195.25,
+      "entry": 110.94,
+      "stop": 110.79,
+      "target": 111.315,
       "volume": 0.01,
       "risk_pct": 0.25,
-      "valid_until": "2026-10-06T15:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes below 4158.00 before entry, or if a high-impact USD/metal event becomes imminent within 60 minutes before fill.",
-      "confidence": 0.77,
+      "valid_until": "2026-10-06T16:00:00Z",
+      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes below 110.86 before entry, or if a high-impact CAD/JPY event becomes imminent within 60 minutes before fill.",
+      "confidence": 0.76,
       "setup_name": "H1 20-bar breakout retest",
-      "regime": "bullish volatility expansion",
+      "regime": "CAD bullish expansion / JPY underperformance",
       "session": "London-New York overlap",
       "news_proximity": "UNKNOWN_NOT_PROVIDED_IN_RENDER_CONTEXT",
-      "exposure_note": "Adds 0.25% gold-long/USD-short risk. The prior EURUSD target and USDCAD stop were crossed during the completed 11:00 UTC bar; GBPJPY remains the only modeled active position at 0.25%. If this order fills, modeled aggregate risk is 0.50%, with 0.25% absolute directional exposure each to gold, USD, GBP, and JPY—within the 1.0% cap. Existing account and duplicate-symbol risk remain subject to server-side enforcement.",
-      "reasoning": "XAUUSD completed the 11:00 UTC H1 candle at 4173.525, 12.65 points above the prior 20-bar high of 4160.875. The candle had a 14.99-point bullish body, an 18.79-point range, closed near its high, and retained a spread near 0.04 ATR. The 4161.50 limit seeks a retest of the broken range instead of chasing; the stop sits below the preceding structure and the target provides 2.50R.",
+      "exposure_note": "Adds 0.25% CAD-long/JPY-short risk. GBPJPY remains modeled active at 0.25% and the XAUUSD limit remains modeled pending at 0.25%; if all are active, proposed aggregate risk is 0.75%. Absolute modeled directional exposure is 0.50% short JPY and 0.25% each long CAD, long GBP, long gold, and short USD—within the 1.0% per-currency/metal cap. Existing account and duplicate-symbol risk remain subject to server-side enforcement.",
+      "reasoning": "CADJPY completed the 12:00 UTC H1 candle at 111.025, 0.0905 above the prior 20-bar high of 110.9345. The candle advanced 0.147 from open to close (about 1.45 ATR), spanned about 1.77 ATR, closed near its high, and retained an approximately 0.10-ATR spread. The 110.94 limit seeks a retest of the broken range rather than chasing; the 110.79 stop sits below the preceding consolidation and the 111.315 target provides 2.50R. Cross-checks show concurrent CAD strength in USDCAD while the correlated GBPJPY position is already near target, so added JPY exposure remains capped.",
       "context": {
-        "scan_id": "GDESK-2026-10-06T12-e585c90aeb",
-        "ready_generated_at": "2026-10-06T12:05:12.406640+00:00",
-        "ready_event_at": "2026-10-06T12:05:12.409955+00:00",
-        "symbol_generated_at": "2026-10-06T12:05:12.406640+00:00",
-        "latest_completed_bar": "2026-10-06T11:00:00+00:00",
+        "scan_id": "GDESK-2026-10-06T13-50cef85dcd",
+        "ready_generated_at": "2026-10-06T13:00:56.907236+00:00",
+        "ready_event_at": "2026-10-06T13:00:56.913942+00:00",
+        "symbol_generated_at": "2026-10-06T13:00:56.907236+00:00",
+        "latest_completed_bar": "2026-10-06T12:00:00+00:00",
         "market_state": "MARKET_OPEN",
         "freshness": "FRESH",
         "data_source": "Dukascopy BID/ASK",
@@ -35,5 +35,5 @@
       }
     }
   ],
-  "message": "TRADE: XAUUSD.x BUY_LIMIT breakout-retest setup selected from a complete fresh 18/18-symbol scan; 0.25% proposed risk, 2.50R, and modeled aggregate exposure within limits."
+  "message": "TRADE: CADJPY.x BUY_LIMIT breakout-retest selected from a complete fresh 18/18-symbol scan; 0.25% proposed risk, 2.50R, and modeled aggregate/directional exposure within limits."
 }
