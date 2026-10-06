@@ -1,7 +1,39 @@
 {
-  "decision_id": "GDESK-20261006T062125620Z-NO_TRADE",
-  "generated_at": "2026-10-06T06:21:25.620Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-06T06-8a573a6d51 analyzed through the completed 05:00 UTC Dukascopy H1 BID/ASK bars; the existing USDJPY pending setup remains untriggered and valid, while USDCAD's marginal 20-bar close lacked sufficient momentum and spread quality for additional risk."
+  "decision_id": "GDESK-20261006T072008865Z-TRADE",
+  "generated_at": "2026-10-06T07:20:08.865Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "USDCAD.x",
+      "side": "BUY",
+      "order_type": "BUY_LIMIT",
+      "entry": 1.42715,
+      "stop": 1.4261,
+      "target": 1.42978,
+      "volume": 0.01,
+      "risk_pct": 0.25,
+      "valid_until": "2026-10-06T10:00:00Z",
+      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes below 1.42685 before entry, or if a high-impact USD/CAD event becomes imminent within 60 minutes before fill.",
+      "confidence": 0.76,
+      "setup_name": "H1 20-bar breakout retest",
+      "regime": "bullish range expansion",
+      "session": "London",
+      "news_proximity": "UNKNOWN_NOT_PROVIDED_IN_RENDER_CONTEXT",
+      "exposure_note": "Adds 0.25% USD-long/CAD-short risk. The previously proposed USDJPY pending order remains untriggered and valid until 08:00 UTC; if both orders fill, absolute USD directional exposure is 0.50%, JPY 0.25%, and CAD 0.25%, within the 1.0% per-currency cap. Existing account risk remains subject to server-side enforcement.",
+      "reasoning": "The completed 06:00 UTC H1 candle closed at 1.42782, 7.65 pips above the prior 20-bar high of 1.427055, with a 9.15-pip body and 13.35-pip range. Six-hour momentum is positive and the close spread was 1.0 pip. A limit entry at 1.42715 seeks a controlled retest of the broken range rather than chasing the expansion; the stop invalidates a failed breakout and the target provides approximately 2.50R.",
+      "context": {
+        "scan_id": "GDESK-2026-10-06T07-04550bbade",
+        "ready_generated_at": "2026-10-06T07:00:58.810903+00:00",
+        "ready_event_at": "2026-10-06T07:00:58.899443+00:00",
+        "symbol_generated_at": "2026-10-06T07:00:58.810903+00:00",
+        "latest_completed_bar": "2026-10-06T06:00:00+00:00",
+        "market_state": "MARKET_OPEN",
+        "freshness": "FRESH",
+        "data_source": "Dukascopy BID/ASK",
+        "timeframe": "H1 completed bars"
+      }
+    }
+  ],
+  "message": "TRADE: USDCAD.x BUY_LIMIT breakout-retest setup selected from a complete fresh 18/18-symbol scan; 0.25% proposed risk, approximately 2.50R, with correlated exposure kept within limits."
 }
