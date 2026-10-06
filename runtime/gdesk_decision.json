@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261006T222418315Z-SYSTEM_FAILURE",
-  "generated_at": "2026-10-06T22:24:18.315Z",
+  "decision_id": "GDESK-20261006T232614562Z-SYSTEM_FAILURE",
+  "generated_at": "2026-10-06T23:26:14.562Z",
   "result": "SYSTEM_FAILURE",
   "decisions": [],
-  "message": "SYSTEM_FAILURE: current-hour scan GDESK-2026-10-06T22-b9163372d5 contains 18/18 symbol events, but XAUUSD.x is one completed H1 bar behind the other 17 symbols (20:00 UTC versus 21:00 UTC). Context is not temporally complete, so no trading decision was produced."
+  "message": "SYSTEM_FAILURE: current-hour scan GDESK-2026-10-06T23-0bacf4d462 contains 18/18 symbol events, but EURUSD.x and GBPUSD.x are one completed H1 bar behind the other 16 symbols (21:00 UTC versus 22:00 UTC). Context is not temporally complete, so no trading decision was produced."
 }
