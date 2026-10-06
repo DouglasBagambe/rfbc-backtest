@@ -1,7 +1,39 @@
 {
-  "decision_id": "GDESK-20261006T112255250Z-NO_TRADE",
-  "generated_at": "2026-10-06T11:22:55.250Z",
-  "result": "NO_TRADE",
-  "decisions": [],
-  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-06T11-1de19c0b0d analyzed through the completed 10:00 UTC Dukascopy H1 BID/ASK bars. GBPAUD and GBPCAD continuation breakouts were rejected because they would stack GBP and/or CAD exposure onto potentially active GBPJPY and USDCAD positions; XAUUSD's range clearance was marginal."
+  "decision_id": "GDESK-20261006T121742836Z-TRADE",
+  "generated_at": "2026-10-06T12:17:42.836Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "XAUUSD.x",
+      "side": "BUY",
+      "order_type": "BUY_LIMIT",
+      "entry": 4161.5,
+      "stop": 4148,
+      "target": 4195.25,
+      "volume": 0.01,
+      "risk_pct": 0.25,
+      "valid_until": "2026-10-06T15:00:00Z",
+      "cancel_condition": "Cancel if unfilled at valid_until, if any completed H1 candle closes below 4158.00 before entry, or if a high-impact USD/metal event becomes imminent within 60 minutes before fill.",
+      "confidence": 0.77,
+      "setup_name": "H1 20-bar breakout retest",
+      "regime": "bullish volatility expansion",
+      "session": "London-New York overlap",
+      "news_proximity": "UNKNOWN_NOT_PROVIDED_IN_RENDER_CONTEXT",
+      "exposure_note": "Adds 0.25% gold-long/USD-short risk. The prior EURUSD target and USDCAD stop were crossed during the completed 11:00 UTC bar; GBPJPY remains the only modeled active position at 0.25%. If this order fills, modeled aggregate risk is 0.50%, with 0.25% absolute directional exposure each to gold, USD, GBP, and JPY—within the 1.0% cap. Existing account and duplicate-symbol risk remain subject to server-side enforcement.",
+      "reasoning": "XAUUSD completed the 11:00 UTC H1 candle at 4173.525, 12.65 points above the prior 20-bar high of 4160.875. The candle had a 14.99-point bullish body, an 18.79-point range, closed near its high, and retained a spread near 0.04 ATR. The 4161.50 limit seeks a retest of the broken range instead of chasing; the stop sits below the preceding structure and the target provides 2.50R.",
+      "context": {
+        "scan_id": "GDESK-2026-10-06T12-e585c90aeb",
+        "ready_generated_at": "2026-10-06T12:05:12.406640+00:00",
+        "ready_event_at": "2026-10-06T12:05:12.409955+00:00",
+        "symbol_generated_at": "2026-10-06T12:05:12.406640+00:00",
+        "latest_completed_bar": "2026-10-06T11:00:00+00:00",
+        "market_state": "MARKET_OPEN",
+        "freshness": "FRESH",
+        "data_source": "Dukascopy BID/ASK",
+        "timeframe": "H1 completed bars"
+      }
+    }
+  ],
+  "message": "TRADE: XAUUSD.x BUY_LIMIT breakout-retest setup selected from a complete fresh 18/18-symbol scan; 0.25% proposed risk, 2.50R, and modeled aggregate exposure within limits."
 }
