@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261007T081838358Z-NO_TRADE",
-  "generated_at": "2026-10-07T08:18:38.358Z",
+  "decision_id": "GDESK-20261007T092507562Z-NO_TRADE",
+  "generated_at": "2026-10-07T09:25:07.562Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-07T08-e16205d019, aligned through the 07:00 UTC completed H1 bar. The universe printed extreme correlated expansion candles; chasing post-shock moves is disqualified. EURUSD and EURGBP reached target, USDJPY hit stop, and AUDUSD plus XAUUSD remain active."
+  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-07T09-5d6ded871a, aligned through the 08:00 UTC completed H1 bar. Post-shock volatility remains elevated and uneven, so no fresh setup offers qualified structure without chasing. Existing AUDUSD and XAUUSD shorts remain active; no duplicate or additional correlated exposure proposed."
 }
