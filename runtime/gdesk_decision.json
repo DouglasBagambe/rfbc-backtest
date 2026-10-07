@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261007T142102368Z-NO_TRADE",
-  "generated_at": "2026-10-07T14:21:02.368Z",
+  "decision_id": "GDESK-20261007T152557607Z-NO_TRADE",
+  "generated_at": "2026-10-07T15:25:57.607Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-07T14-4585827376, aligned through the 13:00 UTC completed H1 bar. GBPUSD's 1.32245 SELL_LIMIT expired unfilled at 14:00 UTC. Current price action is rebound/consolidation after extreme USD and gold moves, with no qualified fresh structure and no chase permitted."
+  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-07T15-3e277b4038, aligned through the 14:00 UTC completed Dukascopy H1 bar. The universe remains in post-shock rebound/consolidation: USD pairs and JPY crosses show conflicting short-term versus broader trend signals, while gold is still normalizing after an extreme move. No fresh structure meets qualification and no chase is permitted."
 }
