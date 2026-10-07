@@ -1,7 +1,36 @@
 {
-  "decision_id": "GDESK-20261007T061744404Z-SYSTEM_FAILURE",
-  "generated_at": "2026-10-07T06:17:44.404Z",
-  "result": "SYSTEM_FAILURE",
-  "decisions": [],
-  "message": "SYSTEM_FAILURE: current-hour scan GDESK-2026-10-07T06-5b971f1233 contains 18/18 symbol events, but EURUSD.x and GBPUSD.x are one completed H1 bar behind the other 16 symbols (04:00 UTC versus 05:00 UTC). Context is not temporally complete, so no trading decision was produced."
+  "decision_id": "GDESK-20261007T072112167Z-TRADE",
+  "generated_at": "2026-10-07T07:21:12.167Z",
+  "result": "TRADE",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "EURGBP.x",
+      "side": "SELL",
+      "order_type": "SELL_STOP",
+      "entry": 0.8472,
+      "stop": 0.84768,
+      "target": 0.846,
+      "volume": 0.01,
+      "risk_pct": 0.25,
+      "valid_until": "2026-10-07T09:00:00Z",
+      "cancel_condition": "Cancel if not triggered by valid_until. Cancel early if a completed H1 bar closes at or above 0.84764, if the bid/ask spread exceeds 0.00012, or if context freshness/market state is no longer FRESH/MARKET_OPEN.",
+      "confidence": 0.77,
+      "setup_name": "H1 six-hour range breakdown continuation",
+      "regime": "Bearish EUR cross expansion",
+      "session": "London open",
+      "news_proximity": "NOT_SUPPLIED in the Render context; no news-based clearance inferred.",
+      "exposure_note": "Adds 0.25% short EUR and 0.25% long GBP without increasing USD exposure. Including active EURUSD, AUDUSD, USDJPY, and XAUUSD positions, modeled exposure becomes USD +1.00%, EUR -0.50%, GBP +0.25%, AUD -0.25%, JPY -0.25%, and XAU -0.25%; all remain within the 1.0% absolute cap. Modeled aggregate risk becomes 1.25%, with no duplicate symbol.",
+      "reasoning": "The completed 06:00 UTC H1 candle broke the prior six-hour low at 0.847555 and closed at 0.847240 near its 0.847230 low. Its 0.000355 bearish body was about 1.03 ATR14, and price is below EMA8 (0.847758) and EMA20 (0.848087). A sell stop below the signal low requires continuation; the stop is above the signal high and the target offers 2.50R. All 18 reported symbols were reviewed; USD-linked alternatives were rejected because USD exposure is already at its cap.",
+      "context": {
+        "scan_id": "GDESK-2026-10-07T07-a1e1f78ae4",
+        "ready_event_at": "2026-10-07T07:01:17.400843+00:00",
+        "context_generated_at": "2026-10-07T07:01:17.310373+00:00",
+        "latest_completed_bar": "2026-10-07T06:00:00+00:00",
+        "source": "Dukascopy BID/ASK",
+        "timeframe": "H1 completed bars"
+      }
+    }
+  ],
+  "message": "TRADE: complete fresh 18/18-symbol scan. EURGBP.x qualifies for a 0.25% H1 bearish-breakdown SELL_STOP without increasing already-capped USD exposure; modeled aggregate risk remains within 2.0%."
 }
