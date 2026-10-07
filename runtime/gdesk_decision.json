@@ -1,36 +1,7 @@
 {
-  "decision_id": "GDESK-20261007T112215545Z-TRADE",
-  "generated_at": "2026-10-07T11:22:15.545Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "GBPUSD.x",
-      "side": "SELL",
-      "order_type": "SELL_LIMIT",
-      "entry": 1.32245,
-      "stop": 1.32355,
-      "target": 1.3197,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-10-07T14:00:00Z",
-      "cancel_condition": "Cancel unfilled at valid_until; cancel immediately if any completed H1 candle closes above 1.32355, if spread exceeds 0.00020 before fill, or if server-side account/exposure checks reject the order.",
-      "confidence": 0.72,
-      "setup_name": "H1 bearish break-and-retest continuation",
-      "regime": "Bearish expansion transitioning to continuation; price below EMA8 and EMA20 after breaking 1.32253 support.",
-      "session": "London",
-      "news_proximity": "Unknown from supplied context; volatility remains elevated after the earlier correlated shock, so entry is retest-only and must not be chased.",
-      "exposure_note": "Adds 0.25% long-USD directional risk via short GBP. Including the modeled AUDUSD short and possible residual XAUUSD short, worst-case USD-direction exposure is 0.75%, below the 1.0% cap; aggregate proposed risk is 0.25%.",
-      "reasoning": "The 10:00 UTC H1 candle closed at 1.32171 near its low after breaking the prior six-hour floor at 1.32253, with a 1.42-ATR bearish body and price below both EMA8 and EMA20. A sell limit at 1.32245 waits for a retest of broken support instead of chasing the impulse. The 1.32355 stop sits above the breakdown candle high/open zone, and the 1.31970 target provides 2.5R.",
-      "context": {
-        "scan_id": "GDESK-2026-10-07T11-2ea285ad98",
-        "ready_generated_at": "2026-10-07T11:04:54.524836+00:00",
-        "symbol_generated_at": "2026-10-07T11:04:54.524836+00:00",
-        "latest_completed_bar": "2026-10-07T10:00:00+00:00",
-        "source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars"
-      }
-    }
-  ],
-  "message": "TRADE: GBPUSD.x SELL_LIMIT retest at 1.32245, stop 1.32355, target 1.31970, risk 0.25%, valid through 14:00 UTC. Complete fresh 18/18-symbol scan GDESK-2026-10-07T11-2ea285ad98; no chase and server-side risk controls remain authoritative."
+  "decision_id": "GDESK-20261007T121814743Z-NO_TRADE",
+  "generated_at": "2026-10-07T12:18:14.743Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-07T12-03c76731b8, aligned through the 11:00 UTC completed H1 bar. GBPUSD's existing SELL_LIMIT at 1.32245 remains unfilled and valid until 14:00 UTC; no duplicate submitted. USDCAD and other continuation moves are too extended to chase, while correlated alternatives would add redundant exposure."
 }
