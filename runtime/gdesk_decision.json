@@ -1,38 +1,7 @@
 {
-  "decision_id": "GDESK-20261007T172138437Z-TRADE",
-  "generated_at": "2026-10-07T17:21:38.437Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "USDJPY.x",
-      "side": "SELL",
-      "order_type": "SELL_STOP",
-      "entry": 157.84,
-      "stop": 158.18,
-      "target": 156.99,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-10-07T19:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until; cancel before fill if a completed H1 candle closes at or above 158.18, if spread exceeds 0.03 JPY, or if price gaps below 157.74 without an orderly trigger (no chase).",
-      "confidence": 0.66,
-      "setup_name": "H1 session-floor breakdown continuation",
-      "regime": "Bearish intraday transition with synchronized JPY-cross weakness",
-      "session": "New York",
-      "news_proximity": "UNKNOWN — the supplied Render context contains no economic-calendar field; risk held at 0.25%.",
-      "exposure_note": "Proposed aggregate risk 0.25%. Adds 0.25% short-USD/long-JPY directional exposure; within the 1.0% absolute currency cap. No duplicate USDJPY decision is present in the current G_DESK mailbox.",
-      "reasoning": "USDJPY is below its H1 EMA8 and EMA20, successive recent closes are weakening, and GBPJPY, EURJPY, CADJPY, CHFJPY, and AUDJPY are also below their short-term averages. The 157.84 sell-stop sits below the established 157.854 session low, requiring confirmation rather than chasing the current 158.0315 close. The 158.18 stop is above the recent consolidation and the 156.99 target provides 2.5R.",
-      "context": {
-        "scan_id": "GDESK-2026-10-07T17-8c5de81c97",
-        "ready_generated_at": "2026-10-07T17:04:44.000566+00:00",
-        "symbol_generated_at": "2026-10-07T17:04:44.000566+00:00",
-        "latest_completed_bar": "2026-10-07T16:00:00+00:00",
-        "source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars",
-        "market_state": "MARKET_OPEN",
-        "freshness": "FRESH"
-      }
-    }
-  ],
-  "message": "TRADE: USDJPY.x SELL_STOP 157.84, stop 158.18, target 156.99, 0.01 volume, 0.25% risk, valid through 19:00 UTC. Complete fresh 18/18-symbol scan GDESK-2026-10-07T17-8c5de81c97; entry requires a confirmed break below the 157.854 session floor."
+  "decision_id": "GDESK-20261007T201920000Z-NO_TRADE",
+  "generated_at": "2026-10-07T20:19:20.000Z",
+  "result": "NO_TRADE",
+  "decisions": [],
+  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-07T20-311191114c. Market open, but no setup meets the production qualification threshold without forcing an entry; late-session price action is predominantly consolidation/retracement after earlier directional moves."
 }
