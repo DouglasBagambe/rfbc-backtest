@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261007T152557607Z-NO_TRADE",
-  "generated_at": "2026-10-07T15:25:57.607Z",
+  "decision_id": "GDESK-20261007T162013680Z-NO_TRADE",
+  "generated_at": "2026-10-07T16:20:13.680Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-07T15-3e277b4038, aligned through the 14:00 UTC completed Dukascopy H1 bar. The universe remains in post-shock rebound/consolidation: USD pairs and JPY crosses show conflicting short-term versus broader trend signals, while gold is still normalizing after an extreme move. No fresh structure meets qualification and no chase is permitted."
+  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-07T16-3df8945557, aligned through the 15:00 UTC completed Dukascopy H1 bar. USDCHF briefly exceeded range resistance but closed back inside it, while the wider universe remains choppy and conflicted after the earlier shock. No confirmed structure qualifies and no chase is permitted."
 }
