@@ -1,37 +1,7 @@
 {
-  "decision_id": "GDESK-20261007T001804579Z-TRADE",
-  "generated_at": "2026-10-07T00:18:04.579Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "USDJPY.x",
-      "side": "BUY",
-      "order_type": "BUY_STOP",
-      "entry": 158.33,
-      "stop": 158.16,
-      "target": 158.755,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-10-07T04:00:00Z",
-      "cancel_condition": "Cancel if unfilled at valid_until, if a completed H1 candle closes below 158.200 before trigger, or if the executable spread exceeds 0.030 at trigger.",
-      "confidence": 0.76,
-      "setup_name": "H1 Asian-session continuation breakout",
-      "regime": "Bullish trend continuation with volatility expansion",
-      "session": "Asia",
-      "news_proximity": "No event calendar supplied in the Render context; server-side news controls remain authoritative.",
-      "exposure_note": "Adds 0.25% short-JPY directional exposure alongside the modeled active GBPJPY long at 0.25%; proposed absolute JPY exposure is 0.50%, below the 1.0% cap.",
-      "reasoning": "The completed 23:00 UTC bar closed at 158.3095 near its 158.3230 high, decisively above the prior six-bar 158.2010 resistance. EMA8 is above EMA20, the breakout body is approximately one ATR, spread normalized to 0.007, and a stop below the breakout origin provides 2.5R reward-to-risk.",
-      "context": {
-        "scan_id": "GDESK-2026-10-07T00-d6098f7248",
-        "ready_generated_at": "2026-10-07T00:02:13.200376+00:00",
-        "ready_event_at": "2026-10-07T00:02:13.204312+00:00",
-        "symbol_generated_at": "2026-10-07T00:02:13.200376+00:00",
-        "latest_completed_bar": "2026-10-06T23:00:00+00:00",
-        "market_source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars"
-      }
-    }
-  ],
-  "message": "TRADE: complete fresh 18/18-symbol scan. USDJPY.x qualifies for a 0.25%-risk Asian-session continuation BUY_STOP above the confirmed H1 breakout; proposed aggregate modeled risk is 0.50% including the existing GBPJPY position."
+  "decision_id": "GDESK-20261007T012239483Z-SYSTEM_FAILURE",
+  "generated_at": "2026-10-07T01:22:39.483Z",
+  "result": "SYSTEM_FAILURE",
+  "decisions": [],
+  "message": "SYSTEM_FAILURE: current-hour scan GDESK-2026-10-07T01-ea591b2c56 contains 18/18 symbol events, but USDCHF.x is one completed H1 bar behind the other 17 symbols (23:00 UTC versus 00:00 UTC). Context is not temporally complete, so no trading decision was produced."
 }
