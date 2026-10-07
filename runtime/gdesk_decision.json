@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261007T121814743Z-NO_TRADE",
-  "generated_at": "2026-10-07T12:18:14.743Z",
+  "decision_id": "GDESK-20261007T131849262Z-NO_TRADE",
+  "generated_at": "2026-10-07T13:18:49.262Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-07T12-03c76731b8, aligned through the 11:00 UTC completed H1 bar. GBPUSD's existing SELL_LIMIT at 1.32245 remains unfilled and valid until 14:00 UTC; no duplicate submitted. USDCAD and other continuation moves are too extended to chase, while correlated alternatives would add redundant exposure."
+  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-07T13-6f3391338f, aligned through the 12:00 UTC completed H1 bar. XAUUSD printed an extreme 4.28-ATR selloff and USD continuation moves are extended, so chasing is disqualified. GBPUSD's existing SELL_LIMIT at 1.32245 remains unfilled and valid until 14:00 UTC; no duplicate or additional correlated exposure proposed."
 }
