@@ -1,7 +1,7 @@
 {
-  "decision_id": "GDESK-20261007T201920000Z-NO_TRADE",
-  "generated_at": "2026-10-07T20:19:20.000Z",
+  "decision_id": "GDESK-20261007T222208267Z-fec9f518ae-NO_TRADE",
+  "generated_at": "2026-10-07T22:22:08.267Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: complete fresh 18/18-symbol scan GDESK-2026-10-07T20-311191114c. Market open, but no setup meets the production qualification threshold without forcing an entry; late-session price action is predominantly consolidation/retracement after earlier directional moves."
+  "message": "NO_TRADE: fresh MARKET_OPEN 18/18-symbol Dukascopy H1 BID/ASK context verified for scan GDESK-2026-10-07T22-fec9f518ae. No qualified breakout; elevated late-session spreads and consolidation. No trades proposed."
 }
