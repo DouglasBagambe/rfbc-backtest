@@ -1,36 +1,7 @@
 {
-  "decision_id": "GDESK-20261007T051851590Z-TRADE",
-  "generated_at": "2026-10-07T05:18:51.590Z",
-  "result": "TRADE",
-  "decisions": [
-    {
-      "source": "G_DESK",
-      "symbol": "XAUUSD.x",
-      "side": "SELL",
-      "order_type": "SELL_STOP",
-      "entry": 4134.7,
-      "stop": 4144.9,
-      "target": 4109.2,
-      "volume": 0.01,
-      "risk_pct": 0.25,
-      "valid_until": "2026-10-07T07:00:00Z",
-      "cancel_condition": "Cancel if not triggered by valid_until. Cancel early if a completed H1 bar closes at or above 4144.75, if the bid/ask spread exceeds 1.50, or if context freshness/market state is no longer FRESH/MARKET_OPEN.",
-      "confidence": 0.75,
-      "setup_name": "H1 six-hour range breakdown continuation",
-      "regime": "Bearish expansion with broad USD-strength confirmation",
-      "session": "London pre-open",
-      "news_proximity": "NOT_SUPPLIED in the Render context; no news-based clearance inferred.",
-      "exposure_note": "Adds 0.25% short XAU and 0.25% long USD. Including active 0.25% EURUSD short, 0.25% AUDUSD short, and 0.25% USDJPY long, modeled directional exposure becomes USD +1.00%, EUR -0.25%, AUD -0.25%, JPY -0.25%, and XAU -0.25%; this reaches but does not exceed the 1.0% cap, with no duplicate symbol.",
-      "reasoning": "The completed 04:00 UTC H1 candle broke the prior six-hour low at 4138.38 and closed at 4135.215 near its 4134.895 low. Its 8.265 bearish body was about 0.74 ATR14, with price below EMA8 (4148.943) and EMA20 (4150.856). A sell stop below the signal low requires continuation; the stop is above the signal high and the target offers 2.50R. All 18 reported symbols were reviewed; correlated FX alternatives were rejected because this order saturates the USD exposure cap.",
-      "context": {
-        "scan_id": "GDESK-2026-10-07T05-42242fb91d",
-        "ready_event_at": "2026-10-07T05:04:51.814334+00:00",
-        "context_generated_at": "2026-10-07T05:04:51.810029+00:00",
-        "latest_completed_bar": "2026-10-07T04:00:00+00:00",
-        "source": "Dukascopy BID/ASK",
-        "timeframe": "H1 completed bars"
-      }
-    }
-  ],
-  "message": "TRADE: complete fresh 18/18-symbol scan. XAUUSD.x qualifies for a 0.25% H1 bearish-breakdown SELL_STOP; modeled USD exposure reaches but does not exceed the 1.0% cap."
+  "decision_id": "GDESK-20261007T061744404Z-SYSTEM_FAILURE",
+  "generated_at": "2026-10-07T06:17:44.404Z",
+  "result": "SYSTEM_FAILURE",
+  "decisions": [],
+  "message": "SYSTEM_FAILURE: current-hour scan GDESK-2026-10-07T06-5b971f1233 contains 18/18 symbol events, but EURUSD.x and GBPUSD.x are one completed H1 bar behind the other 16 symbols (04:00 UTC versus 05:00 UTC). Context is not temporally complete, so no trading decision was produced."
 }
