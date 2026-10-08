@@ -1,17 +1,18 @@
 {
-  "decision_id": "GDESK-20261008T081802823Z-w3zwyrdu-NO_TRADE",
-  "generated_at": "2026-10-08T08:18:02.823Z",
+  "decision_id": "GDESK-20261008T111632692Z-iff9e8ly-NO_TRADE",
+  "generated_at": "2026-10-08T11:16:32.692Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: MARKET_OPEN/FRESH; all 18/18 Dukascopy H1 BID/ASK symbols validated. CADJPY breakout lacks a low-risk retest; EURCAD/GBPCAD declines are extended (GBPCAD spread elevated); other symbols lack clean confirmation and favorable entry/risk. No trade forced.",
+  "message": "NO_TRADE: MARKET_OPEN/FRESH; 18/18 completed Dukascopy H1 BID/ASK symbols validated. GBPAUD/EURGBP breakouts are extended without retests; NZDUSD break is marginal; other pairs and gold lack clean confirmed entries. No trade forced.",
   "context": {
-    "scan_id": "GDESK-2026-10-08T08-e2c67f4555",
-    "source_generated_at": "2026-10-08T08:03:21.215871+00:00",
-    "latest_completed_bar": "2026-10-08T07:00:00+00:00",
+    "scan_id": "GDESK-2026-10-08T11-d10c8960e9",
+    "source_generated_at": "2026-10-08T11:01:15.001382+00:00",
+    "latest_completed_bar": "2026-10-08T10:00:00+00:00",
     "source": "Dukascopy BID/ASK",
     "symbol_count": 18,
     "market_state": "MARKET_OPEN",
     "freshness": "FRESH",
-    "news_proximity": "UNVERIFIED"
+    "news_proximity": "UNVERIFIED",
+    "gold_session_gap": "2026-10-07T21:00:00Z (scheduled metal market break)"
   }
 }
