@@ -1,14 +1,17 @@
 {
-  "decision_id": "GDESK-20261008T011756320Z-1qi0d2xq-NO_TRADE",
-  "generated_at": "2026-10-08T01:17:56.320Z",
+  "decision_id": "GDESK-20261008T032202462Z-zcwdw3jb-NO_TRADE",
+  "generated_at": "2026-10-08T03:22:02.462Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: MARKET_OPEN, FRESH, all 18/18 completed Dukascopy H1 BID/ASK symbol events verified for scan GDESK-2026-10-08T01-e2738a4ee4. JPY-cross downside breakouts are already extended (2.1–3.3 ATR H1 ranges), with no qualified non-chasing entry; other symbols lack confirmed breakouts.",
+  "message": "NO_TRADE: MARKET_OPEN/FRESH; all 18/18 completed Dukascopy H1 BID/ASK symbols validated for the current-hour scan. JPY-cross rebound candles are extended without confirmed follow-through or a clean retest; gold's push above prior highs closed back below the breakout area. Remaining pairs lack clear risk-defined triggers. No trade forced.",
   "context": {
-    "scan_id": "GDESK-2026-10-08T01-e2738a4ee4",
-    "source_generated_at": "2026-10-08T01:01:55.209756+00:00",
-    "latest_completed_bar": "2026-10-08T00:00:00+00:00",
+    "scan_id": "GDESK-2026-10-08T03-ddfb5b0394",
+    "source_generated_at": "2026-10-08T03:03:20.701846+00:00",
+    "latest_completed_bar": "2026-10-08T02:00:00+00:00",
     "source": "Dukascopy BID/ASK",
-    "symbol_count": 18
+    "symbol_count": 18,
+    "market_state": "MARKET_OPEN",
+    "freshness": "FRESH",
+    "news_proximity": "UNVERIFIED"
   }
 }
