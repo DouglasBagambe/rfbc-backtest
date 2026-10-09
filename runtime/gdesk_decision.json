@@ -1,18 +1,19 @@
 {
-  "decision_id": "GDESK-20261009T161635104Z-6246C8A4A9-NO_TRADE",
-  "generated_at": "2026-10-09T16:16:35.104Z",
+  "decision_id": "GDESK-20261009T192129448Z-74304D7955-NO_TRADE",
+  "generated_at": "2026-10-09T19:21:29.448Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "18/18 current-hour fresh Dukascopy H1 BID/ASK symbols validated. EURAUD downside breakout is extended without retest; other pairs lack confirmed entries or sufficient follow-through. No qualified risk-controlled orders.",
+  "message": "18/18 current-hour Dukascopy H1 BID/ASK symbols checked. USDCHF bearish and XAUUSD bullish breaks lack safe retest entries; late-Friday liquidity and weekend-gap risk preclude new orders.",
   "context": {
-    "scan_id": "GDESK-2026-10-09T16-f9c6cca394",
-    "source_generated_at": "2026-10-09T16:02:08.714253+00:00",
-    "latest_completed_bar": "2026-10-09T15:00:00+00:00",
+    "scan_id": "GDESK-2026-10-09T19-cdceffcbc1",
+    "source_generated_at": "2026-10-09T19:04:20.419565+00:00",
+    "latest_completed_bar": "2026-10-09T18:00:00+00:00",
     "source": "Dukascopy BID/ASK",
     "timeframe": "H1 completed bars",
     "symbol_count": 18,
     "market_state": "MARKET_OPEN",
     "freshness": "FRESH",
+    "session": "Friday late New York",
     "news_proximity": "not supplied; no orders proposed"
   }
 }
