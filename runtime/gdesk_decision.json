@@ -1,17 +1,18 @@
 {
-  "decision_id": "GDESK-20261009T122545082Z-9FE9C9022A-NO_TRADE",
-  "generated_at": "2026-10-09T12:25:45.082Z",
+  "decision_id": "GDESK-20261009T152308908Z-144BEA15AC-NO_TRADE",
+  "generated_at": "2026-10-09T15:23:08.908Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "18/18 fresh completed H1 contexts validated. EURAUD/GBPAUD downside breaks are extended without a confirmed retest; no clean risk-qualified entry. No orders proposed.",
+  "message": "18/18 fresh Dukascopy H1 BID/ASK contexts validated. USDJPY marginal high break lacks confirmation; other symbols lack clean breakout/retest entries or have poor follow-through. No risk-qualified orders.",
   "context": {
-    "scan_id": "GDESK-2026-10-09T12-9fe9c9022a",
-    "source_generated_at": "2026-10-09T12:04:11.011624+00:00",
-    "latest_completed_bar": "2026-10-09T11:00:00+00:00",
+    "scan_id": "GDESK-2026-10-09T15-654e2a7508",
+    "source_generated_at": "2026-10-09T15:01:20.409256+00:00",
+    "latest_completed_bar": "2026-10-09T14:00:00+00:00",
     "source": "Dukascopy BID/ASK",
+    "timeframe": "H1 completed bars",
     "symbol_count": 18,
     "market_state": "MARKET_OPEN",
     "freshness": "FRESH",
-    "note": "XAUUSD has one expected 2h session gap; all symbols latest completed 11:00 UTC H1 bar. News proximity not supplied; no trades proposed."
+    "news_proximity": "not supplied; no orders proposed"
   }
 }
