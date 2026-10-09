@@ -1,18 +1,16 @@
 {
-  "decision_id": "GDESK-20261008T182554150Z-darfiyv3-NO_TRADE",
-  "generated_at": "2026-10-08T18:25:54.150Z",
+  "decision_id": "GDESK-20261009T041709960Z-NO_TRADE",
+  "generated_at": "2026-10-09T04:17:09.960Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "NO_TRADE: MARKET_OPEN/FRESH; all 18/18 Dukascopy H1 BID/ASK contexts validated. USDJPY and USDCHF bearish breaks are extended without a clean retest or aligned short-term trend; GBPJPY breakout lacks broader confirmation. Remaining symbols lack clean actionable structure. No trade forced.",
+  "message": "No qualified setups in the complete 18-symbol H1 context. No orders proposed.",
   "context": {
-    "scan_id": "GDESK-2026-10-08T18-4351f1a889",
-    "source_generated_at": "2026-10-08T18:03:12.758520+00:00",
-    "latest_completed_bar": "2026-10-08T17:00:00+00:00",
+    "scan_id": "GDESK-2026-10-09T04-2141957822",
+    "source_generated_at": "2026-10-09T04:01:41.229664+00:00",
+    "latest_completed_bar": "2026-10-09T03:00:00+00:00",
     "source": "Dukascopy BID/ASK",
     "symbol_count": 18,
     "market_state": "MARKET_OPEN",
-    "freshness": "FRESH",
-    "news_proximity": "UNVERIFIED",
-    "gold_session_gap": "2026-10-07T21:00:00Z (scheduled metal market break)"
+    "freshness": "FRESH"
   }
 }
