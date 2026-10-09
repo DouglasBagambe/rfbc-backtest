@@ -1,16 +1,17 @@
 {
-  "decision_id": "GDESK-20261009T041709960Z-NO_TRADE",
-  "generated_at": "2026-10-09T04:17:09.960Z",
+  "decision_id": "GDESK-20261009T051928430Z-CWV52LGC-NO_TRADE",
+  "generated_at": "2026-10-09T05:19:28.430Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "No qualified setups in the complete 18-symbol H1 context. No orders proposed.",
+  "message": "18/18 fresh H1 symbol contexts validated. No sufficiently confirmed, risk-qualified entries; no orders proposed.",
   "context": {
-    "scan_id": "GDESK-2026-10-09T04-2141957822",
-    "source_generated_at": "2026-10-09T04:01:41.229664+00:00",
-    "latest_completed_bar": "2026-10-09T03:00:00+00:00",
+    "scan_id": "GDESK-2026-10-09T05-87f3a5ec39",
+    "source_generated_at": "2026-10-09T05:02:28.505615+00:00",
+    "latest_completed_bar": "2026-10-09T04:00:00+00:00",
     "source": "Dukascopy BID/ASK",
     "symbol_count": 18,
     "market_state": "MARKET_OPEN",
-    "freshness": "FRESH"
+    "freshness": "FRESH",
+    "note": "XAUUSD 21:00 UTC prior-day session break; latest 04:00 bar present."
   }
 }
