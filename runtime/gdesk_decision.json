@@ -1,13 +1,13 @@
 {
-  "decision_id": "GDESK-20261010T111651189Z-13AB3F2A-SYSTEM_FAILURE",
-  "generated_at": "2026-10-10T11:16:51.189Z",
+  "decision_id": "GDESK-20261010T151640425Z-AD757D46-SYSTEM_FAILURE",
+  "generated_at": "2026-10-10T15:16:40.425Z",
   "result": "SYSTEM_FAILURE",
   "decisions": [],
-  "message": "Market closed: current-hour Render context is MARKET_CLOSED, not MARKET_OPEN/FRESH. Entry gate failed; no symbol analysis or trades authorized.",
+  "message": "Market closed: current-hour Render ready event reports MARKET_CLOSED rather than MARKET_OPEN/FRESH. Entry gate failed; no trades authorized.",
   "context": {
-    "scan_id": "GDESK-2026-10-10T11-f68b30efdd",
-    "source_generated_at": "2026-10-10T11:00:30.906617+00:00",
-    "source_event_at": "2026-10-10T11:00:30.910428+00:00",
+    "scan_id": "GDESK-2026-10-10T15-7c9e8587a5",
+    "source_generated_at": "2026-10-10T15:03:46.199558+00:00",
+    "source_event_at": "2026-10-10T15:03:46.203116+00:00",
     "market_state": "MARKET_CLOSED",
     "freshness": "MARKET_CLOSED",
     "symbols_reported": 18
