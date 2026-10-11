@@ -1,13 +1,13 @@
 {
-  "decision_id": "GDESK-20261011T132309059Z-7744cd79ed-SYSTEM_FAILURE",
-  "generated_at": "2026-10-11T13:23:09.059Z",
+  "decision_id": "GDESK-20261011T192405257Z-80ae7e499b-SYSTEM_FAILURE",
+  "generated_at": "2026-10-11T19:24:05.257Z",
   "result": "SYSTEM_FAILURE",
   "decisions": [],
-  "message": "Current-hour Render context reports MARKET_CLOSED and MARKET_CLOSED freshness; MARKET_OPEN/FRESH prerequisites failed. No trades authorized.",
+  "message": "Current-hour Render context is MARKET_CLOSED with MARKET_CLOSED freshness; MARKET_OPEN/FRESH prerequisites failed. No trades authorized.",
   "context": {
-    "scan_id": "GDESK-2026-10-11T13-7744cd79ed",
-    "source_generated_at": "2026-10-11T13:03:18.803085+00:00",
-    "source_event_at": "2026-10-11T13:03:18.806240+00:00",
+    "scan_id": "GDESK-2026-10-11T19-4749366068",
+    "source_generated_at": "2026-10-11T19:02:50.078981+00:00",
+    "source_event_at": "2026-10-11T19:02:50.101770+00:00",
     "market_state": "MARKET_CLOSED",
     "freshness": "MARKET_CLOSED",
     "symbols_reported": 18
