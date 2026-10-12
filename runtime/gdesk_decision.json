@@ -1,24 +1,19 @@
 {
-  "decision_id": "GDESK-20261012T192504052Z-287e625c75-SYSTEM_FAILURE",
-  "generated_at": "2026-10-12T19:25:04.052Z",
-  "result": "SYSTEM_FAILURE",
+  "decision_id": "GDESK-20261012T202355273Z-06f7e29259-NO_TRADE",
+  "generated_at": "2026-10-12T20:23:55.273Z",
+  "result": "NO_TRADE",
   "decisions": [],
-  "message": "Current-hour MARKET_OPEN/FRESH scan has 18/18 symbol events, but EURUSD.x latest H1 bar is 17:00 UTC while 17 other symbols have the 18:00 UTC completed bar. Universe is temporally incomplete; no trade authorized.",
+  "message": "All 18 completed H1 BID/ASK contexts validated; no confirmed, timely setup justified a new position. No trade authorized.",
   "context": {
-    "scan_id": "GDESK-2026-10-12T19-287e625c75",
-    "source_generated_at": "2026-10-12T19:00:43.312542+00:00",
-    "source_event_at": "2026-10-12T19:00:43.401263+00:00",
+    "scan_id": "GDESK-2026-10-12T20-06f7e29259",
+    "source_generated_at": "2026-10-12T20:01:26.904430+00:00",
     "market_state": "MARKET_OPEN",
     "freshness": "FRESH",
     "symbols_reported": 18,
     "symbols_received": 18,
-    "symbols_with_latest_1800_bar": 17,
-    "stale_symbols": [
-      "EURUSD.x"
-    ],
-    "latest_completed_bar_expected": "2026-10-12T18:00:00+00:00",
-    "latest_completed_bar_eurusd": "2026-10-12T17:00:00+00:00",
+    "latest_completed_bar": "2026-10-12T19:00:00.000Z",
     "source": "Dukascopy BID/ASK",
-    "timeframe": "H1 completed bars"
+    "timeframe": "H1 completed bars",
+    "validation_errors": []
   }
 }
