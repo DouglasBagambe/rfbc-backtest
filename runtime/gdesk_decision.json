@@ -1,18 +1,23 @@
 {
-  "decision_id": "GDESK-20261012T162056124Z-zouz36n3-NO_TRADE",
-  "generated_at": "2026-10-12T16:20:56.124Z",
-  "result": "NO_TRADE",
+  "decision_id": "GDESK-20261012T192504052Z-287e625c75-SYSTEM_FAILURE",
+  "generated_at": "2026-10-12T19:25:04.052Z",
+  "result": "SYSTEM_FAILURE",
   "decisions": [],
-  "message": "18/18 FRESH MARKET_OPEN Dukascopy H1 BID/ASK contexts validated. Broad USD-led breakout is already extended without confirmed pullback/retest; EUR/GBP/AUD/NZD downside and USD/CAD/CHF/JPY upside lack risk-efficient fresh entry. Crosses and gold offer no cleaner confirmation. No qualifying setups; 0% proposed risk.",
+  "message": "Current-hour MARKET_OPEN/FRESH scan has 18/18 symbol events, but EURUSD.x latest H1 bar is 17:00 UTC while 17 other symbols have the 18:00 UTC completed bar. Universe is temporally incomplete; no trade authorized.",
   "context": {
-    "scan_id": "GDESK-2026-10-12T16-ad902cc5c1",
-    "source_generated_at": "2026-10-12T16:03:00.608323+00:00",
-    "source_event_at": "2026-10-12T16:03:00.613326+00:00",
-    "latest_completed_bar": "2026-10-12T15:00:00+00:00",
+    "scan_id": "GDESK-2026-10-12T19-287e625c75",
+    "source_generated_at": "2026-10-12T19:00:43.312542+00:00",
+    "source_event_at": "2026-10-12T19:00:43.401263+00:00",
     "market_state": "MARKET_OPEN",
     "freshness": "FRESH",
     "symbols_reported": 18,
-    "symbols_validated": 18,
+    "symbols_received": 18,
+    "symbols_with_latest_1800_bar": 17,
+    "stale_symbols": [
+      "EURUSD.x"
+    ],
+    "latest_completed_bar_expected": "2026-10-12T18:00:00+00:00",
+    "latest_completed_bar_eurusd": "2026-10-12T17:00:00+00:00",
     "source": "Dukascopy BID/ASK",
     "timeframe": "H1 completed bars"
   }
