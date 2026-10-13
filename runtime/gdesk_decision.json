@@ -1,21 +1,21 @@
 {
-  "decision_id": "GDESK-20261013T041646888Z-a91267c83a-NO_TRADE",
-  "generated_at": "2026-10-13T04:16:46.888Z",
+  "decision_id": "GDESK-20261013T062553341Z-wuo7v989-NO_TRADE",
+  "generated_at": "2026-10-13T06:25:53.341Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "18/18 fresh Dukascopy completed H1 BID/ASK contexts assessed. No confirmed 20-bar breakout; JPY pairs are rebounding, EURAUD retraced, and XAUUSD remains below its prior range high. No qualified setup.",
+  "message": "18/18 fresh completed Dukascopy H1 BID/ASK symbol contexts validated. No completed H1 close confirmed a 20-bar range breakout. XAUUSD approached resistance without closing above it; USDJPY remained above support. No qualified setup; proposed risk 0%.",
   "context": {
-    "scan_id": "GDESK-2026-10-13T04-a91267c83a",
-    "source_generated_at": "2026-10-13T04:02:43.990315+00:00",
-    "ready_event_at": "2026-10-13T04:02:44.005118+00:00",
+    "scan_id": "GDESK-2026-10-13T06-d38a0a8164",
+    "source_generated_at": "2026-10-13T06:04:12.523917+00:00",
+    "ready_event_at": "2026-10-13T06:04:12.602269+00:00",
     "market_state": "MARKET_OPEN",
     "freshness": "FRESH",
     "symbols_reported": 18,
     "symbols_received": 18,
-    "latest_completed_bar": "2026-10-13T03:00:00+00:00",
+    "latest_completed_bar": "2026-10-13T05:00:00+00:00",
     "source": "Dukascopy BID/ASK",
     "timeframe": "H1 completed bars",
     "validation_errors": [],
-    "note": "XAUUSD source has no 21:00 UTC bar during daily trading break; all 24 supplied bars are complete."
+    "note": "Gold bars skip 2026-10-12T21:00 UTC daily market break; supplied completed bars are internally ordered."
   }
 }
