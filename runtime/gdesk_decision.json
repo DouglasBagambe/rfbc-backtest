@@ -1,17 +1,17 @@
 {
-  "decision_id": "GDESK-20261012T202355273Z-06f7e29259-NO_TRADE",
-  "generated_at": "2026-10-12T20:23:55.273Z",
+  "decision_id": "GDESK-20261013T002037152Z-c810586609-NO_TRADE",
+  "generated_at": "2026-10-13T00:20:37.152Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "All 18 completed H1 BID/ASK contexts validated; no confirmed, timely setup justified a new position. No trade authorized.",
+  "message": "All 18 fresh, completed H1 BID/ASK symbol contexts validated. JPY downside breaks lack sufficient follow-through and event-risk confirmation; no qualified trade.",
   "context": {
-    "scan_id": "GDESK-2026-10-12T20-06f7e29259",
-    "source_generated_at": "2026-10-12T20:01:26.904430+00:00",
+    "scan_id": "GDESK-2026-10-13T00-c810586609",
+    "source_generated_at": "2026-10-13T00:04:37.700617+00:00",
     "market_state": "MARKET_OPEN",
     "freshness": "FRESH",
     "symbols_reported": 18,
     "symbols_received": 18,
-    "latest_completed_bar": "2026-10-12T19:00:00.000Z",
+    "latest_completed_bar": "2026-10-12T23:00:00+00:00",
     "source": "Dukascopy BID/ASK",
     "timeframe": "H1 completed bars",
     "validation_errors": []
