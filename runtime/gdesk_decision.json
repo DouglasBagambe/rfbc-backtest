@@ -1,21 +1,20 @@
 {
-  "decision_id": "GDESK-20261013T062553341Z-wuo7v989-NO_TRADE",
-  "generated_at": "2026-10-13T06:25:53.341Z",
+  "decision_id": "GDESK-20261013T072232722Z-ed2115eab8-NO_TRADE",
+  "generated_at": "2026-10-13T07:22:32.722Z",
   "result": "NO_TRADE",
   "decisions": [],
-  "message": "18/18 fresh completed Dukascopy H1 BID/ASK symbol contexts validated. No completed H1 close confirmed a 20-bar range breakout. XAUUSD approached resistance without closing above it; USDJPY remained above support. No qualified setup; proposed risk 0%.",
+  "message": "18/18 current-hour Dukascopy H1 BID/ASK symbol contexts validated. CADJPY closed marginally below its prior 20-bar low (0.28 ATR; breakout clearance ~2.1x spread), without robust confirmation. Other symbols did not close beyond 20-bar extremes. No qualified setup; proposed risk 0%.",
   "context": {
-    "scan_id": "GDESK-2026-10-13T06-d38a0a8164",
-    "source_generated_at": "2026-10-13T06:04:12.523917+00:00",
-    "ready_event_at": "2026-10-13T06:04:12.602269+00:00",
+    "scan_id": "GDESK-2026-10-13T07-ed2115eab8",
+    "source_generated_at": "2026-10-13T07:04:58.921469+00:00",
+    "ready_event_at": "2026-10-13T07:04:59.005998+00:00",
     "market_state": "MARKET_OPEN",
     "freshness": "FRESH",
     "symbols_reported": 18,
     "symbols_received": 18,
-    "latest_completed_bar": "2026-10-13T05:00:00+00:00",
+    "latest_completed_bar": "2026-10-13T06:00:00+00:00",
     "source": "Dukascopy BID/ASK",
     "timeframe": "H1 completed bars",
-    "validation_errors": [],
-    "note": "Gold bars skip 2026-10-12T21:00 UTC daily market break; supplied completed bars are internally ordered."
+    "validation_errors": []
   }
 }
