@@ -1,0 +1,12 @@
+{"accepted": 0, "at": "2026-10-14T14:16:01.916563+00:00", "event": "desk_result", "rejected": [], "result": "NO_TRADE"}
+{"at": "2026-10-14T14:16:01.921776+00:00", "decision_id": "SYNTHETIC-NO_TRADE", "event": "gdesk_bridge_consumed", "ingest_status": "NO_TRADE", "result": "NO_TRADE"}
+{"at": "2026-10-14T14:16:01.922126+00:00", "decision_id": "SYNTHETIC-SYSTEM_FAILURE", "event": "gdesk_telegram_delivery", "ok": false, "result": "SYSTEM_FAILURE", "status": "telegram_not_configured"}
+{"at": "2026-10-14T14:16:01.927353+00:00", "decision_id": "SYNTHETIC-SYSTEM_FAILURE", "event": "gdesk_bridge_consumed", "result": "SYSTEM_FAILURE"}
+{"at": "2026-10-14T14:16:02.011206+00:00", "decision_id": "SYNTHETIC-NO_TRADE--7200.0", "event": "gdesk_bridge_rejected", "reason": "future_or_stale_decision"}
+{"at": "2026-10-14T14:16:02.016579+00:00", "decision_id": "SYNTHETIC-NO_TRADE-600.0", "event": "gdesk_bridge_rejected", "reason": "future_or_stale_decision"}
+{"accepted": 1, "at": "2026-10-14T14:16:02.104895+00:00", "event": "desk_result", "rejected": [], "result": "TRADE"}
+{"at": "2026-10-14T14:16:02.109988+00:00", "decision_id": "SYNTHETIC-TRADE", "event": "gdesk_bridge_consumed", "ingest_status": "TRADE", "result": "TRADE"}
+----------------------------------------------------------------------
+Ran 148 tests in 13.228s
+
+OK

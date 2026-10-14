@@ -91,10 +91,11 @@ def validate_snapshot(s, now):
         if not isinstance(s[kind],list) or len(s[kind]) > 128:
             raise Reject('invalid_items')
         for item in s[kind]:
-            keys(item, {'ticket','symbol','side','order_type','volume','entry','sl','tp','profit','swap','magic','comment','stop_limit','expires_at'})
+            keys(item, {'ticket','symbol','side','order_type','volume','entry','sl','tp','profit','swap','magic','comment','stop_limit','expires_at'},optional={'identifier'})
             if not isinstance(item['ticket'],str) or not re.fullmatch(r'[1-9][0-9]{0,19}',item['ticket']) or item['ticket'] in tickets:
                 raise Reject('invalid_ticket')
             tickets.add(item['ticket'])
+            if 'identifier' in item and (not isinstance(item['identifier'],str) or not re.fullmatch(r'[1-9][0-9]{0,19}',item['identifier'])):raise Reject('invalid_position_identifier')
             if item['symbol'] not in s['symbols'] or item['side'] not in {'BUY','SELL'} or item['order_type'] not in ORDER_TYPES:
                 raise Reject('invalid_item')
             if not item['order_type'].startswith(item['side']):

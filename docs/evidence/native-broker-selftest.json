@@ -1,0 +1,7 @@
+{
+  "native_tests": 31,
+  "failures": 0,
+  "mocked_broker": true,
+  "real_broker_orders": 0,
+  "lost_response_restart_no_duplicate": true
+}

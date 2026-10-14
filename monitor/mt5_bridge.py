@@ -38,6 +38,9 @@ def request_signature(method,path,stamp,nonce,body):
     return sign(f'{method}\n{path}\n{stamp}\n{nonce}\n'.encode()+body)
 
 def _ensure_schema():
+    from dnb_history import SCHEMA as HISTORY_SCHEMA
+    from dnb_authority import SCHEMA as AUTHORITY_SCHEMA
+    from dnb_demo import SCHEMA as DEMO_SCHEMA
     store.ensure_schema((
         'CREATE TABLE IF NOT EXISTS mt5_v2_nonces (nonce TEXT PRIMARY KEY, received_at INTEGER NOT NULL)',
         'CREATE INDEX IF NOT EXISTS mt5_v2_nonce_time ON mt5_v2_nonces(received_at)',
@@ -47,7 +50,7 @@ def _ensure_schema():
         'CREATE TABLE IF NOT EXISTS mt5_v2_reconciliation (id TEXT PRIMARY KEY, snapshot_id TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL)',
         'CREATE TABLE IF NOT EXISTS dnb_thesis_legs (command_id TEXT PRIMARY KEY, thesis_id TEXT NOT NULL, confirmation_id TEXT NOT NULL, payload TEXT NOT NULL, UNIQUE(thesis_id,confirmation_id))',
         'CREATE TABLE IF NOT EXISTS dnb_alert_intents (trade_id TEXT PRIMARY KEY, symbol TEXT NOT NULL, side TEXT NOT NULL, state TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL, delivery TEXT)',
-    ))
+    )+HISTORY_SCHEMA+AUTHORITY_SCHEMA+DEMO_SCHEMA)
 
 @bp.teardown_request
 def close_store(error):
@@ -316,3 +319,40 @@ def create_shadow_test():
         return jsonify(ok=True,command_id=row['id'],synthetic=True,auto_available=False)
     except (risk.Reject,KeyError,ValueError):
         return jsonify(ok=False,error='shadow_preflight_rejected'),409
+
+
+@bp.post('/fx101/mt5/history')
+def broker_history():
+    try:
+        import dnb_history
+        return jsonify(dnb_history.ingest(strict_json(),clock()))
+    except risk.Reject as exc:
+        store.db().rollback()
+        return jsonify(ok=False,error=str(exc)),400
+
+@bp.post('/fx101/mt5/telegram-test')
+def telegram_test():
+    if request.get_data() not in {b'',b'{}'}: return jsonify(ok=False,error='unexpected_payload'),400
+    # Explicit authenticated operator test; never presents a trading instruction.
+    try:
+        ok,status=fx101.telegram_send('dnb Fx SYSTEM TEST — permanent gateway Telegram delivery. No trading instruction. LIVE AUTO remains blocked.')
+        return jsonify(ok=ok,delivery_status=status,broker_order_sent=False),200 if ok else 503
+    except Exception:
+        return jsonify(ok=False,error='telegram_delivery_unconfirmed',broker_order_sent=False),503
+
+
+@bp.post('/fx101/mt5/demo/intent')
+def demo_intent():
+    try:
+        import dnb_demo
+        return jsonify(dnb_demo.intent(strict_json(),clock()))
+    except risk.Reject as exc:
+        store.db().rollback();return jsonify(ok=False,error=str(exc)),400
+
+@bp.post('/fx101/mt5/demo/ack')
+def demo_ack():
+    try:
+        import dnb_demo
+        return jsonify(dnb_demo.ack(strict_json(),clock()))
+    except risk.Reject as exc:
+        store.db().rollback();return jsonify(ok=False,error=str(exc)),400

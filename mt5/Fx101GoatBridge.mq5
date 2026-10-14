@@ -11,7 +11,9 @@ input FX101_MODE InpMode=MODE_SHADOW;
 input bool InpLocalKill=true;
 input int InpPollSeconds=5;
 
-// Deliberately no Trade library, OrderSend, position modification or close calls.
+// Broker operations are implemented behind a closed live-authorisation gate.
+#include "include/DnbBroker.mqh"
+bool DnbBrokerIoAuthorised() { return false; } // Compliance, anchors and native validation unresolved.
 string g_key="";
 string g_session="";
 ulong g_counter=0;
@@ -130,6 +132,7 @@ string PositionJson()
       string side=PositionGetInteger(POSITION_TYPE)==POSITION_TYPE_BUY ? "BUY" : "SELL";
       if(i>0) s+=",";
       s+=StringFormat("{\"ticket\":\"%I64u\",\"symbol\":\"%s\",\"side\":\"%s\",\"order_type\":\"%s\",",ticket,Escape(symbol),side,side);
+      s+=StringFormat("\"identifier\":\"%I64d\",",PositionGetInteger(POSITION_IDENTIFIER));
       s+="\"volume\":"+Num(PositionGetDouble(POSITION_VOLUME))+",\"entry\":"+Num(PositionGetDouble(POSITION_PRICE_OPEN));
       s+=",\"sl\":"+Num(PositionGetDouble(POSITION_SL))+",\"tp\":"+Num(PositionGetDouble(POSITION_TP));
       s+=",\"profit\":"+Num(PositionGetDouble(POSITION_PROFIT))+",\"swap\":"+Num(PositionGetDouble(POSITION_SWAP));
@@ -498,6 +501,10 @@ void ValidateContracts()
    g_contract_validation=WritePrivate("Fx101Bridge\\native-contract-validation.json",out);
   }
 
+#include "include/DnbHistory.mqh"
+void OnTradeTransaction(const MqlTradeTransaction &transaction,const MqlTradeRequest &request,const MqlTradeResult &result)
+  { g_history_dirty=true; }
+
 void OnTimer()
   {
    if(InpMode==MODE_OFF || !AccountBound()) return;
@@ -507,6 +514,7 @@ void OnTimer()
    if(!WritePrivate("Fx101Bridge\\snapshot.json",body)) return;
    string response,nonce;
    g_snapshot_ok=Http("POST","/fx101/mt5/snapshot",body,response,nonce);
+   if(g_snapshot_ok) DnbPumpHistory();
    if(g_snapshot_ok && InpMode==MODE_SHADOW && !Killed()) DrainAcks();
    Poll();
   }

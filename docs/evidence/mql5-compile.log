@@ -1,8 +1,12 @@
-SOURCE_SHA256=f040711c56244eab9d642f73f6d5cd68afe6117a451822e93e46f744728e370c
-EX5_SHA256=e79ea2d62c8fe945f909faa74b764cb4653442ecdc5f1ce9c398e238ae90e45f
+INCLUDE_SHA256 mt5/include/DnbBroker.mqh: a535061542be4f2d83032f65cb717089c446c99c7bbdafe2ee2afed4b134251e
+INCLUDE_SHA256 mt5/include/DnbHistory.mqh: bdadef295f81386c53669ae03a2360299db5da981644cda759a87bba4dc10eea
+SOURCE_SHA256=774ebf9829a239fe5eb50e945bd33a9a73b48dfe40bb4034889996a1f2003110
+EX5_SHA256=20933211ede1d109b105299ddb5984477b818a821a7182aabdc48f50db78ae87
 
 
-C:\Fx101Validation1791983421919324377\Fx101GoatBridge.mq5 : information: compiling C:\Fx101Validation1791983421919324377\Fx101GoatBridge.mq5
+C:\Fx101Validation1791986159527839099\Fx101GoatBridge.mq5 : information: compiling C:\Fx101Validation1791986159527839099\Fx101GoatBridge.mq5
+C:\Fx101Validation1791986159527839099\Fx101GoatBridge.mq5 : information: including C:\Fx101Validation1791986159527839099\include\DnbBroker.mqh
+C:\Fx101Validation1791986159527839099\Fx101GoatBridge.mq5 : information: including C:\Fx101Validation1791986159527839099\include\DnbHistory.mqh
  : information: generating code
  : information: generating code 3%
  : information: generating code 6%
@@ -38,4 +42,4 @@ C:\Fx101Validation1791983421919324377\Fx101GoatBridge.mq5 : information: compili
  : information: generating code 95%
  : information: generating code 100%
  : information: code generated
-Result: 0 errors, 0 warnings, 2895 ms elapsed, cpu='X64 Regular'
+Result: 0 errors, 0 warnings, 2581 ms elapsed, cpu='X64 Regular'

@@ -1,0 +1,44 @@
+INCLUDE_SHA256 mt5/include/DnbBroker.mqh: 093f0e3fca571eb1253f7340cd80fbb1c6aa3e393d5faa58f6cd3fb1a6b40661
+INCLUDE_SHA256 mt5/include/DnbHistory.mqh: bdadef295f81386c53669ae03a2360299db5da981644cda759a87bba4dc10eea
+SOURCE_SHA256=84e6a5359225f5bcf619b901f6037f984f0b4ba4c6afaf30f704290d961f5bf1
+EX5_SHA256=b8f16264642e81ea2c3e0aabee145e1a3d25383410825e4ab51a15dafb505545
+
+
+C:\Fx101Validation1791987704778267568\DnbDemoBrokerTest.mq5 : information: compiling C:\Fx101Validation1791987704778267568\DnbDemoBrokerTest.mq5
+C:\Fx101Validation1791987704778267568\DnbDemoBrokerTest.mq5 : information: including C:\Fx101Validation1791987704778267568\include\DnbBroker.mqh
+ : information: generating code
+ : information: generating code 3%
+ : information: generating code 6%
+ : information: generating code 9%
+ : information: generating code 12%
+ : information: generating code 15%
+ : information: generating code 18%
+ : information: generating code 21%
+ : information: generating code 24%
+ : information: generating code 27%
+ : information: generating code 30%
+ : information: generating code 33%
+ : information: generating code 36%
+ : information: generating code 39%
+ : information: generating code 42%
+ : information: generating code 45%
+ : information: generating code 48%
+ : information: generating code 51%
+ : information: generating code 54%
+ : information: generating code 57%
+ : information: generating code 60%
+ : information: generating code 63%
+ : information: generating code 66%
+ : information: generating code 69%
+ : information: generating code 72%
+ : information: generating code 75%
+ : information: generating code 78%
+ : information: generating code 81%
+ : information: generating code 84%
+ : information: generating code 87%
+ : information: generating code 90%
+ : information: generating code 93%
+ : information: generating code 95%
+ : information: generating code 100%
+ : information: code generated
+Result: 0 errors, 0 warnings, 875 ms elapsed, cpu='X64 Regular'
