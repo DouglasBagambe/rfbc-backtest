@@ -1,0 +1,33 @@
+name: MT5 Bridge Validation
+
+on:
+  pull_request:
+    branches: [ strategy2-round2-wip ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install monitor dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r monitor/requirements.txt
+      - name: Compile Python
+        run: |
+          python -m py_compile monitor/mt5_bridge.py monitor/webapp.py monitor/fx101.py
+      - name: Run bridge tests
+        env:
+          PYTHONPATH: monitor
+        run: |
+          python -m unittest monitor.test_mt5_bridge monitor.test_fx101 monitor.test_gdesk_bridge -v
