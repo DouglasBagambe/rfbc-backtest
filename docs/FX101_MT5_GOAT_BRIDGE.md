@@ -112,6 +112,8 @@ Rollback: engage kills first, close/remove the observer EA, preserve journals an
 
 Written GOAT approval/clarification; verified daily and historical trailing anchors/payout resets; persistent remote storage tested under Render restarts; currency directional risk checks on both sides; complete deal/order history reconciliation; commissions/slippage/gaps and cross-account hedging visibility; native tests across all 18 contracts/order types; broker execution and management implementation; durable submission intent plus broker identity search after ambiguous acceptance; concurrency/manual-intervention races; outage/restart tests; news and payout/holding-time controls; security review.
 
+Snapshot/reconciliation retention is not yet bounded for long-running use. The orphaned first SHADOW journal from the ephemeral rollout remains unresolved; repeated unknown-ACK failures need dead-letter/backoff handling, and multiple orphaned files could delay the bounded outbox scan. Concurrent producers also require stress testing beyond the deterministic idempotency tests. These are additional reasons not to promote this build.
+
 The specific edge “broker accepts order, network dies before ACK, terminal restarts” remains unimplemented and untested. There is no honest basis to label this READY FOR AUTO VALIDATION.
 
 ## Commits and changed files
@@ -123,7 +125,9 @@ Base: `db49a0dd0d0ae7f64a01a2c48b920983ee1ba689`.
 - `5445a10` — TLS proxy correction and sanitized transport diagnostics.
 - `1c0e31e` — idempotency conflicts, command evidence and reproducible compilation.
 - `f167246` — persistent ACK outbox independent of expiry; fresh native compiler verification.
-- Final evidence/documentation commit is recorded in `git log` and the final handoff.
+- `ecf5993` — official rules, failure matrix, complete operational report and real E2E/restart evidence.
+- `00423cd` — verified final state: both kills engaged, 18 live specifications, fresh SHADOW observation.
+- Final documentation correction is recorded in `git log` and the handoff.
 
 Changed implementation: `.gitignore`; `monitor/mt5_bridge.py`; `monitor/mt5_risk.py`; `monitor/mt5_symbols.py`; `monitor/mt5_runtime.py`; `monitor/mt5_shadow_app.py`; `monitor/sitecustomize.py`; `monitor/webapp.py`; `monitor/test_mt5_bridge.py`; `mt5/Fx101GoatBridge.mq5`; `tools/compile_mt5.py`; `tools/mt5_probe.py`.
 
