@@ -1,0 +1,31 @@
+{
+  "service_id": "srv-db7nv1t9fdbs73eto5d0",
+  "backend_commits": [
+    "1a00f717e4ad67752e5b91371cd0e9e9897fbb81",
+    "369d968"
+  ],
+  "rollout": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"commit\":{\"createdAt\":\"2026-10-14T19:11:57Z\",\"id\":\"1a00f717e4ad67752e5b91371cd0e9e9897fbb81\",\"message\":\"Preserve demo submission continuity and bind manual fills to broker evidence\"},\"createdAt\":\"2026-10-14T19:12:26.892632Z\",\"id\":\"dep-db7t86mk1f9s73culf0g\",\"startedAt\":\"2026-10-14T19:12:26.858964Z\",\"status\":\"update_in_progress\",\"trigger\":\"api\",\"updatedAt\":\"2026-10-14T19:12:59.835697Z\"}"
+      }
+    ],
+    "isError": false
+  },
+  "latest_trigger": {
+    "content": [
+      {
+        "type": "text",
+        "text": "received response code 500: internal server error"
+      }
+    ],
+    "structuredContent": {
+      "error_code": "INVALID_ARGUMENT"
+    },
+    "isError": true
+  },
+  "completed_deployment_verified": false,
+  "demo_execution_enabled": false,
+  "goat_live_auto_available": false
+}
