@@ -22,6 +22,10 @@ SELFTEST = selftest.run()
 print(f"RFBC_OPERATIONAL_SELFTEST {SELFTEST}", flush=True)
 
 app = Flask(__name__)
+# Render terminates TLS at its managed proxy; trust exactly one hop only there.
+if os.getenv("FX101_MT5_TRUST_PROXY", "0") == "1":
+    from werkzeug.middleware.proxy_fix import ProxyFix
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1)
 mt5_bridge.install_fx101_hooks()
 app.register_blueprint(mt5_bridge.bp)
 _last_alert_keys: set[str] = set()
@@ -297,7 +301,8 @@ def check():
 
 
 if __name__ == "__main__":
-    fx101.activate_goat_challenge_profile()
+    if not mt5_bridge.enabled():
+        fx101.activate_goat_challenge_profile()
     webhook_url = os.getenv("TELEGRAM_WEBHOOK_URL", "").strip()
     if webhook_url:
         ok, status = fx101.register_telegram_webhook(webhook_url)

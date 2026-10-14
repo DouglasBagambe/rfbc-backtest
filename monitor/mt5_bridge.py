@@ -1,390 +1,268 @@
-"""Secure MT5 bridge for G's Fx101.
+"""Authenticated broker observation and durable SHADOW commands.
 
-This module is intentionally transport/risk focused. It does not alter RFBC or
-G_DESK signal-generation logic. GitHub remains the G_DESK analysis mailbox;
-live broker execution uses this authenticated Render <-> MT5 channel.
+AUTO is deliberately unavailable: untested broker paths and GOAT hosting policy
+must be resolved before any order-sending implementation is eligible for use.
+The v1 queue is quarantined; no legacy command is imported or executed.
 """
 from __future__ import annotations
-
+import hashlib
 import hmac
 import json
 import os
+import re
+import time
 import uuid
 from datetime import datetime, timezone
-from typing import Any
-
-from flask import Blueprint, jsonify, request
-
+from flask import Blueprint, Response, jsonify, request
 import fx101
+import mt5_risk as risk
 
-bp = Blueprint("mt5_bridge", __name__)
+bp = Blueprint('mt5_bridge', __name__)
+ACCOUNT_ID = 'goat-stride-2500-instant-hero'
+MAX_BYTES = 131072
+AUTO_AVAILABLE = False
 
-ACCOUNT_ID = "goat-stride-2500-instant-hero"
-EXPECTED_LOGIN = int(os.getenv("FX101_MT5_LOGIN", "315307814"))
-EXPECTED_SERVER = os.getenv("FX101_MT5_SERVER", "GoatFunded-Server").strip()
-INITIAL_BALANCE = float(os.getenv("FX101_GOAT_INITIAL_BALANCE", "2500"))
-SNAPSHOT_MAX_AGE = int(os.getenv("FX101_MT5_SNAPSHOT_MAX_AGE_SECONDS", "30"))
-BRIDGE_ENABLED = os.getenv("FX101_MT5_BRIDGE_ENABLED", "0").strip() == "1"
-EXECUTION_MODE = "SHADOW"  # Live execution quarantined; env cannot bypass validation.
-PER_TRADE_RISK_CAP = float(os.getenv("FX101_MT5_PER_TRADE_RISK_CAP_PCT", "0.50"))
-AGGREGATE_RISK_GUARD = float(os.getenv("FX101_MT5_AGGREGATE_RISK_GUARD_PCT", "0.75"))
-FLOATING_LOSS_GUARD = float(os.getenv("FX101_MT5_FLOATING_LOSS_GUARD_PCT", "0.80"))
-DAILY_DD_GUARD = float(os.getenv("FX101_MT5_DAILY_DD_GUARD_PCT", "2.50"))
-TRAILING_DD_GUARD = float(os.getenv("FX101_MT5_TRAILING_DD_GUARD_PCT", "4.50"))
-COMMAND_TTL_SECONDS = int(os.getenv("FX101_MT5_COMMAND_TTL_SECONDS", "180"))
+def clock(): return int(time.time())
+def enabled(): return os.getenv('FX101_MT5_BRIDGE_ENABLED','0') == '1'
+def mode():
+    value = os.getenv('FX101_MT5_EXECUTION_MODE','SHADOW')
+    return value if value in {'OFF','OBSERVE','SHADOW'} else 'OFF'
+def killed(): return os.getenv('FX101_MT5_KILL_SWITCH','1') != '0'
+def secret():
+    value = os.getenv('FX101_MT5_BRIDGE_TOKEN','')
+    if not re.fullmatch(r'[a-f0-9]{64}',value): raise risk.Reject('credential_not_configured')
+    return value.encode('ascii')
+def sign(message): return hmac.new(secret(),message,hashlib.sha256).hexdigest()
+def request_signature(method,path,stamp,nonce,body):
+    return sign(f'{method}\n{path}\n{stamp}\n{nonce}\n'.encode()+body)
 
-
-def _utcnow() -> datetime:
-    return datetime.now(timezone.utc)
-
-
-def _iso() -> str:
-    return _utcnow().isoformat()
-
-
-def _authorised() -> bool:
-    expected = os.getenv("FX101_MT5_BRIDGE_TOKEN", "")
-    supplied = request.headers.get("X-FX101-MT5-Token", "")
-    return bool(expected) and hmac.compare_digest(expected, supplied)
-
-
-def _ensure_schema() -> None:
+def _ensure_schema():
     c = fx101.db()
-    statements = [
-        """CREATE TABLE IF NOT EXISTS mt5_snapshots (
-            id TEXT PRIMARY KEY, login INTEGER NOT NULL, server TEXT NOT NULL,
-            balance REAL NOT NULL, equity REAL NOT NULL, free_margin REAL NOT NULL,
-            floating_pnl REAL NOT NULL, day_key TEXT, daily_anchor REAL,
-            high_water_equity REAL, payload TEXT NOT NULL, received_at TEXT NOT NULL
-        )""",
-        """CREATE TABLE IF NOT EXISTS mt5_commands (
-            id TEXT PRIMARY KEY, trade_id TEXT NOT NULL UNIQUE, login INTEGER NOT NULL,
-            mode TEXT NOT NULL, state TEXT NOT NULL, payload TEXT NOT NULL,
-            created_at TEXT NOT NULL, expires_at TEXT NOT NULL,
-            broker_ticket TEXT, ack_status TEXT, ack_payload TEXT, acked_at TEXT
-        )""",
-        "CREATE INDEX IF NOT EXISTS mt5_snapshots_received_idx ON mt5_snapshots(received_at)",
-        "CREATE INDEX IF NOT EXISTS mt5_commands_state_idx ON mt5_commands(state, created_at)",
-    ]
-    for s in statements:
-        c.execute(s)
+    for sql in (
+        'CREATE TABLE IF NOT EXISTS mt5_v2_nonces (nonce TEXT PRIMARY KEY, received_at INTEGER NOT NULL)',
+        'CREATE INDEX IF NOT EXISTS mt5_v2_nonce_time ON mt5_v2_nonces(received_at)',
+        'CREATE TABLE IF NOT EXISTS mt5_v2_snapshots (id TEXT PRIMARY KEY, captured_at INTEGER NOT NULL, received_at INTEGER NOT NULL, payload TEXT NOT NULL)',
+        'CREATE INDEX IF NOT EXISTS mt5_v2_snapshot_time ON mt5_v2_snapshots(captured_at)',
+        'CREATE TABLE IF NOT EXISTS mt5_v2_commands (id TEXT PRIMARY KEY, trade_id TEXT UNIQUE NOT NULL, state TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL, expires_at INTEGER NOT NULL, ack TEXT)',
+        'CREATE TABLE IF NOT EXISTS mt5_v2_reconciliation (id TEXT PRIMARY KEY, snapshot_id TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL)',
+    ): c.execute(sql)
     c.commit()
 
+@bp.before_request
+def authenticate():
+    # Apply size limit before reading/parsing JSON; server must also bound HTTP headers.
+    request.max_content_length = MAX_BYTES
+    if request.content_length is not None and request.content_length > MAX_BYTES:
+        return jsonify(ok=False,error='request_too_large'),413
+    if not request.is_secure: return jsonify(ok=False,error='tls_required'),403
+    if not enabled(): return jsonify(ok=False,error='bridge_disabled'),503
+    try:
+        stamp = request.headers.get('X-FX101-Time','')
+        nonce = request.headers.get('X-FX101-Nonce','')
+        signature = request.headers.get('X-FX101-Signature','')
+        if not re.fullmatch(r'\d{10}',stamp) or not re.fullmatch(r'[a-f0-9]{64}',nonce) or not re.fullmatch(r'[a-f0-9]{64}',signature):
+            raise risk.Reject('unauthorized')
+        now = clock()
+        if abs(now-int(stamp)) > 15: raise risk.Reject('unauthorized')
+        expected = request_signature(request.method,request.path,stamp,nonce,request.get_data())
+        if not hmac.compare_digest(expected,signature): raise risk.Reject('unauthorized')
+        _ensure_schema()
+        c = fx101.db()
+        count = c.execute('SELECT COUNT(*) FROM mt5_v2_nonces WHERE received_at>=?',(now-60,)).fetchone()[0]
+        if count >= 90: return jsonify(ok=False,error='rate_limited'),429
+        # Atomic unique nonce insertion protects multiple threads/processes and restarts.
+        c.execute('INSERT INTO mt5_v2_nonces VALUES (?,?)',(nonce,now))
+        c.execute('DELETE FROM mt5_v2_nonces WHERE received_at<?',(now-120,))
+        c.commit()
+    except risk.Reject:
+        return jsonify(ok=False,error='unauthorized'),401
+    except Exception:
+        fx101.db().rollback()
+        return jsonify(ok=False,error='replay_or_storage_unavailable'),409
 
-def _parse_iso(value: str) -> datetime:
-    return datetime.fromisoformat(str(value).replace("Z", "+00:00")).astimezone(timezone.utc)
+@bp.errorhandler(413)
+def too_large(_): return jsonify(ok=False,error='request_too_large'),413
 
+@bp.errorhandler(Exception)
+def sanitized_error(_):
+    fx101.log('mt5_bridge_error')
+    return jsonify(ok=False,error='bridge_unavailable'),503
 
-def latest_snapshot() -> dict[str, Any] | None:
+def strict_json():
+    def pairs(values):
+        out = {}
+        for key,value in values:
+            if key in out: raise risk.Reject('duplicate_json_key')
+            out[key] = value
+        return out
+    try:
+        return json.loads(request.get_data(), object_pairs_hook=pairs,
+                          parse_constant=lambda _: (_ for _ in ()).throw(risk.Reject('nonfinite_json')))
+    except (ValueError,TypeError,UnicodeError) as exc:
+        raise risk.Reject('invalid_json') from exc
+
+def latest_snapshot():
     _ensure_schema()
-    row = fx101.db().execute(
-        "SELECT * FROM mt5_snapshots ORDER BY received_at DESC LIMIT 1"
-    ).fetchone()
-    if not row:
-        return None
-    out = dict(row)
-    out["payload"] = json.loads(out["payload"])
-    out["age_seconds"] = (_utcnow() - _parse_iso(out["received_at"])).total_seconds()
-    out["fresh"] = out["age_seconds"] <= SNAPSHOT_MAX_AGE
+    row = fx101.db().execute('SELECT * FROM mt5_v2_snapshots ORDER BY captured_at DESC,received_at DESC LIMIT 1').fetchone()
+    if not row: return None
+    out = dict(row); out['payload'] = json.loads(out['payload'])
+    out['age_seconds'] = clock()-out['captured_at']
+    out['fresh'] = 0 <= out['age_seconds'] <= 15 and out['payload']['terminal_connected']
     return out
 
+def adapt_symbol(symbol):
+    if symbol in risk.SYMBOLS: return symbol
+    if isinstance(symbol,str) and len(symbol)==7 and symbol.endswith('c') and symbol[:6]+'.x' in risk.SYMBOLS:
+        return symbol[:6]+'.x'
+    raise risk.Reject('symbol_unavailable')
 
-def _active_broker_items(snapshot: dict[str, Any]) -> list[dict[str, Any]]:
-    p = snapshot.get("payload") or {}
-    return list(p.get("positions") or []) + list(p.get("orders") or [])
+def make_command(d):
+    now = clock()
+    expiry = datetime.fromisoformat(str(d['valid_until']).replace('Z','+00:00'))
+    if expiry.tzinfo is None: raise risk.Reject('invalid_command_time')
+    context = d.get('context') or {}
+    return {'command_id':uuid.uuid4().hex,'login':risk.LOGIN,'server':risk.SERVER,'created_at':now,
+            'expires_at':min(now+30,int(expiry.timestamp())),'symbol':adapt_symbol(d['symbol']),
+            'order_type':context.get('order_type',d['side']),'entry':d['entry'],'sl':d['stop'],'tp':d['target'],
+            'risk_pct':d['risk_pct'],'stop_limit':context.get('stop_limit',0),'cancel':context.get('machine_cancel')}
 
-
-def _same_symbol(a: str, b: str) -> bool:
-    return str(a).upper() == str(b).upper()
-
-
-def _position_risk_pct(snapshot: dict[str, Any]) -> float:
-    balance = max(float(snapshot.get("balance") or 0), 1e-9)
-    total = 0.0
-    for item in _active_broker_items(snapshot):
-        try:
-            total += max(0.0, float(item.get("risk_usd") or 0.0))
-        except Exception:
-            pass
-    return total / balance * 100.0
-
-
-def preflight_decision(decision: dict[str, Any]) -> list[str]:
-    """Fail-closed broker-aware guard. Active only once bridge is enabled."""
-    if not BRIDGE_ENABLED:
-        return []
+def preflight_decision(d):
+    if not enabled(): return ['mt5_bridge_disabled']
+    if killed() or mode() in {'OFF','OBSERVE'}: return ['mt5_killed_or_observe']
     snap = latest_snapshot()
-    if not snap:
-        return ["mt5_snapshot_missing"]
-    errors: list[str] = []
-    if not snap["fresh"]:
-        errors.append("mt5_snapshot_stale")
-    if int(snap["login"]) != EXPECTED_LOGIN:
-        errors.append("mt5_wrong_account")
-    if str(snap["server"]).strip() != EXPECTED_SERVER:
-        errors.append("mt5_wrong_server")
+    if not snap or not snap['fresh']: return ['mt5_snapshot_missing_or_stale']
+    try:
+        risk.plan(snap['payload'],make_command(d),clock())
+    except (risk.Reject,KeyError,TypeError,ValueError) as exc:
+        return [str(exc) if isinstance(exc,risk.Reject) else 'invalid_decision']
+    return []
 
-    balance = float(snap["balance"])
-    equity = float(snap["equity"])
-    floating = float(snap["floating_pnl"])
-    daily_anchor = float(snap.get("daily_anchor") or max(balance, equity))
-    high_water = float(snap.get("high_water_equity") or max(INITIAL_BALANCE, equity))
-
-    if balance <= 0 or equity <= 0:
-        errors.append("mt5_invalid_equity")
-    if floating < -(balance * FLOATING_LOSS_GUARD / 100.0):
-        errors.append("goat_floating_loss_guard")
-    if equity < daily_anchor * (1.0 - DAILY_DD_GUARD / 100.0):
-        errors.append("goat_daily_drawdown_guard")
-    # Instant HERO trailing loss is a fixed 5% of initial balance trailing upward
-    # and capped at initial balance. We use a stricter 4.5% guard.
-    guard_floor = min(INITIAL_BALANCE, high_water - INITIAL_BALANCE * TRAILING_DD_GUARD / 100.0)
-    if equity <= guard_floor:
-        errors.append("goat_trailing_drawdown_guard")
-
-    risk_pct = float(decision.get("risk_pct") or 0)
-    if risk_pct <= 0 or risk_pct > PER_TRADE_RISK_CAP + 1e-9:
-        errors.append("mt5_per_trade_risk_cap")
-    if _position_risk_pct(snap) + risk_pct > AGGREGATE_RISK_GUARD + 1e-9:
-        errors.append("mt5_aggregate_risk_guard")
-
-    symbol = str(decision.get("symbol") or "")
-    side = str(decision.get("side") or "").upper()
-    for item in _active_broker_items(snap):
-        if not _same_symbol(symbol, item.get("symbol", "")):
-            continue
-        errors.append("mt5_duplicate_active_symbol")
-        existing_side = str(item.get("side") or "").upper()
-        if existing_side and side and existing_side != side:
-            errors.append("goat_hedging_prohibited")
-        break
-    return list(dict.fromkeys(errors))
-
-
-def _queue_command(trade: dict[str, Any]) -> None:
-    if not BRIDGE_ENABLED:
-        return
-    _ensure_schema()
+def _queue_command(d, *, synthetic=False):
+    """Durable idempotent insertion. Synthetic commands are SHADOW-only, not trades."""
+    if not enabled() or killed() or mode() != 'SHADOW': raise risk.Reject('shadow_unavailable')
+    snap = latest_snapshot()
+    if not snap or not snap['fresh']: raise risk.Reject('stale_snapshot')
+    command = make_command(d)
+    quote = risk.plan(snap['payload'],command,clock(),require_anchors=not synthetic)
+    payload = {**command,'synthetic':synthetic,'quote':quote,'snapshot_id':snap['id']}
     c = fx101.db()
-    existing = c.execute("SELECT id FROM mt5_commands WHERE trade_id=?", (trade["trade_id"],)).fetchone()
-    if existing:
-        return
-    context = dict(trade.get("context") or {})
-    order_type = str(context.get("order_type") or trade.get("side") or "").upper()
-    command_id = "MT5-" + uuid.uuid4().hex[:20].upper()
-    now = _utcnow()
-    expires = min(
-        _parse_iso(trade["valid_until"]),
-        datetime.fromtimestamp(now.timestamp() + COMMAND_TTL_SECONDS, tz=timezone.utc),
-    )
-    payload = {
-        "command_id": command_id,
-        "trade_id": trade["trade_id"],
-        "mode": EXECUTION_MODE if EXECUTION_MODE in {"OBSERVE", "SHADOW", "AUTO"} else "SHADOW",
-        "symbol": trade["symbol"],
-        "side": trade["side"],
-        "order_type": order_type,
-        "entry": float(trade["entry"]),
-        "stop": float(trade["stop"]),
-        "target": float(trade["target"]),
-        "requested_volume": float(trade["volume"]),
-        "risk_pct": float(trade["risk_pct"]),
-        "valid_until": trade["valid_until"],
-        "stop_trigger": context.get("stop_trigger"),
-        "cancel_condition": trade.get("cancel_condition"),
-    }
-    c.execute(
-        "INSERT INTO mt5_commands (id,trade_id,login,mode,state,payload,created_at,expires_at) VALUES (?,?,?,?,?,?,?,?)",
-        (command_id, trade["trade_id"], EXPECTED_LOGIN, payload["mode"], "QUEUED",
-         json.dumps(payload, separators=(",", ":")), now.isoformat(), expires.isoformat()),
-    )
+    # A duplicate trade ID returns the original command, never a newly sized replacement.
+    c.execute('INSERT OR IGNORE INTO mt5_v2_commands VALUES (?,?,?,?,?,?,?)',
+              (command['command_id'],d['trade_id'],'QUEUED',json.dumps(payload,separators=(',',':')),clock(),command['expires_at'],None))
     c.commit()
-    fx101.log("mt5_command_queued", command_id=command_id, trade_id=trade["trade_id"], mode=payload["mode"])
+    return dict(c.execute('SELECT * FROM mt5_v2_commands WHERE trade_id=?',(d['trade_id'],)).fetchone())
 
+def wire(command, nonce):
+    # Exact flat ASCII protocol: no permissive substring JSON parser in the EA.
+    p = json.loads(command['payload'])
+    fields = ['FX101v2',nonce,p['command_id'],str(risk.LOGIN),risk.SERVER,'SHADOW',str(p['created_at']),str(p['expires_at']),
+              p['symbol'],p['order_type']]+[format(float(p[k]),'.10f') for k in ('entry','sl','tp','risk_pct','stop_limit')]
+    fields += [p['cancel']['kind'],format(float(p['cancel']['price']),'.10f'),'1' if p['synthetic'] else '0']
+    body = '|'.join(fields)
+    return body+'|'+sign(body.encode('ascii'))
 
-def _activate_stride_profile() -> dict[str, Any]:
-    stamp = fx101.now()
-    c = fx101.db()
-    c.execute("UPDATE accounts SET status='inactive', is_default=0, updated_at=? WHERE id<>?", (stamp, ACCOUNT_ID))
-    exists = c.execute("SELECT 1 FROM accounts WHERE id=?", (ACCOUNT_ID,)).fetchone()
-    rules = {
-        "model": "Goat Stride / Instant HERO",
-        "firm_daily_drawdown_pct": 3.0,
-        "firm_trailing_max_loss_pct": 5.0,
-        "firm_floating_loss_pct": 1.0,
-        "ea_first_party_only": True,
-        "hedging_allowed": False,
-        "hosting_vps_vpn_allowed": False,
-        "valid_day_profit_pct": 0.5,
-        "valid_days_required": 6,
-        "consistency_pct": 15.0,
-    }
-    allowed = json.dumps(sorted(getattr(fx101, "DESK_SYMBOLS", set())))
-    values = (
-        "GOAT Stride • $2.5K Instant HERO", "GOAT Funded Trader", "prop", "USD",
-        INITIAL_BALANCE, INITIAL_BALANCE, INITIAL_BALANCE, INITIAL_BALANCE,
-        PER_TRADE_RISK_CAP, AGGREGATE_RISK_GUARD, DAILY_DD_GUARD, TRAILING_DD_GUARD,
-        2, allowed, json.dumps(rules),
-        "Authoritative balance/equity comes from local MT5 EA. AUTO remains disabled until shadow validation passes.",
-        stamp,
-    )
-    if exists:
-        c.execute(
-            """UPDATE accounts SET name=?,broker=?,account_type=?,base_currency=?,
-            tracked_balance=?,tracked_equity=?,initial_balance=?,high_water_mark=?,
-            status='active',is_default=1,min_lot=NULL,max_lot=NULL,volume_step=NULL,
-            per_trade_risk_cap=?,aggregate_risk_cap=?,daily_loss_limit=?,
-            weekly_loss_limit=NULL,max_drawdown=?,max_positions=?,allowed_symbols=?,
-            prop_rules=?,notes=?,updated_at=? WHERE id=?""",
-            values + (ACCOUNT_ID,),
-        )
-    else:
-        c.execute(
-            """INSERT INTO accounts
-            (id,name,broker,account_type,base_currency,tracked_balance,tracked_equity,
-            initial_balance,high_water_mark,status,is_default,min_lot,max_lot,volume_step,
-            per_trade_risk_cap,aggregate_risk_cap,daily_loss_limit,weekly_loss_limit,
-            max_drawdown,max_positions,allowed_symbols,prop_rules,notes,created_at,updated_at)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-            (ACCOUNT_ID,) + values[:8] + ("active", 1, None, None, None) +
-            values[8:11] + (None,) + values[11:16] + (stamp,),
-        )
-    c.commit()
-    return fx101.get_account(ACCOUNT_ID)
+@bp.post('/fx101/mt5/snapshot')
+def ingest_snapshot():
+    try:
+        body = strict_json(); risk.validate_snapshot(body,clock())
+        c = fx101.db(); prior = latest_snapshot()
+        if prior and body['captured_at'] <= prior['captured_at']: raise risk.Reject('out_of_order_snapshot')
+        # Client assertions cannot establish historical anchors in this validation build.
+        body['anchors_verified'] = False
+        if prior:
+            body['high_water_equity'] = max(body['high_water_equity'],prior['payload']['high_water_equity'],body['equity'],2500)
+        else: body['high_water_equity'] = max(body['high_water_equity'],body['equity'],2500)
+        sid = uuid.uuid4().hex
+        c.execute('INSERT INTO mt5_v2_snapshots VALUES (?,?,?,?)',(sid,body['captured_at'],clock(),json.dumps(body,separators=(',',':'))))
+        # Preserve differences as evidence; do not invent closures, fills or P&L from missing tickets.
+        previous = {i['ticket']:i for group in ('positions','orders') for i in (prior['payload'][group] if prior else [])}
+        current = {i['ticket']:i for group in ('positions','orders') for i in body[group]}
+        differences = {'added':[k for k in current if k not in previous],
+                       'missing':[k for k in previous if k not in current],
+                       'changed':[k for k in current if k in previous and current[k]!=previous[k]],
+                       'unresolved_internal_trades':[x['id'] for x in c.execute("SELECT id FROM trades WHERE state IN ('PLACED','OPEN')")]}
+        c.execute('INSERT INTO mt5_v2_reconciliation VALUES (?,?,?,?)',(uuid.uuid4().hex,sid,json.dumps(differences),clock()))
+        c.commit()
+    except (risk.Reject,ValueError,KeyError,TypeError) as exc:
+        return jsonify(ok=False,error=str(exc) if isinstance(exc,risk.Reject) else 'invalid_snapshot'),400
+    return jsonify(ok=True,snapshot_id=sid,mode=mode(),auto_available=False)
 
+@bp.get('/fx101/mt5/command')
+def next_command():
+    if request.args: return jsonify(ok=False,error='unexpected_query'),400
+    c = fx101.db(); now = clock()
+    c.execute("UPDATE mt5_v2_commands SET state='EXPIRED' WHERE state='QUEUED' AND expires_at<=?",(now,)); c.commit()
+    if killed() or mode() != 'SHADOW': return Response('NONE',mimetype='text/plain')
+    snap = latest_snapshot()
+    if not snap or not snap['fresh']: return Response('NONE',mimetype='text/plain')
+    row = c.execute("SELECT * FROM mt5_v2_commands WHERE state='QUEUED' AND expires_at>? ORDER BY created_at,id LIMIT 1",(now,)).fetchone()
+    if not row: return Response('NONE',mimetype='text/plain')
+    return Response(wire(dict(row),request.headers['X-FX101-Nonce']),mimetype='text/plain')
 
-def install_fx101_hooks() -> None:
-    """Patch only execution/account routing; signal-generation remains untouched."""
-    fx101.activate_goat_challenge_profile = _activate_stride_profile
+@bp.post('/fx101/mt5/ack')
+def ack_command():
+    try:
+        body = strict_json()
+        risk.keys(body,{'command_id','login','server','status','volume','risk_usd','detail'})
+        if body['login']!=risk.LOGIN or body['server']!=risk.SERVER: raise risk.Reject('account_binding')
+        if body['status'] not in {'SHADOW_OK','REJECTED'}: raise risk.Reject('live_ack_prohibited')
+        if not isinstance(body['detail'],str) or not re.fullmatch(r'[a-z0-9_]{1,64}',body['detail']): raise risk.Reject('invalid_detail')
+        for k in ('volume','risk_usd'):
+            if risk.number(body[k]) < 0: raise risk.Reject('invalid_ack')
+        c = fx101.db(); row = c.execute('SELECT * FROM mt5_v2_commands WHERE id=?',(body['command_id'],)).fetchone()
+        if not row: return jsonify(ok=False,error='unknown_command'),404
+        canonical = json.dumps(body,sort_keys=True,separators=(',',':'))
+        if row['ack']:
+            if row['ack'] != canonical: raise risk.Reject('conflicting_ack')
+            return jsonify(ok=True,idempotent=True)
+        # Late ACK retained as evidence; it cannot resurrect an expired command.
+        c.execute("UPDATE mt5_v2_commands SET state=?,ack=? WHERE id=? AND ack IS NULL",
+                  (body['status'],canonical,body['command_id'])); c.commit()
+    except (risk.Reject,ValueError,KeyError,TypeError) as exc:
+        return jsonify(ok=False,error=str(exc) if isinstance(exc,risk.Reject) else 'invalid_ack'),400
+    return jsonify(ok=True,state=body['status'])
+
+@bp.get('/fx101/mt5/status')
+def mt5_status():
+    snap = latest_snapshot()
+    return jsonify(ok=True,bridge_enabled=enabled(),mode=mode(),kill_switch=killed(),auto_available=False,
+                   connected=bool(snap and snap['fresh']),snapshot=snap,
+                   validation_blockers=['historical_anchors','goat_hosted_decisions_policy','broker_execution_paths'])
+
+def install_fx101_hooks():
+    # Idempotent registration; preserve frozen analysis and avoid recursive monkey-patching.
+    if getattr(fx101.persist_decision,'_mt5_hook',False): return
     original = fx101.persist_decision
-
-    def wrapped(decision: dict[str, Any]):
-        errors = preflight_decision(decision)
-        if errors:
-            tid = fx101.trade_id(decision)
-            return False, ",".join(errors), {"trade_id": tid, "errors": errors}
-        ok, status, trade = original(decision)
-        if ok and status == "signalled":
-            _queue_command(trade)
-        return ok, status, trade
-
+    def wrapped(d):
+        if not enabled(): return original(d)
+        errors = preflight_decision(d)
+        if errors: return False,','.join(errors),{'trade_id':fx101.trade_id(d),'errors':errors}
+        # No live decision acceptance before anchors and policy gates are satisfied.
+        return False,'auto_validation_incomplete',{'trade_id':fx101.trade_id(d),'errors':['auto_validation_incomplete']}
+    wrapped._mt5_hook = True
     fx101.persist_decision = wrapped
 
 
-@bp.post("/fx101/mt5/snapshot")
-def ingest_snapshot():
-    if not _authorised():
-        return jsonify({"ok": False, "error": "unauthorized"}), 401
-    body = request.get_json(silent=True) or {}
-    try:
-        login = int(body["login"])
-        server = str(body["server"]).strip()
-        balance = float(body["balance"])
-        equity = float(body["equity"])
-        free_margin = float(body["free_margin"])
-        floating = float(body["floating_pnl"])
-    except (KeyError, TypeError, ValueError):
-        return jsonify({"ok": False, "error": "invalid_snapshot"}), 400
-    if login != EXPECTED_LOGIN or server != EXPECTED_SERVER:
-        return jsonify({"ok": False, "error": "account_or_server_mismatch"}), 403
-
-    _ensure_schema()
-    received = _iso()
-    high_water = max(float(body.get("high_water_equity") or equity), equity, INITIAL_BALANCE)
-    c = fx101.db()
-    c.execute(
-        """INSERT INTO mt5_snapshots
-        (id,login,server,balance,equity,free_margin,floating_pnl,day_key,daily_anchor,
-         high_water_equity,payload,received_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",
-        (uuid.uuid4().hex, login, server, balance, equity, free_margin, floating,
-         str(body.get("day_key") or ""), body.get("daily_anchor"), high_water,
-         json.dumps(body, separators=(",", ":")), received),
-    )
-    # Keep account presentation synchronized with broker truth.
-    try:
-        account = _activate_stride_profile()
-        high = max(float(account.get("high_water_mark") or INITIAL_BALANCE), high_water)
-        c.execute(
-            "UPDATE accounts SET tracked_balance=?,tracked_equity=?,high_water_mark=?,updated_at=? WHERE id=?",
-            (balance, equity, high, received, ACCOUNT_ID),
-        )
-    except Exception as exc:
-        fx101.log("mt5_account_sync_failed", error=type(exc).__name__)
-    c.commit()
-    return jsonify({"ok": True, "received_at": received, "mode": EXECUTION_MODE})
-
-
-@bp.get("/fx101/mt5/command")
-def next_command():
-    if not _authorised():
-        return jsonify({"ok": False, "error": "unauthorized"}), 401
-    try:
-        login = int(request.args.get("login", "0"))
-    except ValueError:
-        login = 0
-    if login != EXPECTED_LOGIN:
-        return jsonify({"ok": False, "error": "wrong_account"}), 403
-    _ensure_schema()
-    now = _iso()
-    c = fx101.db()
-    # Expire old commands before selection.
-    c.execute("UPDATE mt5_commands SET state='EXPIRED' WHERE state='QUEUED' AND expires_at<=?", (now,))
-    row = c.execute(
-        "SELECT * FROM mt5_commands WHERE login=? AND state='QUEUED' ORDER BY created_at ASC LIMIT 1",
-        (login,),
-    ).fetchone()
-    c.commit()
-    if not row:
-        return jsonify({"ok": True, "command": None})
-    payload = json.loads(dict(row)["payload"])
-    return jsonify({"ok": True, "command": payload})
-
-
-@bp.post("/fx101/mt5/ack")
-def ack_command():
-    if not _authorised():
-        return jsonify({"ok": False, "error": "unauthorized"}), 401
-    body = request.get_json(silent=True) or {}
-    command_id = str(body.get("command_id") or "")
-    status = str(body.get("status") or "").upper()
-    if not command_id or status not in {
-        "SHADOW_OK", "EXECUTED", "REJECTED", "ERROR", "CANCELLED", "EXPIRED"
-    }:
-        return jsonify({"ok": False, "error": "invalid_ack"}), 400
-    _ensure_schema()
-    c = fx101.db()
-    row = c.execute("SELECT * FROM mt5_commands WHERE id=?", (command_id,)).fetchone()
-    if not row:
-        return jsonify({"ok": False, "error": "unknown_command"}), 404
-    record = dict(row)
-    if record["state"] in {"ACKED", "REJECTED", "EXPIRED"}:
-        return jsonify({"ok": True, "idempotent": True})
-    new_state = "ACKED" if status in {"SHADOW_OK", "EXECUTED"} else ("EXPIRED" if status == "EXPIRED" else "REJECTED")
-    c.execute(
-        "UPDATE mt5_commands SET state=?,broker_ticket=?,ack_status=?,ack_payload=?,acked_at=? WHERE id=?",
-        (new_state, str(body.get("broker_ticket") or ""), status,
-         json.dumps(body, separators=(",", ":")), _iso(), command_id),
-    )
-    c.commit()
-    fx101.log("mt5_command_ack", command_id=command_id, status=status, broker_ticket=body.get("broker_ticket"))
-    return jsonify({"ok": True, "state": new_state})
-
-
-@bp.get("/fx101/mt5/status")
-def mt5_status():
+@bp.post('/fx101/mt5/shadow-test')
+def create_shadow_test():
+    """Explicit authenticated synthetic probe. Never accepts an executable signal."""
+    if request.get_data() not in {b'',b'{}'}:
+        return jsonify(ok=False,error='unexpected_payload'),400
     snap = latest_snapshot()
-    if not snap:
-        return jsonify({"ok": True, "bridge_enabled": BRIDGE_ENABLED, "connected": False, "mode": EXECUTION_MODE})
-    return jsonify({
-        "ok": True,
-        "bridge_enabled": BRIDGE_ENABLED,
-        "connected": bool(snap["fresh"]),
-        "mode": EXECUTION_MODE,
-        "login": snap["login"],
-        "server": snap["server"],
-        "balance": snap["balance"],
-        "equity": snap["equity"],
-        "floating_pnl": snap["floating_pnl"],
-        "age_seconds": snap["age_seconds"],
-        "open_risk_pct": _position_risk_pct(snap),
-    })
+    if not snap or not snap['fresh']:
+        return jsonify(ok=False,error='stale_snapshot'),409
+    try:
+        symbol='EURUSD.x'
+        spec=snap['payload']['symbols'][symbol]
+        from decimal import Decimal
+        entry=risk.number(spec['ask']); tick=risk.positive(spec['tick_size'])
+        distance=max(Decimal(200)*tick,Decimal(2)*max(spec['stops_level'],spec['freeze_level'])*risk.positive(spec['point']))
+        distance=(distance/tick).to_integral_value(rounding='ROUND_CEILING')*tick
+        decision={'trade_id':'SHADOW-'+uuid.uuid4().hex,'symbol':symbol,'side':'BUY',
+            'entry':float(entry),'stop':float(entry-distance),'target':float(entry+2*distance),
+            'risk_pct':0.25,'valid_until':datetime.fromtimestamp(clock()+30,timezone.utc).isoformat(),
+            'context':{'order_type':'BUY','machine_cancel':{'kind':'price_below','price':float(entry-2*distance)}}}
+        row=_queue_command(decision,synthetic=True)
+        return jsonify(ok=True,command_id=row['id'],synthetic=True,auto_available=False)
+    except (risk.Reject,KeyError,ValueError):
+        return jsonify(ok=False,error='shadow_preflight_rejected'),409

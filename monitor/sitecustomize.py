@@ -119,77 +119,85 @@ if _turso is not None and not getattr(_turso, "_fx101_resilience_installed", Fal
     _turso._fx101_resilience_installed = True
 
 
-# Production safety bootstrap: create one explicit tracked account only when the
-# persistent account table is empty. This is tracking state, not broker-live
-# equity, and never places an order.
-if os.getenv("G_DESK_RUNTIME_MODE", "").strip() == "chatgpt_subscription":
+# Broker bridge runtime bypasses legacy guessed balances and historical backfills.
+if os.getenv("FX101_MT5_BRIDGE_ENABLED", "0") == "1":
+    import sys
+    import types
+    # Python automatically imports usercustomize after sitecustomize on some hosts.
+    sys.modules["usercustomize"] = types.ModuleType("usercustomize")
+    import mt5_runtime
+elif os.getenv("FX101_LEGACY_OVERLAYS", "0") == "1":
+    # Production safety bootstrap: create one explicit tracked account only when the
+    # persistent account table is empty. This is tracking state, not broker-live
+    # equity, and never places an order.
+    if os.getenv("G_DESK_RUNTIME_MODE", "").strip() == "chatgpt_subscription":
+        try:
+            import fx101 as _fx101
+
+            if not _fx101.list_accounts():
+                tracked = float(os.getenv("RFBC_EQUITY_USD", "10.03"))
+                _fx101.create_account(
+                    {
+                        "id": "exness-cent-default",
+                        "name": "Exness Cent",
+                        "broker": "Exness",
+                        "account_type": "cent",
+                        "base_currency": "USD",
+                        "tracked_balance": tracked,
+                        "tracked_equity": tracked,
+                        "min_lot": 0.01,
+                        "volume_step": 0.01,
+                        "per_trade_risk_cap": 0.5,
+                        "aggregate_risk_cap": 1.5,
+                        "max_positions": 3,
+                        "allowed_symbols": [
+                            "EURUSDc",
+                            "GBPUSDc",
+                            "GBPJPYc",
+                            "USDCADc",
+                            "EURJPYc",
+                            "USDJPYc",
+                            "AUDJPYc",
+                        ],
+                        "notes": "Tracked Exness Standard Cent account; manual MT5 execution only.",
+                    }
+                )
+                _LOG.warning("fx101_default_tracked_account_created")
+        except Exception as exc:
+            _LOG.exception("fx101_default_account_bootstrap_failed: %s", exc)
+
+    # Load current product/risk presentation policy after the safety bootstrap.
     try:
-        import fx101 as _fx101
-
-        if not _fx101.list_accounts():
-            tracked = float(os.getenv("RFBC_EQUITY_USD", "10.03"))
-            _fx101.create_account(
-                {
-                    "id": "exness-cent-default",
-                    "name": "Exness Cent",
-                    "broker": "Exness",
-                    "account_type": "cent",
-                    "base_currency": "USD",
-                    "tracked_balance": tracked,
-                    "tracked_equity": tracked,
-                    "min_lot": 0.01,
-                    "volume_step": 0.01,
-                    "per_trade_risk_cap": 0.5,
-                    "aggregate_risk_cap": 1.5,
-                    "max_positions": 3,
-                    "allowed_symbols": [
-                        "EURUSDc",
-                        "GBPUSDc",
-                        "GBPJPYc",
-                        "USDCADc",
-                        "EURJPYc",
-                        "USDJPYc",
-                        "AUDJPYc",
-                    ],
-                    "notes": "Tracked Exness Standard Cent account; manual MT5 execution only.",
-                }
-            )
-            _LOG.warning("fx101_default_tracked_account_created")
+        import usercustomize as _fx101_runtime_policy  # noqa: F401
     except Exception as exc:
-        _LOG.exception("fx101_default_account_bootstrap_failed: %s", exc)
+        _LOG.exception("fx101_runtime_policy_load_failed: %s", exc)
 
-# Load current product/risk presentation policy after the safety bootstrap.
-try:
-    import usercustomize as _fx101_runtime_policy  # noqa: F401
-except Exception as exc:
-    _LOG.exception("fx101_runtime_policy_load_failed: %s", exc)
-
-# Repair pre-Telegram manual positions and keep lifecycle polling lightweight.
-try:
-    import production_hotfix as _fx101_production_hotfix  # noqa: F401
-except Exception as exc:
-    _LOG.exception("fx101_production_hotfix_load_failed: %s", exc)
-
-# Final presentation overlay. Loaded last so it can safely reshape Telegram UX
-# without altering trading/data/risk behavior.
-try:
-    import premium_ux as _fx101_premium_ux  # noqa: F401
-except Exception as exc:
-    _LOG.exception("fx101_premium_ux_load_failed: %s", exc)
-
-# Temporary live-mode overlay: pause RFBC execution and move USDJPY/AUDJPY into
-# G DESK. Frozen RFBC implementation remains in the repo for later re-enable.
-try:
-    import gdesk_only_mode as _fx101_gdesk_only_mode  # noqa: F401
-except Exception as exc:
-    _LOG.exception("fx101_gdesk_only_mode_load_failed: %s", exc)
-
-# G DESK mailbox freshness is handled directly in fx101_worker via the GitHub
-# Contents API. Do not override it with raw/CDN transports; those can serve stale
-# branch content and silently suppress current-hour Telegram results.
-if os.getenv("G_DESK_RUNTIME_MODE", "").strip() == "chatgpt_subscription":
+    # Repair pre-Telegram manual positions and keep lifecycle polling lightweight.
     try:
-        import fx101 as _bridge_fx101
-        _bridge_fx101.log("gdesk_bridge_hardening_loaded", transport="github_contents_api", timeout_seconds=15)
+        import production_hotfix as _fx101_production_hotfix  # noqa: F401
     except Exception as exc:
-        _LOG.exception("gdesk_bridge_hardening_load_failed: %s", exc)
+        _LOG.exception("fx101_production_hotfix_load_failed: %s", exc)
+
+    # Final presentation overlay. Loaded last so it can safely reshape Telegram UX
+    # without altering trading/data/risk behavior.
+    try:
+        import premium_ux as _fx101_premium_ux  # noqa: F401
+    except Exception as exc:
+        _LOG.exception("fx101_premium_ux_load_failed: %s", exc)
+
+    # Temporary live-mode overlay: pause RFBC execution and move USDJPY/AUDJPY into
+    # G DESK. Frozen RFBC implementation remains in the repo for later re-enable.
+    try:
+        import gdesk_only_mode as _fx101_gdesk_only_mode  # noqa: F401
+    except Exception as exc:
+        _LOG.exception("fx101_gdesk_only_mode_load_failed: %s", exc)
+
+    # G DESK mailbox freshness is handled directly in fx101_worker via the GitHub
+    # Contents API. Do not override it with raw/CDN transports; those can serve stale
+    # branch content and silently suppress current-hour Telegram results.
+    if os.getenv("G_DESK_RUNTIME_MODE", "").strip() == "chatgpt_subscription":
+        try:
+            import fx101 as _bridge_fx101
+            _bridge_fx101.log("gdesk_bridge_hardening_loaded", transport="github_contents_api", timeout_seconds=15)
+        except Exception as exc:
+            _LOG.exception("gdesk_bridge_hardening_load_failed: %s", exc)

@@ -1,0 +1,91 @@
+test_aggregate_risk (monitor.test_mt5_bridge.RiskTests.test_aggregate_risk) ... ok
+test_all_eight_order_plans (monitor.test_mt5_bridge.RiskTests.test_all_eight_order_plans) ... ok
+test_arbitrary_lot_step_rounds_down (monitor.test_mt5_bridge.RiskTests.test_arbitrary_lot_step_rounds_down) ... ok
+test_cancellation_met (monitor.test_mt5_bridge.RiskTests.test_cancellation_met) ... ok
+test_clean_order_rounds_down (monitor.test_mt5_bridge.RiskTests.test_clean_order_rounds_down) ... ok
+test_close_only_symbol (monitor.test_mt5_bridge.RiskTests.test_close_only_symbol) ... ok
+test_daily_drawdown (monitor.test_mt5_bridge.RiskTests.test_daily_drawdown) ... ok
+test_disconnected_terminal (monitor.test_mt5_bridge.RiskTests.test_disconnected_terminal) ... ok
+test_duplicate_symbol (monitor.test_mt5_bridge.RiskTests.test_duplicate_symbol) ... ok
+test_eighteen_symbol_universe (monitor.test_mt5_bridge.RiskTests.test_eighteen_symbol_universe) ... ok
+test_floating_loss (monitor.test_mt5_bridge.RiskTests.test_floating_loss) ... ok
+test_freeze_level (monitor.test_mt5_bridge.RiskTests.test_freeze_level) ... ok
+test_future_command (monitor.test_mt5_bridge.RiskTests.test_future_command) ... ok
+test_future_snapshot (monitor.test_mt5_bridge.RiskTests.test_future_snapshot) ... ok
+test_inverted_stop (monitor.test_mt5_bridge.RiskTests.test_inverted_stop) ... ok
+test_legacy_symbol_rejected_at_execution (monitor.test_mt5_bridge.RiskTests.test_legacy_symbol_rejected_at_execution) ... ok
+test_manual_pending_counts (monitor.test_mt5_bridge.RiskTests.test_manual_pending_counts) ... ok
+test_manual_position_counts (monitor.test_mt5_bridge.RiskTests.test_manual_position_counts) ... ok
+test_margin (monitor.test_mt5_bridge.RiskTests.test_margin) ... ok
+test_minimum_lot (monitor.test_mt5_bridge.RiskTests.test_minimum_lot) ... ok
+test_no_sl_pending (monitor.test_mt5_bridge.RiskTests.test_no_sl_pending) ... ok
+test_no_sl_position (monitor.test_mt5_bridge.RiskTests.test_no_sl_position) ... ok
+test_nonfinite (monitor.test_mt5_bridge.RiskTests.test_nonfinite) ... ok
+test_opposite_position (monitor.test_mt5_bridge.RiskTests.test_opposite_position) ... ok
+test_oversized_ttl (monitor.test_mt5_bridge.RiskTests.test_oversized_ttl) ... ok
+test_per_trade_risk (monitor.test_mt5_bridge.RiskTests.test_per_trade_risk) ... ok
+test_price_tick_alignment (monitor.test_mt5_bridge.RiskTests.test_price_tick_alignment) ... ok
+test_spread (monitor.test_mt5_bridge.RiskTests.test_spread) ... ok
+test_stale_command (monitor.test_mt5_bridge.RiskTests.test_stale_command) ... ok
+test_stale_quote (monitor.test_mt5_bridge.RiskTests.test_stale_quote) ... ok
+test_stale_snapshot (monitor.test_mt5_bridge.RiskTests.test_stale_snapshot) ... ok
+test_stop_level (monitor.test_mt5_bridge.RiskTests.test_stop_level) ... ok
+test_stop_limit_geometry (monitor.test_mt5_bridge.RiskTests.test_stop_limit_geometry) ... ok
+test_tick_value_missing (monitor.test_mt5_bridge.RiskTests.test_tick_value_missing) ... ok
+test_trailing_drawdown_uncapped (monitor.test_mt5_bridge.RiskTests.test_trailing_drawdown_uncapped) ... ok
+test_unbounded_cancellation (monitor.test_mt5_bridge.RiskTests.test_unbounded_cancellation) ... ok
+test_unsupported_order (monitor.test_mt5_bridge.RiskTests.test_unsupported_order) ... ok
+test_unverified_anchors (monitor.test_mt5_bridge.RiskTests.test_unverified_anchors) ... ok
+test_wrong_account (monitor.test_mt5_bridge.RiskTests.test_wrong_account) ... ok
+test_wrong_command_account (monitor.test_mt5_bridge.RiskTests.test_wrong_command_account) ... ok
+test_wrong_command_server (monitor.test_mt5_bridge.RiskTests.test_wrong_command_server) ... ok
+test_wrong_server (monitor.test_mt5_bridge.RiskTests.test_wrong_server) ... ok
+test_bad_signature (monitor.test_mt5_bridge.TransportTests.test_bad_signature) ... ok
+test_command_signature_and_request_binding (monitor.test_mt5_bridge.TransportTests.test_command_signature_and_request_binding) ... ok
+test_conflicting_ack (monitor.test_mt5_bridge.TransportTests.test_conflicting_ack) ... ok
+test_duplicate_json_key (monitor.test_mt5_bridge.TransportTests.test_duplicate_json_key) ... ok
+test_durable_duplicate_command (monitor.test_mt5_bridge.TransportTests.test_durable_duplicate_command) ... ok
+test_executed_ack_prohibited (monitor.test_mt5_bridge.TransportTests.test_executed_ack_prohibited) ... ok
+test_expired_command_not_delivered (monitor.test_mt5_bridge.TransportTests.test_expired_command_not_delivered) ... ok
+test_history_cannot_be_client_verified (monitor.test_mt5_bridge.TransportTests.test_history_cannot_be_client_verified) ... ok
+test_local_auto_has_no_broker_operations (monitor.test_mt5_bridge.TransportTests.test_local_auto_has_no_broker_operations) ... ok
+test_lost_ack_resubmission_and_restart (monitor.test_mt5_bridge.TransportTests.test_lost_ack_resubmission_and_restart) ... ok
+test_no_legacy_queue_execution (monitor.test_mt5_bridge.TransportTests.test_no_legacy_queue_execution) ... ok
+test_nonfinite_json (monitor.test_mt5_bridge.TransportTests.test_nonfinite_json) ... ok
+test_observe_no_command (monitor.test_mt5_bridge.TransportTests.test_observe_no_command) ... ok
+test_out_of_order_snapshot (monitor.test_mt5_bridge.TransportTests.test_out_of_order_snapshot) ... ok
+test_oversized_request (monitor.test_mt5_bridge.TransportTests.test_oversized_request) ... ok
+test_rate_limit (monitor.test_mt5_bridge.TransportTests.test_rate_limit) ... ok
+test_reconciliation_records_manual_changes (monitor.test_mt5_bridge.TransportTests.test_reconciliation_records_manual_changes) ... ok
+test_replay_after_backend_restart (monitor.test_mt5_bridge.TransportTests.test_replay_after_backend_restart) ... ok
+test_replayed_request (monitor.test_mt5_bridge.TransportTests.test_replayed_request) ... ok
+test_server_auto_local_shadow_no_command (monitor.test_mt5_bridge.TransportTests.test_server_auto_local_shadow_no_command) ... ok
+test_server_kill (monitor.test_mt5_bridge.TransportTests.test_server_kill) ... ok
+test_snapshot_status_authoritative (monitor.test_mt5_bridge.TransportTests.test_snapshot_status_authoritative) ... ok
+test_stale_auth (monitor.test_mt5_bridge.TransportTests.test_stale_auth) ... ok
+test_timeout_before_delivery_same_command (monitor.test_mt5_bridge.TransportTests.test_timeout_before_delivery_same_command) ... ok
+test_tls_only (monitor.test_mt5_bridge.TransportTests.test_tls_only) ... ok
+test_unknown_snapshot_field (monitor.test_mt5_bridge.TransportTests.test_unknown_snapshot_field) ... ok
+test_unsigned (monitor.test_mt5_bridge.TransportTests.test_unsigned) ... ok
+test_wrong_snapshot_account (monitor.test_mt5_bridge.TransportTests.test_wrong_snapshot_account) ... ok
+test_empty_adapter_response_is_no_trade (monitor.test_fx101.Fx101Tests.test_empty_adapter_response_is_no_trade) ... ok
+test_geometry_and_correlation_gate (monitor.test_fx101.Fx101Tests.test_geometry_and_correlation_gate) ... ok
+test_persist_idempotent_and_lifecycle (monitor.test_fx101.Fx101Tests.test_persist_idempotent_and_lifecycle) ... ok
+test_price_manager_marks_target (monitor.test_fx101.Fx101Tests.test_price_manager_marks_target) ... ok
+test_reconciliation_preserves_tracked_balance (monitor.test_fx101.Fx101Tests.test_reconciliation_preserves_tracked_balance) ... ok
+test_no_trade_and_system_failure_are_consumed (monitor.test_gdesk_bridge.BridgeTests.test_no_trade_and_system_failure_are_consumed) ... {"accepted": 0, "at": "2026-10-14T11:41:39.069327+00:00", "event": "desk_result", "rejected": [], "result": "NO_TRADE"}
+{"at": "2026-10-14T11:41:39.074741+00:00", "decision_id": "SYNTHETIC-NO_TRADE", "event": "gdesk_bridge_consumed", "ingest_status": "NO_TRADE", "result": "NO_TRADE"}
+{"at": "2026-10-14T11:41:39.075373+00:00", "decision_id": "SYNTHETIC-SYSTEM_FAILURE", "event": "gdesk_telegram_delivery", "ok": false, "result": "SYSTEM_FAILURE", "status": "telegram_not_configured"}
+{"at": "2026-10-14T11:41:39.080853+00:00", "decision_id": "SYNTHETIC-SYSTEM_FAILURE", "event": "gdesk_bridge_consumed", "result": "SYSTEM_FAILURE"}
+ok
+test_stale_and_future_are_rejected_once (monitor.test_gdesk_bridge.BridgeTests.test_stale_and_future_are_rejected_once) ... {"at": "2026-10-14T11:41:39.168711+00:00", "decision_id": "SYNTHETIC-NO_TRADE--7200.0", "event": "gdesk_bridge_rejected", "reason": "future_or_stale_decision"}
+{"at": "2026-10-14T11:41:39.174303+00:00", "decision_id": "SYNTHETIC-NO_TRADE-600.0", "event": "gdesk_bridge_rejected", "reason": "future_or_stale_decision"}
+ok
+test_trade_and_duplicate_are_idempotent (monitor.test_gdesk_bridge.BridgeTests.test_trade_and_duplicate_are_idempotent) ... {"accepted": 1, "at": "2026-10-14T11:41:39.277906+00:00", "event": "desk_result", "rejected": [], "result": "TRADE"}
+{"at": "2026-10-14T11:41:39.283143+00:00", "decision_id": "SYNTHETIC-TRADE", "event": "gdesk_bridge_consumed", "ingest_status": "TRADE", "result": "TRADE"}
+ok
+
+----------------------------------------------------------------------
+Ran 78 tests in 5.020s
+
+OK
