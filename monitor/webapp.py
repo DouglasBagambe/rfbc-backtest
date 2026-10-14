@@ -16,11 +16,14 @@ import telegram_notify as tg
 import fx101
 import fx101_worker
 import g_desk_adapter
+import mt5_bridge
 
 SELFTEST = selftest.run()
 print(f"RFBC_OPERATIONAL_SELFTEST {SELFTEST}", flush=True)
 
 app = Flask(__name__)
+mt5_bridge.install_fx101_hooks()
+app.register_blueprint(mt5_bridge.bp)
 _last_alert_keys: set[str] = set()
 
 
