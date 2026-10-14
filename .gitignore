@@ -15,3 +15,10 @@ results_next_strategy/round3c/trades.csv
 # Local broker observations and non-shareable broker captures
 broker_validation/local_data/
 broker_validation/output/*_private.*
+
+# Bridge private local state and test environment
+.venv/
+.pytest_cache/
+*.ex5
+*.sqlite3*
+bridge-private/

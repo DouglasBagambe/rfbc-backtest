@@ -2,7 +2,7 @@
 #property version   "1.00"
 #property description "G's Fx101 first-party MT5 execution bridge for GoatFunded Stride"
 
-#include <Trade/Trade.mqh>
+// Live broker operations are deliberately absent pending critical-path validation.
 
 enum FX101_MODE
   {
@@ -27,7 +27,7 @@ input double InpInitialBalance=2500.0;
 input int    InpFirmResetHourUTC=22;
 input ulong  InpMagic=5010101;
 
-CTrade Trade;
+
 double g_high_water=0.0;
 double g_daily_anchor=0.0;
 string g_day_key="";
@@ -481,43 +481,8 @@ bool ExecuteCommand(string json,string &detail,string &ticket)
       return false;
      }
 
-   Trade.SetExpertMagicNumber(InpMagic);
-   Trade.SetAsyncMode(false);
-   bool ok=false;
-   string comment="FX101:"+StringSubstr(command_id,0,20);
-   if(order_type=="BUY")
-      ok=Trade.Buy(volume,symbol,0.0,stop,target,comment);
-   else if(order_type=="SELL")
-      ok=Trade.Sell(volume,symbol,0.0,stop,target,comment);
-   else if(order_type=="BUY_LIMIT")
-      ok=Trade.BuyLimit(volume,entry,symbol,stop,target,ORDER_TIME_GTC,0,comment);
-   else if(order_type=="SELL_LIMIT")
-      ok=Trade.SellLimit(volume,entry,symbol,stop,target,ORDER_TIME_GTC,0,comment);
-   else if(order_type=="BUY_STOP")
-      ok=Trade.BuyStop(volume,entry,symbol,stop,target,ORDER_TIME_GTC,0,comment);
-   else if(order_type=="SELL_STOP")
-      ok=Trade.SellStop(volume,entry,symbol,stop,target,ORDER_TIME_GTC,0,comment);
-   else if(order_type=="BUY_STOP_LIMIT" && stop_trigger>0.0)
-      ok=Trade.BuyStopLimit(volume,stop_trigger,entry,symbol,stop,target,ORDER_TIME_GTC,0,comment);
-   else if(order_type=="SELL_STOP_LIMIT" && stop_trigger>0.0)
-      ok=Trade.SellStopLimit(volume,stop_trigger,entry,symbol,stop,target,ORDER_TIME_GTC,0,comment);
-   else
-     {
-      detail="unsupported_order_type";
-      return false;
-     }
-
-   if(!ok)
-     {
-      detail=StringFormat("trade_failed retcode=%u %s",Trade.ResultRetcode(),Trade.ResultRetcodeDescription());
-      return false;
-     }
-   ulong order=Trade.ResultOrder();
-   ulong deal=Trade.ResultDeal();
-   ticket=(deal>0 ? (string)deal : (string)order);
-   detail=StringFormat("executed volume=%.4f risk=$%.2f",volume,exact_risk);
-   g_last_command=command_id;
-   return true;
+   detail="auto_validation_incomplete";
+   return false;
   }
 
 void PollCommand()
@@ -555,7 +520,11 @@ void PollCommand()
 
 int OnInit()
   {
-   Trade.SetExpertMagicNumber(InpMagic);
+   if(InpMode==MODE_AUTO)
+     {
+      Print("AUTO disabled: validation incomplete.");
+      return INIT_PARAMETERS_INCORRECT;
+     }
    UpdateRiskAnchors();
    EventSetTimer(MathMax(2,InpPollSeconds));
    Print("FX101 MT5 Bridge started. Mode=",EnumToString(InpMode),

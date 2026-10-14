@@ -25,7 +25,7 @@ EXPECTED_SERVER = os.getenv("FX101_MT5_SERVER", "GoatFunded-Server").strip()
 INITIAL_BALANCE = float(os.getenv("FX101_GOAT_INITIAL_BALANCE", "2500"))
 SNAPSHOT_MAX_AGE = int(os.getenv("FX101_MT5_SNAPSHOT_MAX_AGE_SECONDS", "30"))
 BRIDGE_ENABLED = os.getenv("FX101_MT5_BRIDGE_ENABLED", "0").strip() == "1"
-EXECUTION_MODE = os.getenv("FX101_MT5_EXECUTION_MODE", "SHADOW").strip().upper()
+EXECUTION_MODE = "SHADOW"  # Live execution quarantined; env cannot bypass validation.
 PER_TRADE_RISK_CAP = float(os.getenv("FX101_MT5_PER_TRADE_RISK_CAP_PCT", "0.50"))
 AGGREGATE_RISK_GUARD = float(os.getenv("FX101_MT5_AGGREGATE_RISK_GUARD_PCT", "0.75"))
 FLOATING_LOSS_GUARD = float(os.getenv("FX101_MT5_FLOATING_LOSS_GUARD_PCT", "0.80"))
