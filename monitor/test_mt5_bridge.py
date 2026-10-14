@@ -65,7 +65,7 @@ class RiskTests(unittest.TestCase):
         self.s.update(equity=2476.17-amount,free_margin=2476.17-amount,floating_pnl=-amount)
     def test_floating_loss(self): self.loss(18); self.rejected('floating_loss')
     def test_daily_drawdown(self): self.s['daily_anchor']=2600; self.rejected('daily_drawdown')
-    def test_trailing_drawdown_uncapped(self): self.s['high_water_equity']=2700; self.rejected('trailing_drawdown')
+    def test_trailing_drawdown_capped_with_buffer(self): self.s['high_water_equity']=2700; self.rejected('trailing_drawdown')
     def test_per_trade_risk(self): self.c['risk_pct']=.26; self.rejected('per_trade_risk')
     def test_aggregate_risk(self): self.s['positions']=[item(volume=.2)]; self.rejected('aggregate_risk')
     def test_minimum_lot(self): self.c['risk_pct']=.001; self.rejected('lot_minimum')

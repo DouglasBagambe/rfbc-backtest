@@ -1,1 +1,13 @@
-{"real_postgres": true, "concurrent_nonce_unique": true, "concurrent_command_conflicts": true, "concurrent_ack_conflicts": true, "rollback_isolated": true, "command_id": "2b5b5fe25e984249ad0882389d7db0fe", "broker_execution_test": false}
+{
+  "real_postgres": true,
+  "concurrent_nonce_unique": true,
+  "concurrent_command_conflicts": true,
+  "concurrent_ack_conflicts": true,
+  "rollback_isolated": true,
+  "command_id": "3ee4b1eb10664573a879d1c0f3b9f600",
+  "broker_execution_test": false,
+  "remote_thesis_reservation_reconnect": true,
+  "unresolved_add_on_blocked": true,
+  "remote_manual_alert_quarantine_reconnect": true,
+  "telegram_delivery_test": false
+}

@@ -1,5 +1,7 @@
 # Fx101 GOAT Stride execution audit and SHADOW evidence
 
+> Historical disposable-service milestone. The current permanent dnb installation and corrected rules are documented in [DNB_FX_PRODUCTION_READINESS.md](DNB_FX_PRODUCTION_READINESS.md). The proportional trailing interpretation below was superseded by the current official fixed-dollar capped rule; older E2E evidence remains historical.
+
 **Verdict: NOT READY for AUTO validation.** No live trade was placed. AUTO is unavailable in both server behavior and EA source. Work is on `feature/mt5-goat-auto`; production `strategy2-round2-wip` and the existing Render production service were not modified. This is an observation/SHADOW implementation, not a finished autonomous executor.
 
 ## Architecture delivered

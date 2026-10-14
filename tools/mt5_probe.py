@@ -2,7 +2,7 @@
 import argparse,hashlib,hmac,json,secrets,time
 from pathlib import Path
 import requests
-p=argparse.ArgumentParser();p.add_argument('action',choices=['status','shadow']);p.add_argument('--url',default='https://fx101-mt5-shadow.onrender.com');p.add_argument('--out');p.add_argument('--resolve',help='Temporary verified address for this test hostname only');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('action',choices=['status','shadow']);p.add_argument('--url',default='https://dnb-fx.onrender.com');p.add_argument('--out');p.add_argument('--resolve',help='Temporary verified address for this test hostname only');a=p.parse_args()
 if not a.url.startswith('https://'): raise SystemExit('HTTPS required')
 if a.resolve:
     import socket, urllib.parse, ipaddress

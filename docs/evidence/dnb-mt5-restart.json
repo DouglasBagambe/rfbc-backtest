@@ -1,0 +1,11 @@
+{
+  "normal_mt5_restart": true,
+  "fresh_snapshot": true,
+  "age_seconds": 1,
+  "connected": true,
+  "command_id": "646302155cfe47ce860feca86d15bd5d",
+  "shadow_ack_outbox_reconfirmed": true,
+  "positions": [],
+  "orders": [],
+  "broker_acceptance_lost_ack_test": false
+}

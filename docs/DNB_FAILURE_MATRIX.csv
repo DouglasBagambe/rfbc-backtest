@@ -1,0 +1,46 @@
+Path,Protection,Validation,Remaining before AUTO
+Clean order,Broker metadata sizing downward; 0.25% cap; conservative quote allowance,Python fixtures and real synthetic SHADOW ACK,Actual fills/fees/slippage untested
+Wrong account/login,Hardcoded binding on server and EA,Python deterministic tests,EA rejection runtime permutations not exercised
+Wrong server,Exact binding on server and EA,Python deterministic tests,EA rejection runtime permutations not exercised
+Stale/future account snapshot,15-second capture bound and connected flag,Python deterministic tests,Long real network outage needs expanded testing
+Stale/future command,30-second lifetime and signature-bound times,Python deterministic tests,Live order expiration not implemented
+Duplicate command,Durable server ID and unique trade key,Python restart/idempotency/conflict tests,Real broker idempotency not implemented
+Replay after terminal restart,Persistent per-command ACK journals,Real SHADOW journal; normal restart and persisted ACK confirmation passed,No live broker execution journal exists
+Duplicate/opposite/manual same symbol,Portfolio rejection across positions and orders,Python deterministic tests,Real account currently empty
+Manual position/manual pending order,All tickets synchronized and accounted regardless of magic,Python synthetic manual fixtures; real empty arrays,Nonempty real account synchronization not exercised
+Manual exposure without SL,New risk blocked,Python deterministic tests,Broker position/order snapshots need further race testing
+Floating loss,0.70% internal guard below 1% firm boundary,Python threshold tests; live P&L observed zero,Protective broker close/cancel not implemented
+Daily loss,2.50% internal guard; unknown historical anchors block signals,Python threshold tests,Official daily anchor/reset semantics unresolved; local anchor gate blocks real commands
+Trailing loss,"Fixed $125 trailing amount capped at $2500, plus $12.50 engineering buffer; unknown history blocks live",Current official recheck and deterministic floor tests,"Verified historical peak, reset timezone and payout reset baseline"
+Per-trade risk,0.25% internal cap based on lesser balance/equity,Python tests and real SHADOW volume/risk,Commission/gap/fill risk needs validation
+Aggregate risk,0.60% internal guard counting manual exposure,Python position/order fixtures,"Native nonempty manual/pending risk race tests, gaps/fees/conversion"
+Directional exposure,0.40% same currency-direction risk on backend and native planner; no opposite-leg offsets,Deterministic concentration test and compiled native implementation,Native nonempty portfolio/race tests and complete deal history
+Minimum lot,Reject when floor below broker minimum,Python deterministic tests and actual broker specification reads,Across-symbol native executable tests required
+Lot step,Round down without positive epsilon,Python arbitrary-step test; native volume observed,Across-symbol rounding tests required
+Margin,Native OrderCalcMargin; server reported margin estimate; reserve 20%,Python insufficiency test and native synthetic planning,Pending/portfolio concurrent margin races untested
+Stops/freeze,Geometry and quote-distance checks,Python deterministic tests; native shadow check,Live modification/freeze behavior unimplemented
+Spread/quote/contract,Required finite broker values and spread/freshness checks,Python deterministic tests; all 18 live specs observed,Volatile/news/gap stress paths untested
+BUY/SELL/limit/stop/stop-limit,All eight planning order types; unsupported type rejection,Python eight-type planning tests,All eight broker submission paths absent
+Cancellation condition,Only measurable price-above/price-below accepted,Python deterministic tests,Pending management/cancellation execution absent
+Broker rejection,No broker operation permitted,Not implemented or broker tested,Need deterministic submission adapter and broker error tests
+Partial fills/pending fills,No broker operation permitted,Not implemented or broker tested,Need order/deal reconciliation and actual native tests
+SL/TP modification/cancel/close/expiration,No broker operation permitted,Not implemented or broker tested,Need management command protocol and independent local guards
+Manual close/external edit,Snapshot ticket differences recorded without fabricated outcomes,Python manual-change snapshot test,Deal-history reconciliation and true closure attribution absent
+HTTP timeout before command,Same durable command redelivered until expiry,Python repeated-delivery test,Physical timeout injection not performed
+ACK loss after SHADOW calculation,ACK flushed locally before HTTP; independent outbox retry,Python late/duplicate ACK tests; native outbox resend confirmed after restart,Full offline/reconnect duration testing incomplete
+Trade accepted then connection lost before ACK,AUTO impossible; all broker calls removed,Live path deliberately absent,CRITICAL: must prove broker history/order identity recovery before implementing AUTO
+Render restart/redeploy,"Dedicated permanent Postgres, no ephemeral execution state",Actual permanent command/ACK survived two deployments; isolated remote concurrency/reconnect tests,"Full backup/restore, quota/capacity and live-intent recovery"
+SHADOW cannot trade,No broker order/mutation calls in EA; server rejects EXECUTED ACK,Source check; real unchanged broker exposure,Does not validate future order-sending code
+Server AUTO/local SHADOW,Server maps unsupported AUTO to OFF; no command served,Python deterministic test,Actual AUTO setting never enabled
+Local AUTO/server SHADOW,EA rejects AUTO at initialization; no broker order calls,Source assertion and compiled code,Actual AUTO setting never enabled
+Kill switches,Server gates command delivery; local KILL gates planning/outbox,Python server-kill test and local configuration,Switch behavior around future in-flight orders untested
+TLS/auth/schema/replay/limits,HMAC-SHA256 body/method/path/time/nonce; nonce persistence; strict schema; TLS; limits,Original security tests; real permanent TLS/HMAC; remote concurrent nonce/ACK conflicts; distinct credential rotation,"External audit, least-privilege DB role, capacity/rate stress"
+News/holding time/consistency/hosting,Live commands blocked,Official documentation research only,Account-specific rules and written architecture approval needed
+Intentional scale-in,"Broker-confirmed thesis membership, fresh confirmation, profit, unchanged structure SL, equal/smaller risk, max two add-ons",Python planning fixtures and persistent reservation restart tests,Native protocol/submission/broker-history proof absent; no live scale-in
+Scale-in lost ACK/restart,Reservation retained and repeated ID cannot add another leg; unresolved submission blocks next add-on,SQLite library restart simulation; shared durable schema exists,Not actual broker acceptance or native lost-ACK recovery
+Offline Telegram fallback,Separate durable alert intent; ambiguous delivery quarantined; no lot authorised without broker risk,Fake sender/timeout/expiry/restart tests,Permanent producer/Telegram workers and credentials not commissioned
+Manual alert executed before reconnect,All same-symbol possible manual fills block automated reentry until full history proof,Position-candidate and empty-snapshot fixtures; no guessed binding,Native order/deal history and real manual-fill mapping absent
+All 18 symbols/eight types,Native requests constructed with actual contract metadata and profit/margin calculations,"144 native calculation cases, all passed, zero submissions","Broker acceptance, fill-mode/session admission and live lifecycle untested"
+Permanent MT5 profile restart,Saved permanent input URL and WebRequest configuration; private journals preserved,Actual normal restart; fresh snapshot and recovered SHADOW .sent marker,PC reboot and extended outage untested
+Permanent credential isolation,Distinct key for permanent gateway; legacy key rejected,New key authenticated; old key returned HTTP401,Security review / rotation automation
+Payout pause,Planning pauses new risk at $150 gross target or pending payout; purchase date accounted,Deterministic policy tests; no recovery sizing,Full broker net-history/calendar eligibility and live admission integration

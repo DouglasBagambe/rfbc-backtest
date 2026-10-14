@@ -88,6 +88,39 @@ with app.app_context():
     c.rollback()
     assert c.execute('SELECT nonce FROM mt5_v2_nonces WHERE nonce=?',('b'*64,)).fetchone() is None
     assert c.execute('SELECT COUNT(*) AS n FROM mt5_v2_commands').fetchone()['n']==before
-print(json.dumps({'real_postgres':True,'concurrent_nonce_unique':True,
+validation={'real_postgres':True,'concurrent_nonce_unique':True,
                   'concurrent_command_conflicts':True,'concurrent_ack_conflicts':True,
-                  'rollback_isolated':True,'command_id':cid,'broker_execution_test':False}))
+                  'rollback_isolated':True,'command_id':cid,'broker_execution_test':False}
+
+# Staged thesis reservations use the actual remote store, across contexts.
+from test_dnb_thesis import ThesisTests
+import dnb_thesis, dnb_alerts
+fixture=ThesisTests();fixture.setUp()
+thesis_id='TEST-THESIS-'+uuid.uuid4().hex
+fixture.proof['thesis_id']=thesis_id;fixture.proof['confirmation_at']=now
+fixture.proof['legs'][0].update(thesis_id=thesis_id,created_at=now-60,command_id=uuid.uuid4().hex)
+fixture.s['captured_at']=now
+for spec in fixture.s['symbols'].values():spec['quote_at']=now
+fixture.c.update(command_id=uuid.uuid4().hex,created_at=now,expires_at=now+30)
+with app.app_context(): first=dnb_thesis.reserve_scale_in(fixture.s,fixture.c,fixture.proof,now)
+with app.app_context(): second=dnb_thesis.reserve_scale_in(fixture.s,fixture.c,fixture.proof,now)
+assert first==second
+with app.app_context():
+    rows=list(store.db().execute('SELECT * FROM dnb_thesis_legs WHERE thesis_id=?',(thesis_id,)))
+    assert len(rows)==2
+    other={**fixture.c,'command_id':uuid.uuid4().hex}
+    try:dnb_thesis.reserve_scale_in(fixture.s,other,{**fixture.proof,'confirmation_id':'NEXT'},now)
+    except bridge.risk.Reject as e:assert str(e)=='unresolved_thesis_submission'
+    else:raise AssertionError('ambiguous reserved add-on was ignored')
+
+alert_id='TEST-ALERT-'+uuid.uuid4().hex
+with app.app_context():
+    dnb_alerts.prepare({**decision,'trade_id':alert_id,'source':'G_DESK','symbol':'GBPAUD.x'},now)
+    assert dnb_alerts.dispatch(alert_id,lambda _:(False,'timeout'))=='DELIVERY_UNKNOWN'
+with app.app_context():
+    assert dnb_alerts.dispatch(alert_id,lambda _:(_ for _ in ()).throw(AssertionError('redelivered')))=='DELIVERY_UNKNOWN'
+    assert any(x['trade_id']==alert_id for x in dnb_alerts.reconnect_candidates(s))
+validation.update({'remote_thesis_reservation_reconnect':True,'unresolved_add_on_blocked':True,
+                  'remote_manual_alert_quarantine_reconnect':True,'broker_execution_test':False,
+                  'telegram_delivery_test':False})
+print(json.dumps(validation))

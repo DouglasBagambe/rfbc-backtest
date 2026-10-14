@@ -1,0 +1,43 @@
+{
+  "permanent_service": "srv-db7nv1t9fdbs73eto5d0",
+  "url": "https://dnb-fx.onrender.com",
+  "deployed_commit": "b3046604778c406293f4e990bf659bec76b44ec5",
+  "backend_redeploy_survived": {
+    "ack": {
+      "command_id": "646302155cfe47ce860feca86d15bd5d",
+      "detail": "synthetic_shadow_only",
+      "login": 315307814,
+      "risk_usd": 6.18,
+      "server": "GoatFunded-Server",
+      "status": "SHADOW_OK",
+      "volume": 0.03
+    },
+    "expires_at": 1791984226,
+    "id": "646302155cfe47ce860feca86d15bd5d",
+    "state": "SHADOW_OK"
+  },
+  "rotated_credential_authenticated": true,
+  "disposable_credential_rejected_http": 401,
+  "health_http": 200,
+  "health_body": {
+    "auto_available": false,
+    "mode": "SHADOW",
+    "ok": true,
+    "product": "dnb Fx",
+    "storage": "postgres"
+  },
+  "mode": "SHADOW",
+  "server_kill": true,
+  "local_kill": true,
+  "snapshot_age_seconds": 5,
+  "connected": true,
+  "account": {
+    "login": 315307814,
+    "server": "GoatFunded-Server",
+    "balance": 2476.17,
+    "equity": 2476.17,
+    "positions": [],
+    "orders": []
+  },
+  "symbols": 18
+}
