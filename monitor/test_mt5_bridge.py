@@ -187,6 +187,14 @@ class TransportTests(unittest.TestCase):
         self.fx.close_db()
         self.assertTrue(self.send('/fx101/mt5/ack',ack).json['idempotent'])
         self.assertEqual(self.send('/fx101/mt5/command').text,'NONE')
+    def test_late_durable_shadow_ack_after_expiry(self):
+        row=self.queue(); ack=self.ack(row)
+        with patch.object(self.b,'clock',return_value=NOW+31):
+            raw=json.dumps(ack,separators=(',',':')).encode()
+            h=self.headers('POST','/fx101/mt5/ack',raw,stamp=NOW+31)
+            self.assertEqual(self.send('/fx101/mt5/ack',raw,headers=h).status_code,200)
+            state=self.fx.db().execute('SELECT state FROM mt5_v2_commands WHERE id=?',(row['id'],)).fetchone()[0]
+            self.assertEqual(state,'SHADOW_OK')
     def test_conflicting_ack(self):
         row=self.queue(); self.send('/fx101/mt5/ack',self.ack(row)); ack=self.ack(row); ack['volume']=.05
         self.assertEqual(self.send('/fx101/mt5/ack',ack).status_code,400)

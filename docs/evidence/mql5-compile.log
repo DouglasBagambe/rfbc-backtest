@@ -1,7 +1,8 @@
-SOURCE_SHA256=ffa78dde150523cc7cffa29353e0154fab8f88e19bb665753d5a898fa70e8336
+SOURCE_SHA256=1ce74695e0c012340431b969d43d174e4b1f730cf8e5baae23a57d4b1ed2ceca
+EX5_SHA256=bfe548da7bcbce4d86a1bb5e6e88c03be20c289a9edf07cd7255c6107ee6064d
 
 
-C:\fx101.mq5 : information: compiling C:\fx101.mq5
+C:\Fx101Validation1791979664817374061\Fx101GoatBridge.mq5 : information: compiling C:\Fx101Validation1791979664817374061\Fx101GoatBridge.mq5
  : information: generating code
  : information: generating code 3%
  : information: generating code 6%
@@ -37,4 +38,4 @@ C:\fx101.mq5 : information: compiling C:\fx101.mq5
  : information: generating code 95%
  : information: generating code 100%
  : information: code generated
-Result: 0 errors, 0 warnings, 1842 ms elapsed, cpu='X64 Regular'
+Result: 0 errors, 0 warnings, 1800 ms elapsed, cpu='X64 Regular'

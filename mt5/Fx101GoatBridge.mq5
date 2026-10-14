@@ -221,6 +221,7 @@ bool Http(string method,string path,string body,string &response,string &nonce)
    uchar encoded[]; Bytes(body,encoded);
    char data[],result[]; ArrayCopy(data,encoded);
    string result_headers;
+   ResetLastError();
    int code=WebRequest(method,InpApiBase+path,headers,3000,data,result,result_headers);
    int error=GetLastError();
    WritePrivate("Fx101Bridge\\transport.txt",StringFormat("http_status=%d last_error=%d utc=%I64d",code,error,(long)TimeGMT()));
@@ -351,9 +352,34 @@ bool Plan(string &f[],double &volume,double &usd,string &reason)
    reason="synthetic_shadow_only";
    return true;
   }
-void Ack(string body)
+void Ack(string id,string body)
   {
-   string response,nonce; Http("POST","/fx101/mt5/ack",body,response,nonce);
+   string response,nonce;
+   if(Http("POST","/fx101/mt5/ack",body,response,nonce))
+     {
+      if(!WritePrivate("Fx101Bridge\\"+id+".sent","ACKED")) Print("FX101 ACK marker failed; retry remains safe");
+      Print("FX101 ACK confirmed command=",id);
+     }
+  }
+void DrainAcks()
+  {
+   string name;
+   long handle=FileFindFirst("Fx101Bridge\\*.ack",name);
+   if(handle==INVALID_HANDLE) return;
+   int attempted=0;
+   do
+     {
+      if(StringLen(name)!=36 || !Hex(StringSubstr(name,0,32),32)) continue;
+      string id=StringSubstr(name,0,32);
+      if(FileIsExist("Fx101Bridge\\"+id+".sent")) continue;
+      string body=ReadPrivate("Fx101Bridge\\"+name);
+      if(body=="") continue;
+      Ack(id,body); attempted++;
+      // Bound traffic; durable ACK retry is independent of command expiry.
+      if(attempted>=2) break;
+     }
+   while(FileFindNext(handle,name));
+   FileFindClose(handle);
   }
 void Poll()
   {
@@ -368,7 +394,7 @@ void Poll()
    if(FileIsExist(journal))
      {
       string existing=ReadPrivate(journal);
-      if(existing!="") Ack(existing);
+      if(existing!="") Ack(f[2],existing);
       else Print("FX101 corrupt journal; command blocked");
       return;
      }
@@ -379,7 +405,7 @@ void Poll()
    // Persist and flush before ACK. Failed ACK is replayed from disk on next poll/restart.
    if(!WritePrivate(journal,body)) { Print("FX101 journal unavailable; blocked"); return; }
    Print("FX101 SHADOW command=",f[2]," status=",ok ? "SHADOW_OK" : "REJECTED"," volume=",Num(volume)," risk_usd=",Num(usd)," reason=",reason);
-   Ack(body);
+   Ack(f[2],body);
   }
 int OnInit()
   {
@@ -410,5 +436,6 @@ void OnTimer()
    if(!WritePrivate("Fx101Bridge\\snapshot.json",body)) return;
    string response,nonce;
    g_snapshot_ok=Http("POST","/fx101/mt5/snapshot",body,response,nonce);
+   if(g_snapshot_ok && InpMode==MODE_SHADOW && !Killed()) DrainAcks();
    Poll();
   }
