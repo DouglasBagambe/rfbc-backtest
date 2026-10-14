@@ -384,7 +384,7 @@ void Poll()
 int OnInit()
   {
    if(InpMode==MODE_AUTO) { Print("FX101 AUTO unavailable: critical paths unvalidated"); return INIT_PARAMETERS_INCORRECT; }
-   if(InpExpectedLogin!=315307814 || InpExpectedServer!="GoatFunded-Server" || !AccountBound()) return INIT_PARAMETERS_INCORRECT;
+   if(InpExpectedLogin!=315307814 || InpExpectedServer!="GoatFunded-Server") return INIT_PARAMETERS_INCORRECT;
    if(StringFind(InpApiBase,"https://")!=0 || StringFind(InpApiBase,"\r")>=0 || StringFind(InpApiBase,"\n")>=0 || InpPollSeconds<5 || InpPollSeconds>10) return INIT_PARAMETERS_INCORRECT;
    if(Hmac("The quick brown fox jumps over the lazy dog","key")!="f7bc83f430538424b13298e6aa6fb143ef4d59a14946175997479dbc2d1a3cd8") { Print("FX101 cryptographic selftest failed"); return INIT_FAILED; }
    FolderCreate("Fx101Bridge");

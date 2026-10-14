@@ -43,6 +43,7 @@ test_wrong_server (monitor.test_mt5_bridge.RiskTests.test_wrong_server) ... ok
 test_bad_signature (monitor.test_mt5_bridge.TransportTests.test_bad_signature) ... ok
 test_command_signature_and_request_binding (monitor.test_mt5_bridge.TransportTests.test_command_signature_and_request_binding) ... ok
 test_conflicting_ack (monitor.test_mt5_bridge.TransportTests.test_conflicting_ack) ... ok
+test_duplicate_command_changed_parameters_rejected (monitor.test_mt5_bridge.TransportTests.test_duplicate_command_changed_parameters_rejected) ... ok
 test_duplicate_json_key (monitor.test_mt5_bridge.TransportTests.test_duplicate_json_key) ... ok
 test_durable_duplicate_command (monitor.test_mt5_bridge.TransportTests.test_durable_duplicate_command) ... ok
 test_executed_ack_prohibited (monitor.test_mt5_bridge.TransportTests.test_executed_ack_prohibited) ... ok
@@ -61,8 +62,11 @@ test_replay_after_backend_restart (monitor.test_mt5_bridge.TransportTests.test_r
 test_replayed_request (monitor.test_mt5_bridge.TransportTests.test_replayed_request) ... ok
 test_server_auto_local_shadow_no_command (monitor.test_mt5_bridge.TransportTests.test_server_auto_local_shadow_no_command) ... ok
 test_server_kill (monitor.test_mt5_bridge.TransportTests.test_server_kill) ... ok
+test_shadow_backend_does_not_start_workers (monitor.test_mt5_bridge.TransportTests.test_shadow_backend_does_not_start_workers) ... ok
 test_snapshot_status_authoritative (monitor.test_mt5_bridge.TransportTests.test_snapshot_status_authoritative) ... ok
 test_stale_auth (monitor.test_mt5_bridge.TransportTests.test_stale_auth) ... ok
+test_synthetic_endpoint_cannot_accept_signal (monitor.test_mt5_bridge.TransportTests.test_synthetic_endpoint_cannot_accept_signal) ... ok
+test_synthetic_endpoint_creates_shadow_only (monitor.test_mt5_bridge.TransportTests.test_synthetic_endpoint_creates_shadow_only) ... ok
 test_timeout_before_delivery_same_command (monitor.test_mt5_bridge.TransportTests.test_timeout_before_delivery_same_command) ... ok
 test_tls_only (monitor.test_mt5_bridge.TransportTests.test_tls_only) ... ok
 test_unknown_snapshot_field (monitor.test_mt5_bridge.TransportTests.test_unknown_snapshot_field) ... ok
@@ -73,19 +77,19 @@ test_geometry_and_correlation_gate (monitor.test_fx101.Fx101Tests.test_geometry_
 test_persist_idempotent_and_lifecycle (monitor.test_fx101.Fx101Tests.test_persist_idempotent_and_lifecycle) ... ok
 test_price_manager_marks_target (monitor.test_fx101.Fx101Tests.test_price_manager_marks_target) ... ok
 test_reconciliation_preserves_tracked_balance (monitor.test_fx101.Fx101Tests.test_reconciliation_preserves_tracked_balance) ... ok
-test_no_trade_and_system_failure_are_consumed (monitor.test_gdesk_bridge.BridgeTests.test_no_trade_and_system_failure_are_consumed) ... {"accepted": 0, "at": "2026-10-14T11:49:09.892463+00:00", "event": "desk_result", "rejected": [], "result": "NO_TRADE"}
-{"at": "2026-10-14T11:49:09.897675+00:00", "decision_id": "SYNTHETIC-NO_TRADE", "event": "gdesk_bridge_consumed", "ingest_status": "NO_TRADE", "result": "NO_TRADE"}
-{"at": "2026-10-14T11:49:09.898213+00:00", "decision_id": "SYNTHETIC-SYSTEM_FAILURE", "event": "gdesk_telegram_delivery", "ok": false, "result": "SYSTEM_FAILURE", "status": "telegram_not_configured"}
-{"at": "2026-10-14T11:49:09.903234+00:00", "decision_id": "SYNTHETIC-SYSTEM_FAILURE", "event": "gdesk_bridge_consumed", "result": "SYSTEM_FAILURE"}
+test_no_trade_and_system_failure_are_consumed (monitor.test_gdesk_bridge.BridgeTests.test_no_trade_and_system_failure_are_consumed) ... {"accepted": 0, "at": "2026-10-14T12:00:10.308771+00:00", "event": "desk_result", "rejected": [], "result": "NO_TRADE"}
+{"at": "2026-10-14T12:00:10.314168+00:00", "decision_id": "SYNTHETIC-NO_TRADE", "event": "gdesk_bridge_consumed", "ingest_status": "NO_TRADE", "result": "NO_TRADE"}
+{"at": "2026-10-14T12:00:10.314503+00:00", "decision_id": "SYNTHETIC-SYSTEM_FAILURE", "event": "gdesk_telegram_delivery", "ok": false, "result": "SYSTEM_FAILURE", "status": "telegram_not_configured"}
+{"at": "2026-10-14T12:00:10.319709+00:00", "decision_id": "SYNTHETIC-SYSTEM_FAILURE", "event": "gdesk_bridge_consumed", "result": "SYSTEM_FAILURE"}
 ok
-test_stale_and_future_are_rejected_once (monitor.test_gdesk_bridge.BridgeTests.test_stale_and_future_are_rejected_once) ... {"at": "2026-10-14T11:49:09.990954+00:00", "decision_id": "SYNTHETIC-NO_TRADE--7200.0", "event": "gdesk_bridge_rejected", "reason": "future_or_stale_decision"}
-{"at": "2026-10-14T11:49:09.996652+00:00", "decision_id": "SYNTHETIC-NO_TRADE-600.0", "event": "gdesk_bridge_rejected", "reason": "future_or_stale_decision"}
+test_stale_and_future_are_rejected_once (monitor.test_gdesk_bridge.BridgeTests.test_stale_and_future_are_rejected_once) ... {"at": "2026-10-14T12:00:10.405625+00:00", "decision_id": "SYNTHETIC-NO_TRADE--7200.0", "event": "gdesk_bridge_rejected", "reason": "future_or_stale_decision"}
+{"at": "2026-10-14T12:00:10.411273+00:00", "decision_id": "SYNTHETIC-NO_TRADE-600.0", "event": "gdesk_bridge_rejected", "reason": "future_or_stale_decision"}
 ok
-test_trade_and_duplicate_are_idempotent (monitor.test_gdesk_bridge.BridgeTests.test_trade_and_duplicate_are_idempotent) ... {"accepted": 1, "at": "2026-10-14T11:49:10.100896+00:00", "event": "desk_result", "rejected": [], "result": "TRADE"}
-{"at": "2026-10-14T11:49:10.109214+00:00", "decision_id": "SYNTHETIC-TRADE", "event": "gdesk_bridge_consumed", "ingest_status": "TRADE", "result": "TRADE"}
+test_trade_and_duplicate_are_idempotent (monitor.test_gdesk_bridge.BridgeTests.test_trade_and_duplicate_are_idempotent) ... {"accepted": 1, "at": "2026-10-14T12:00:10.504890+00:00", "event": "desk_result", "rejected": [], "result": "TRADE"}
+{"at": "2026-10-14T12:00:10.510047+00:00", "decision_id": "SYNTHETIC-TRADE", "event": "gdesk_bridge_consumed", "ingest_status": "TRADE", "result": "TRADE"}
 ok
 
 ----------------------------------------------------------------------
-Ran 78 tests in 5.001s
+Ran 82 tests in 5.378s
 
 OK

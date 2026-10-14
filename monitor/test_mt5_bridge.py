@@ -160,6 +160,17 @@ class TransportTests(unittest.TestCase):
     def test_durable_duplicate_command(self):
         first=self.queue(); self.fx.close_db(); second=self.b._queue_command(self.trade(),synthetic=True)
         self.assertEqual(first['id'],second['id'])
+    def test_duplicate_command_changed_parameters_rejected(self):
+        self.queue(); changed=self.trade(); changed['risk_pct']=.20
+        with self.assertRaisesRegex(risk.Reject,'duplicate_command_conflict'): self.b._queue_command(changed,synthetic=True)
+    def test_synthetic_endpoint_cannot_accept_signal(self):
+        self.ingest(); self.assertEqual(self.send('/fx101/mt5/shadow-test',{'side':'BUY'}).status_code,400)
+    def test_synthetic_endpoint_creates_shadow_only(self):
+        self.ingest(); result=self.send('/fx101/mt5/shadow-test',b'').json
+        self.assertTrue(result['ok']); self.assertTrue(result['synthetic']); self.assertFalse(result['auto_available'])
+    def test_shadow_backend_does_not_start_workers(self):
+        from mt5_shadow_app import app
+        self.assertEqual(app.test_client().get('/health').json['auto_available'],False)
     def test_command_signature_and_request_binding(self):
         row=self.queue(); h=self.headers('GET','/fx101/mt5/command',b'')
         wire=self.send('/fx101/mt5/command',headers=h).text; parts=wire.split('|')

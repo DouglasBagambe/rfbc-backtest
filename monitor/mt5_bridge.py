@@ -121,10 +121,15 @@ def make_command(d):
     expiry = datetime.fromisoformat(str(d['valid_until']).replace('Z','+00:00'))
     if expiry.tzinfo is None: raise risk.Reject('invalid_command_time')
     context = d.get('context') or {}
+    order_type=context.get('order_type',d['side'])
+    entry=d['entry']; stop_limit=context.get('stop_limit',0)
+    if order_type.endswith('STOP_LIMIT') and 'stop_trigger' in context:
+        if 'stop_limit' in context: raise risk.Reject('ambiguous_stop_limit')
+        entry=context['stop_trigger']; stop_limit=d['entry']
     return {'command_id':uuid.uuid4().hex,'login':risk.LOGIN,'server':risk.SERVER,'created_at':now,
             'expires_at':min(now+30,int(expiry.timestamp())),'symbol':adapt_symbol(d['symbol']),
-            'order_type':context.get('order_type',d['side']),'entry':d['entry'],'sl':d['stop'],'tp':d['target'],
-            'risk_pct':d['risk_pct'],'stop_limit':context.get('stop_limit',0),'cancel':context.get('machine_cancel')}
+            'order_type':order_type,'entry':entry,'sl':d['stop'],'tp':d['target'],
+            'risk_pct':d['risk_pct'],'stop_limit':stop_limit,'cancel':context.get('machine_cancel')}
 
 def preflight_decision(d):
     if not enabled(): return ['mt5_bridge_disabled']
@@ -146,6 +151,12 @@ def _queue_command(d, *, synthetic=False):
     quote = risk.plan(snap['payload'],command,clock(),require_anchors=not synthetic)
     payload = {**command,'synthetic':synthetic,'quote':quote,'snapshot_id':snap['id']}
     c = fx101.db()
+    existing=c.execute('SELECT * FROM mt5_v2_commands WHERE trade_id=?',(d['trade_id'],)).fetchone()
+    if existing:
+        old=json.loads(existing['payload'])
+        frozen=('login','server','symbol','order_type','entry','sl','tp','risk_pct','stop_limit','cancel','synthetic')
+        if any(old[k]!=payload[k] for k in frozen): raise risk.Reject('duplicate_command_conflict')
+        return dict(existing)
     # A duplicate trade ID returns the original command, never a newly sized replacement.
     c.execute('INSERT OR IGNORE INTO mt5_v2_commands VALUES (?,?,?,?,?,?,?)',
               (command['command_id'],d['trade_id'],'QUEUED',json.dumps(payload,separators=(',',':')),clock(),command['expires_at'],None))
@@ -225,7 +236,9 @@ def ack_command():
 @bp.get('/fx101/mt5/status')
 def mt5_status():
     snap = latest_snapshot()
-    return jsonify(ok=True,bridge_enabled=enabled(),mode=mode(),kill_switch=killed(),auto_available=False,
+    recent=[{'id':r['id'],'state':r['state'],'expires_at':r['expires_at'],'ack':json.loads(r['ack']) if r['ack'] else None}
+            for r in fx101.db().execute('SELECT * FROM mt5_v2_commands ORDER BY created_at DESC LIMIT 10')]
+    return jsonify(ok=True,recent_commands=recent,bridge_enabled=enabled(),mode=mode(),kill_switch=killed(),auto_available=False,
                    connected=bool(snap and snap['fresh']),snapshot=snap,
                    validation_blockers=['historical_anchors','goat_hosted_decisions_policy','broker_execution_paths'])
 
