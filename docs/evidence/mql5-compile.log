@@ -1,4 +1,4 @@
-SOURCE_SHA256=c117e1558e0f1888880ad729061a1e768f9b0c5956e5121947a25d31a629ed50
+SOURCE_SHA256=92ba7e92d6a23ac52818a4225f18252b0504120c340d03f7f91b633fd06f279d
 
 
 C:\fx101.mq5 : information: compiling C:\fx101.mq5
@@ -37,4 +37,4 @@ C:\fx101.mq5 : information: compiling C:\fx101.mq5
  : information: generating code 95%
  : information: generating code 100%
  : information: code generated
-Result: 0 errors, 0 warnings, 2723 ms elapsed, cpu='X64 Regular'
+Result: 0 errors, 0 warnings, 1653 ms elapsed, cpu='X64 Regular'

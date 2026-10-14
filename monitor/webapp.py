@@ -309,4 +309,5 @@ if __name__ == "__main__":
         fx101.log("telegram_webhook_registration", ok=ok, status=status, secret_configured=bool(os.getenv("TELEGRAM_WEBHOOK_SECRET")))
     threading.Thread(target=fx101_worker.main, name="fx101-worker", daemon=True).start()
     threading.Thread(target=_startup_smoke_test, name="fx101-startup-smoke", daemon=True).start()
-    serve(app, host="0.0.0.0", port=int(os.getenv("PORT", "10000")), threads=6, channel_timeout=90)
+    serve(app, trusted_proxy="*" if os.getenv("FX101_MT5_TRUST_PROXY", "0")=="1" else None,
+          trusted_proxy_headers={"x-forwarded-proto"} if os.getenv("FX101_MT5_TRUST_PROXY","0")=="1" else set(), host="0.0.0.0", port=int(os.getenv("PORT", "10000")), threads=6, channel_timeout=90)

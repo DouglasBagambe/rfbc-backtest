@@ -222,7 +222,9 @@ bool Http(string method,string path,string body,string &response,string &nonce)
    char data[],result[]; ArrayCopy(data,encoded);
    string result_headers;
    int code=WebRequest(method,InpApiBase+path,headers,3000,data,result,result_headers);
-   if(code!=200) { Print("FX101 transport unavailable code=",code," error=",GetLastError()); return false; }
+   int error=GetLastError();
+   WritePrivate("Fx101Bridge\\transport.txt",StringFormat("http_status=%d last_error=%d utc=%I64d",code,error,(long)TimeGMT()));
+   if(code!=200) { Print("FX101 transport unavailable code=",code," error=",error); return false; }
    if(ArraySize(result)>16384) return false;
    response=CharArrayToString(result,0,-1,CP_UTF8);
    return true;
