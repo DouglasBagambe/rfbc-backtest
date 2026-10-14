@@ -45,6 +45,8 @@ def _ensure_schema():
         'CREATE INDEX IF NOT EXISTS mt5_v2_snapshot_time ON mt5_v2_snapshots(captured_at)',
         'CREATE TABLE IF NOT EXISTS mt5_v2_commands (id TEXT PRIMARY KEY, trade_id TEXT UNIQUE NOT NULL, state TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL, expires_at INTEGER NOT NULL, ack TEXT)',
         'CREATE TABLE IF NOT EXISTS mt5_v2_reconciliation (id TEXT PRIMARY KEY, snapshot_id TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL)',
+        'CREATE TABLE IF NOT EXISTS dnb_thesis_legs (command_id TEXT PRIMARY KEY, thesis_id TEXT NOT NULL, confirmation_id TEXT NOT NULL, payload TEXT NOT NULL, UNIQUE(thesis_id,confirmation_id))',
+        'CREATE TABLE IF NOT EXISTS dnb_alert_intents (trade_id TEXT PRIMARY KEY, symbol TEXT NOT NULL, side TEXT NOT NULL, state TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL, delivery TEXT)',
     ))
 
 @bp.teardown_request
@@ -151,6 +153,8 @@ def _queue_command(d, *, synthetic=False):
     if not enabled() or killed() or mode() != 'SHADOW': raise risk.Reject('shadow_unavailable')
     _ensure_schema()
     c = store.lock_account()
+    unresolved=c.execute("SELECT trade_id FROM dnb_alert_intents WHERE symbol=? AND state IN ('SENDING','SENT','DELIVERY_UNKNOWN','MANUAL_POSSIBLE') LIMIT 1",(adapt_symbol(d['symbol']),)).fetchone()
+    if unresolved: raise risk.Reject('manual_alert_requires_broker_history_reconciliation')
     snap = latest_snapshot()
     if not snap or not snap['fresh']: raise risk.Reject('stale_snapshot')
     command = make_command(d)
@@ -202,6 +206,8 @@ def ingest_snapshot():
                        'missing':[k for k in previous if k not in current],
                        'changed':[k for k in current if k in previous and current[k]!=previous[k]],
                        'unresolved_internal_trades':[] if store.remote() else [x['id'] for x in c.execute("SELECT id FROM trades WHERE state IN ('PLACED','OPEN')")]}
+        from dnb_alerts import reconnect_candidates
+        differences['manual_alert_candidates']=reconnect_candidates(body)
         c.execute('INSERT INTO mt5_v2_reconciliation VALUES (?,?,?,?)',(uuid.uuid4().hex,sid,json.dumps(differences),clock()))
         # Bounded raw observations, separate from permanent command/ACK evidence.
         c.execute('DELETE FROM mt5_v2_snapshots WHERE captured_at<?',(clock()-86400,))
@@ -266,6 +272,19 @@ def install_fx101_hooks():
     original = fx101.persist_decision
     def wrapped(d):
         if not enabled(): return original(d)
+        # An execution outage must not erase a valid analysis decision. Alert
+        # intent is separate from execution; manual fills remain unconfirmed.
+        if os.getenv('DNB_MANUAL_ALERTS_ENABLED','0') == '1':
+            import dnb_alerts
+            from flask import has_app_context
+            if not has_app_context():
+                return False,'durable_alert_context_required',{'trade_id':fx101.trade_id(d)}
+            try:
+                alert=dnb_alerts.prepare({**d,'trade_id':d.get('trade_id') or fx101.trade_id(d)},clock())
+                state=dnb_alerts.dispatch(alert['trade_id'],fx101.telegram_send)
+                return True,'manual_analysis_'+state.lower(),{'trade_id':alert['trade_id'],'broker_execution':False}
+            except risk.Reject as exc:
+                return False,str(exc),{'trade_id':fx101.trade_id(d),'errors':[str(exc)]}
         errors = preflight_decision(d)
         if errors: return False,','.join(errors),{'trade_id':fx101.trade_id(d),'errors':errors}
         # No live decision acceptance before anchors and policy gates are satisfied.

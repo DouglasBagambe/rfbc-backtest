@@ -1,12 +1,12 @@
-{"accepted": 0, "at": "2026-10-14T13:08:41.850967+00:00", "event": "desk_result", "rejected": [], "result": "NO_TRADE"}
-{"at": "2026-10-14T13:08:41.857907+00:00", "decision_id": "SYNTHETIC-NO_TRADE", "event": "gdesk_bridge_consumed", "ingest_status": "NO_TRADE", "result": "NO_TRADE"}
-{"at": "2026-10-14T13:08:41.858743+00:00", "decision_id": "SYNTHETIC-SYSTEM_FAILURE", "event": "gdesk_telegram_delivery", "ok": false, "result": "SYSTEM_FAILURE", "status": "telegram_not_configured"}
-{"at": "2026-10-14T13:08:41.864931+00:00", "decision_id": "SYNTHETIC-SYSTEM_FAILURE", "event": "gdesk_bridge_consumed", "result": "SYSTEM_FAILURE"}
-{"at": "2026-10-14T13:08:41.960607+00:00", "decision_id": "SYNTHETIC-NO_TRADE--7200.0", "event": "gdesk_bridge_rejected", "reason": "future_or_stale_decision"}
-{"at": "2026-10-14T13:08:41.965973+00:00", "decision_id": "SYNTHETIC-NO_TRADE-600.0", "event": "gdesk_bridge_rejected", "reason": "future_or_stale_decision"}
-{"accepted": 1, "at": "2026-10-14T13:08:42.064809+00:00", "event": "desk_result", "rejected": [], "result": "TRADE"}
-{"at": "2026-10-14T13:08:42.070688+00:00", "decision_id": "SYNTHETIC-TRADE", "event": "gdesk_bridge_consumed", "ingest_status": "TRADE", "result": "TRADE"}
+{"accepted": 0, "at": "2026-10-14T13:21:52.434981+00:00", "event": "desk_result", "rejected": [], "result": "NO_TRADE"}
+{"at": "2026-10-14T13:21:52.440328+00:00", "decision_id": "SYNTHETIC-NO_TRADE", "event": "gdesk_bridge_consumed", "ingest_status": "NO_TRADE", "result": "NO_TRADE"}
+{"at": "2026-10-14T13:21:52.440688+00:00", "decision_id": "SYNTHETIC-SYSTEM_FAILURE", "event": "gdesk_telegram_delivery", "ok": false, "result": "SYSTEM_FAILURE", "status": "telegram_not_configured"}
+{"at": "2026-10-14T13:21:52.445819+00:00", "decision_id": "SYNTHETIC-SYSTEM_FAILURE", "event": "gdesk_bridge_consumed", "result": "SYSTEM_FAILURE"}
+{"at": "2026-10-14T13:21:52.530386+00:00", "decision_id": "SYNTHETIC-NO_TRADE--7200.0", "event": "gdesk_bridge_rejected", "reason": "future_or_stale_decision"}
+{"at": "2026-10-14T13:21:52.535769+00:00", "decision_id": "SYNTHETIC-NO_TRADE-600.0", "event": "gdesk_bridge_rejected", "reason": "future_or_stale_decision"}
+{"accepted": 1, "at": "2026-10-14T13:21:52.627102+00:00", "event": "desk_result", "rejected": [], "result": "TRADE"}
+{"at": "2026-10-14T13:21:52.632434+00:00", "decision_id": "SYNTHETIC-TRADE", "event": "gdesk_bridge_consumed", "ingest_status": "TRADE", "result": "TRADE"}
 ----------------------------------------------------------------------
-Ran 92 tests in 6.198s
+Ran 113 tests in 7.279s
 
 OK

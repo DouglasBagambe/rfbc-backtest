@@ -150,7 +150,7 @@ def exposure_budgets(s, symbol, side, basis, now):
     if remaining <= 0: raise Reject('metal_risk')
     return remaining
 
-def plan(s, command, now, *, require_anchors=True):
+def plan(s, command, now, *, require_anchors=True, scale_in_tickets=frozenset()):
     validate_snapshot(s, now)
     required = {'command_id','login','server','created_at','expires_at','symbol','order_type','entry','sl','tp','risk_pct','stop_limit','cancel'}
     keys(command, required)
@@ -176,7 +176,9 @@ def plan(s, command, now, *, require_anchors=True):
     if order_type not in ORDER_TYPES: raise Reject('order_type')
     side = 'BUY' if order_type.startswith('BUY') else 'SELL'
     for item in s['positions']+s['orders']:
-        if item['symbol']==symbol: raise Reject('hedging' if side != item['side'] else 'duplicate_symbol')
+        if item['symbol']==symbol:
+            if side != item['side']: raise Reject('hedging')
+            if item['ticket'] not in scale_in_tickets: raise Reject('duplicate_symbol')
     existing = portfolio_risk(s, now)
     spec = s['symbols'][symbol]
     mode = spec['trade_mode']
