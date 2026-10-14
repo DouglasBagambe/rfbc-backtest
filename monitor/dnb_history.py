@@ -12,15 +12,25 @@ SCHEMA=(
  'CREATE TABLE IF NOT EXISTS dnb_broker_deals (ticket TEXT PRIMARY KEY, captured_at INTEGER NOT NULL, payload TEXT NOT NULL)',
  'CREATE TABLE IF NOT EXISTS dnb_history_revisions (id TEXT PRIMARY KEY, captured_at INTEGER NOT NULL, kind TEXT NOT NULL, ticket TEXT NOT NULL, prior TEXT NOT NULL, current TEXT NOT NULL)',
 )
+DEMO_SCHEMA=tuple(sql.replace('dnb_history_','dnb_demo_history_').replace('dnb_broker_','dnb_demo_broker_') for sql in SCHEMA)
+
+class HistoryConnection:
+    """Namespace selection is internal to the account-bound route, never user SQL."""
+    def __init__(self, connection, demo): self.connection=connection;self.demo=demo
+    def execute(self, sql, parameters=()):
+        if self.demo: sql=sql.replace('dnb_history_','dnb_demo_history_').replace('dnb_broker_','dnb_demo_broker_')
+        return self.connection.execute(sql,parameters)
+    def commit(self):self.connection.commit()
 ORDER_FIELDS={'ticket','position_id','magic','comment','symbol','type','state','reason','volume_initial','volume_current','price','sl','tp','stop_limit','created_at','done_at','expires_at'}
 DEAL_FIELDS={'ticket','order_ticket','position_id','magic','comment','symbol','type','entry','reason','volume','price','profit','commission','swap','fee','time'}
 
 def ticket(value,zero=False):
     if not isinstance(value,str) or not re.fullmatch(r'0|[1-9][0-9]{0,19}' if zero else r'[1-9][0-9]{0,19}',value):raise risk.Reject('invalid_ticket')
 
-def validate(body,now):
+def validate(body,now, *, demo=False):
     risk.keys(body,{'capture_id','login','server','captured_at','from_server_time','to_server_time','kind','page','pages','total','items'})
-    if body['login']!=risk.LOGIN or body['server']!=risk.SERVER:raise risk.Reject('account_binding')
+    from dnb_demo import DEMO_LOGIN, DEMO_SERVER
+    if body['login']!=(DEMO_LOGIN if demo else risk.LOGIN) or body['server']!=(DEMO_SERVER if demo else risk.SERVER):raise risk.Reject('account_binding')
     if not isinstance(body['capture_id'],str) or not re.fullmatch('[a-f0-9]{32}',body['capture_id']):raise risk.Reject('invalid_capture_id')
     for key in ('captured_at','from_server_time','to_server_time','page','pages','total'):
         if type(body[key]) is not int or body[key]<0:raise risk.Reject('invalid_history_integer')
@@ -43,10 +53,10 @@ def validate(body,now):
         for key in numeric-{'profit','commission','swap','fee'}:
             if risk.number(item[key])<0:raise risk.Reject('negative_history_value')
 
-def ingest(body,now):
-    validate(body,now)
+def ingest(body,now, *, demo=False):
+    validate(body,now,demo=demo)
     from mt5_bridge import _ensure_schema
-    _ensure_schema();c=store.lock_account()
+    _ensure_schema();c=HistoryConnection(store.lock_account(),demo)
     canonical=json.dumps(body,sort_keys=True,separators=(',',':'))
     old=c.execute('SELECT payload FROM dnb_history_pages WHERE capture_id=? AND kind=? AND page=?',(body['capture_id'],body['kind'],body['page'])).fetchone()
     if old:
@@ -86,6 +96,6 @@ def ingest(body,now):
         c.execute('INSERT OR IGNORE INTO dnb_history_captures VALUES (?,?,?)',(body['capture_id'],body['captured_at'],summary))
     c.commit();return {'ok':True,'complete':complete,'capture_id':body['capture_id']}
 
-def latest():
-    row=store.db().execute('SELECT * FROM dnb_history_captures ORDER BY captured_at DESC LIMIT 1').fetchone()
+def latest(*, demo=False):
+    row=HistoryConnection(store.db(),demo).execute('SELECT * FROM dnb_history_captures ORDER BY captured_at DESC LIMIT 1').fetchone()
     return None if not row else {**dict(row),'payload':json.loads(row['payload'])}

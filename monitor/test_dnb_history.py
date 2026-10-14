@@ -1,12 +1,12 @@
 import copy
 import unittest
 import dnb_history
-from test_dnb_alerts import AlertTests
+import test_dnb_alerts as fixtures
 from test_mt5_bridge import NOW
 
 class HistoryTests(unittest.TestCase):
-    setUp=AlertTests.setUp
-    tearDown=AlertTests.tearDown
+    setUp=fixtures.AlertTests.setUp
+    tearDown=fixtures.AlertTests.tearDown
     def page(self,kind,items):
         return {'capture_id':'d'*32,'login':315307814,'server':'GoatFunded-Server','captured_at':NOW,
                 'from_server_time':0,'to_server_time':NOW,'kind':kind,'page':0,'pages':1,'total':len(items),'items':items}

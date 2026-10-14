@@ -1,0 +1,9 @@
+{
+  "http_status": 200,
+  "result": {
+    "broker_order_sent": false,
+    "delivery_status": "200",
+    "ok": true
+  },
+  "test_message_only": true
+}

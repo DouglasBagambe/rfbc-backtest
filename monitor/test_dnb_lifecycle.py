@@ -1,6 +1,5 @@
 import unittest
 import dnb_lifecycle as life
-from test_dnb_history import HistoryTests
 class LifecycleTests(unittest.TestCase):
     def order(self,state=4):return {'ticket':'700','position_id':'900','volume_initial':.02,'state':state}
     def deal(self,ticket='800',entry=0,volume=.01,reason=3,profit=0):

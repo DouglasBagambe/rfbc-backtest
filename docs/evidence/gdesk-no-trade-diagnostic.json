@@ -1,20 +1,36 @@
 {
-  "decision_id": "GDESK-20261014T122250727Z-d3e1ba0f2c-NO_TRADE",
-  "generated_at": "2026-10-14T12:22:50.727Z",
-  "result": "NO_TRADE",
-  "message": "18/18 MARKET_OPEN FRESH Dukascopy completed H1 contexts validated. Best near-miss GBPCAD.x BUY: H1 close 1.886230 > prior-12 high 1.885890, breakout 0.367 ATR; 6-bar +0.001665, 12-bar +0.001450 aligned; spread 1.00x prior-12 median but 0.281 ATR, exceeding the 0.150 ATR cap. No qualifying 2-5-bar pullback/resumption continuation. No qualified trade; risk 0%.",
+  "checked_at": 1791994185,
+  "decision_id": "GDESK-20261014T142624026Z-ab2d9a8e61-SYSTEM_FAILURE",
+  "generated_at": "2026-10-14T14:26:24.026Z",
+  "result": "SYSTEM_FAILURE",
+  "message": "SYSTEM_FAILURE: 14/18 symbol contexts lag the latest completed H1 (12:00 UTC instead of 13:00 UTC for a 14:03 UTC scan). No trade or NO_TRADE judgment is authorized from stale/incomplete market context.",
   "context": {
-    "scan_id": "GDESK-2026-10-14T12-d3e1ba0f2c",
-    "source_generated_at": "2026-10-14T12:02:55.505046+00:00",
-    "ready_event_at": "2026-10-14T12:02:55.510313+00:00",
+    "scan_id": "GDESK-2026-10-14T14-ab2d9a8e61",
+    "source_generated_at": "2026-10-14T14:03:05.004594+00:00",
+    "ready_event_at": "2026-10-14T14:03:05.011598+00:00",
     "market_state": "MARKET_OPEN",
     "freshness": "FRESH",
     "symbols_reported": 18,
     "symbols_received": 18,
-    "latest_completed_bar": "2026-10-14T11:00:00+00:00",
+    "expected_latest_completed_bar": "2026-10-14T13:00:00+00:00",
+    "stale_symbols": [
+      "EURUSD.x",
+      "GBPUSD.x",
+      "GBPJPY.x",
+      "USDCAD.x",
+      "EURJPY.x",
+      "AUDUSD.x",
+      "NZDUSD.x",
+      "USDCHF.x",
+      "EURGBP.x",
+      "CADJPY.x",
+      "CHFJPY.x",
+      "EURAUD.x",
+      "GBPAUD.x",
+      "GBPCAD.x"
+    ],
+    "validation_errors": [],
     "source": "Dukascopy BID/ASK",
-    "timeframe": "H1 completed bars",
-    "validation_errors": []
-  },
-  "strategy_rules_not_relaxed": true
+    "timeframe": "H1 completed bars"
+  }
 }

@@ -1,10 +1,11 @@
-INCLUDE_SHA256 mt5/include/DnbBroker.mqh: a535061542be4f2d83032f65cb717089c446c99c7bbdafe2ee2afed4b134251e
+INCLUDE_SHA256 mt5/include/DnbBroker.mqh: 0089b8a3c4b4ca9d9b0dc3b584de2d14970e3d639fb43f3e30273d0380aca46c
+INCLUDE_SHA256 mt5/include/DnbHistory.mqh: bdadef295f81386c53669ae03a2360299db5da981644cda759a87bba4dc10eea
 SOURCE_SHA256=e14662628835bfe6c95ad9e270efc5fa8ce1deb4990f5750978bd40bdf9bc4a7
-EX5_SHA256=bee9b517ce7a14a132adc81ba038d32c2547820b40436465adf50124d1aeae37
+EX5_SHA256=9a34778a19b26aec272f24c100de5b3f60babda08aa5024ed7cafb075722d250
 
 
-C:\Fx101Validation1791985783939953850\DnbBrokerSelftest.mq5 : information: compiling C:\Fx101Validation1791985783939953850\DnbBrokerSelftest.mq5
-C:\Fx101Validation1791985783939953850\DnbBrokerSelftest.mq5 : information: including C:\Fx101Validation1791985783939953850\include\DnbBroker.mqh
+C:\Fx101Validation1791994569670258188\DnbBrokerSelftest.mq5 : information: compiling C:\Fx101Validation1791994569670258188\DnbBrokerSelftest.mq5
+C:\Fx101Validation1791994569670258188\DnbBrokerSelftest.mq5 : information: including C:\Fx101Validation1791994569670258188\include\DnbBroker.mqh
  : information: generating code
  : information: generating code 3%
  : information: generating code 6%
@@ -40,4 +41,4 @@ C:\Fx101Validation1791985783939953850\DnbBrokerSelftest.mq5 : information: inclu
  : information: generating code 95%
  : information: generating code 100%
  : information: code generated
-Result: 0 errors, 0 warnings, 910 ms elapsed, cpu='X64 Regular'
+Result: 0 errors, 0 warnings, 918 ms elapsed, cpu='X64 Regular'

@@ -66,7 +66,10 @@ public:
      {
       order=0; deal=0;
       if(!TerminalInfoInteger(TERMINAL_CONNECTED) || !HistorySelect(0,TimeTradeServer())) return -1;
-      // Require both magic and exact retained comment; rewritten comments fail closed.
+      // Establish the submission identity first. Protective exits may inherit
+      // magic while the broker changes their comments to [sl]/[tp]. They are
+      // lifecycle evidence, not additional submissions of this command.
+      ulong position_id=0;
       for(int i=0;i<OrdersTotal();i++)
         {
          ulong t=OrderGetTicket(i); if(t==0) return -1;
@@ -81,8 +84,10 @@ public:
          ulong t=HistoryOrderGetTicket(i); if(t==0) return -1;
          if((ulong)HistoryOrderGetInteger(t,ORDER_MAGIC)==magic)
            {
-            if(HistoryOrderGetString(t,ORDER_COMMENT)!=comment || HistoryOrderGetString(t,ORDER_SYMBOL)!=symbol) return -1;
+            if(HistoryOrderGetString(t,ORDER_COMMENT)!=comment) continue;
+            if(HistoryOrderGetString(t,ORDER_SYMBOL)!=symbol) return -1;
             if(order!=0 && order!=t) return -1; order=t;
+            position_id=(ulong)HistoryOrderGetInteger(t,ORDER_POSITION_ID);
            }
         }
       for(int i=0;i<HistoryDealsTotal();i++)
@@ -90,10 +95,33 @@ public:
          ulong t=HistoryDealGetTicket(i); if(t==0) return -1;
          if((ulong)HistoryDealGetInteger(t,DEAL_MAGIC)==magic)
            {
-            if(HistoryDealGetString(t,DEAL_COMMENT)!=comment || HistoryDealGetString(t,DEAL_SYMBOL)!=symbol) return -1;
             ulong parent=(ulong)HistoryDealGetInteger(t,DEAL_ORDER);
-            if(order!=0 && order!=parent) return -1; order=parent; deal=t;
+            if(HistoryDealGetString(t,DEAL_SYMBOL)!=symbol) return -1;
+            long entry=HistoryDealGetInteger(t,DEAL_ENTRY);
+            ulong pid=(ulong)HistoryDealGetInteger(t,DEAL_POSITION_ID);
+            if(entry==DEAL_ENTRY_OUT || entry==DEAL_ENTRY_OUT_BY)
+              {
+               if(position_id!=0 && pid==position_id) continue;
+               return -1;
+              }
+            // A netting reversal is never silently treated as an entry fill.
+            if(entry!=DEAL_ENTRY_IN) return -1;
+            if(order!=0 && order==parent)
+              { if(position_id!=0 && pid!=position_id) return -1;position_id=pid;deal=t;continue; }
+            if(HistoryDealGetString(t,DEAL_COMMENT)!=comment) return -1;
+            if(order!=0 && order!=parent) return -1; order=parent;position_id=pid;deal=t;
            }
+        }
+      // A same-magic order with a rewritten comment is acceptable only when
+      // the broker identifies it as a protective exit of the rooted position.
+      for(int i=0;i<HistoryOrdersTotal();i++)
+        {
+         ulong t=HistoryOrderGetTicket(i);
+         if((ulong)HistoryOrderGetInteger(t,ORDER_MAGIC)!=magic || HistoryOrderGetString(t,ORDER_COMMENT)==comment) continue;
+         long reason=HistoryOrderGetInteger(t,ORDER_REASON);
+         if(position_id==0 || (ulong)HistoryOrderGetInteger(t,ORDER_POSITION_ID)!=position_id ||
+            HistoryOrderGetString(t,ORDER_SYMBOL)!=symbol ||
+            (reason!=ORDER_REASON_SL && reason!=ORDER_REASON_TP && reason!=ORDER_REASON_SO)) return -1;
         }
       return order!=0 || deal!=0 ? 1 : 0;
      }

@@ -1,12 +1,12 @@
-INCLUDE_SHA256 mt5/include/DnbBroker.mqh: a535061542be4f2d83032f65cb717089c446c99c7bbdafe2ee2afed4b134251e
-INCLUDE_SHA256 mt5/include/DnbHistory.mqh: bdadef295f81386c53669ae03a2360299db5da981644cda759a87bba4dc10eea
-SOURCE_SHA256=774ebf9829a239fe5eb50e945bd33a9a73b48dfe40bb4034889996a1f2003110
-EX5_SHA256=20933211ede1d109b105299ddb5984477b818a821a7182aabdc48f50db78ae87
+INCLUDE_SHA256 mt5/include/DnbBroker.mqh: 0089b8a3c4b4ca9d9b0dc3b584de2d14970e3d639fb43f3e30273d0380aca46c
+INCLUDE_SHA256 mt5/include/DnbHistory.mqh: 765b8aff988ebfb70593e486cc19aca5d7739a8d2342b6d7b683e936dff2f709
+SOURCE_SHA256=309a2885002eb18f7e7a4b6e23893d86d73207851034f7f954d9beae7dc909f1
+EX5_SHA256=e64d8a1fa981a7fde6cb148323ba9fab35a9d93d468ab195594f6f8431c96e6b
 
 
-C:\Fx101Validation1791986159527839099\Fx101GoatBridge.mq5 : information: compiling C:\Fx101Validation1791986159527839099\Fx101GoatBridge.mq5
-C:\Fx101Validation1791986159527839099\Fx101GoatBridge.mq5 : information: including C:\Fx101Validation1791986159527839099\include\DnbBroker.mqh
-C:\Fx101Validation1791986159527839099\Fx101GoatBridge.mq5 : information: including C:\Fx101Validation1791986159527839099\include\DnbHistory.mqh
+C:\Fx101Validation1791994989746478488\Fx101GoatBridge.mq5 : information: compiling C:\Fx101Validation1791994989746478488\Fx101GoatBridge.mq5
+C:\Fx101Validation1791994989746478488\Fx101GoatBridge.mq5 : information: including C:\Fx101Validation1791994989746478488\include\DnbBroker.mqh
+C:\Fx101Validation1791994989746478488\Fx101GoatBridge.mq5 : information: including C:\Fx101Validation1791994989746478488\include\DnbHistory.mqh
  : information: generating code
  : information: generating code 3%
  : information: generating code 6%
@@ -42,4 +42,4 @@ C:\Fx101Validation1791986159527839099\Fx101GoatBridge.mq5 : information: includi
  : information: generating code 95%
  : information: generating code 100%
  : information: code generated
-Result: 0 errors, 0 warnings, 2581 ms elapsed, cpu='X64 Regular'
+Result: 0 errors, 0 warnings, 2665 ms elapsed, cpu='X64 Regular'

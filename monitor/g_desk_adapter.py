@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os, time
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 import dukascopy_python
@@ -22,7 +23,7 @@ PAIR_TO_DUKASCOPY = {
     "EURJPY": instruments.INSTRUMENT_FX_CROSSES_EUR_JPY,
 }
 DESK_SYMBOLS = ["EURUSD.x","GBPUSD.x","GBPJPY.x","USDCAD.x","EURJPY.x"]
-_DUKA_CACHE: dict[str, tuple[float, list[dict]]] = {}
+_DUKA_CACHE: dict[str, tuple[float, pd.Timestamp, list[dict]]] = {}
 _DUKA_CACHE_SECONDS = 300
 
 
@@ -78,8 +79,8 @@ def _dukascopy_context(symbols: list[str]) -> dict:
         if pair not in PAIR_TO_DUKASCOPY:
             raise ValueError(f"unsupported_g_desk_symbol:{symbol}")
         cached=_DUKA_CACHE.get(symbol)
-        if cached and time.time()-cached[0] < _DUKA_CACHE_SECONDS:
-            result[symbol]=cached[1]
+        if cached and cached[1] == cutoff and time.time()-cached[0] < _DUKA_CACHE_SECONDS:
+            result[symbol]=cached[2]
             continue
 
         bid=_fetch_duka_side(pair,"bid",start,cutoff)
@@ -107,9 +108,15 @@ def _dukascopy_context(symbols: list[str]) -> dict:
                 "ask_close":float(row["close_ask"]),
                 "spread":float(row["close_ask"]-row["close_bid"]),
             })
-        _DUKA_CACHE[symbol]=(time.time(),bars)
+        _DUKA_CACHE[symbol]=(time.time(),cutoff,bars)
         result[symbol]=bars
     return result
+
+
+def fx_weekend_closed(now):
+    # FX reopens Sunday evening; UTC weekday alone mislabels that session.
+    ny=now.astimezone(ZoneInfo('America/New_York'))
+    return ny.weekday()==5 or ny.weekday()==4 and ny.hour>=17 or ny.weekday()==6 and ny.hour<17
 
 
 def context_payload(symbols: list[str] | None = None) -> dict:
@@ -117,17 +124,22 @@ def context_payload(symbols: list[str] | None = None) -> dict:
     requested=list(symbols or DESK_SYMBOLS)
     context=_dukascopy_context(requested)
     latest={s:(bars[-1]["datetime"] if bars else None) for s,bars in context.items()}
-    market_closed=datetime.now(timezone.utc).weekday() >= 5
+    now=datetime.now(timezone.utc)
+    market_closed=fx_weekend_closed(now)
+    expected=pd.Timestamp(now).floor('h')-pd.Timedelta(hours=1)
+    stale=[symbol for symbol,stamp in latest.items() if stamp is None or pd.Timestamp(stamp)!=expected]
     return {
         "ok":True,
         "source":"Dukascopy BID/ASK",
         "timeframe":"H1 completed bars",
-        "generated_at":datetime.now(timezone.utc).isoformat(),
+        "generated_at":now.isoformat(),
         "symbols":requested,
         "latest_completed_bar":latest,
+        "expected_latest_completed_bar":expected.isoformat(),
+        "stale_symbols":stale if not market_closed else [],
         "bars":context,
         "market_state":"MARKET_CLOSED" if market_closed else "MARKET_OPEN",
-        "freshness":"MARKET_CLOSED" if market_closed else "FRESH",
+        "freshness":"MARKET_CLOSED" if market_closed else "INCOMPLETE" if stale else "FRESH",
         "analysis_owner":"ChatGPT subscription automation",
         "execution":"manual",
     }

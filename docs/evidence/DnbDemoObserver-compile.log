@@ -1,0 +1,47 @@
+INCLUDE_SHA256 mt5/include/DnbBroker.mqh: 0089b8a3c4b4ca9d9b0dc3b584de2d14970e3d639fb43f3e30273d0380aca46c
+INCLUDE_SHA256 mt5/include/DnbHistory.mqh: 765b8aff988ebfb70593e486cc19aca5d7739a8d2342b6d7b683e936dff2f709
+DEPENDENCY_SHA256 mt5/Fx101GoatBridge.mq5: 309a2885002eb18f7e7a4b6e23893d86d73207851034f7f954d9beae7dc909f1
+SOURCE_SHA256=dc3efc740156afffec8fa2151bf4a45d02b7dfa3991997206d99b311db3568fd
+EX5_SHA256=a16d9523d4a375574fb6d977fd8d94602342946dc85ff0b13530029a1c8a369f
+
+
+C:\Fx101Validation1791994721312511558\DnbDemoObserver.mq5 : information: compiling C:\Fx101Validation1791994721312511558\DnbDemoObserver.mq5
+C:\Fx101Validation1791994721312511558\DnbDemoObserver.mq5 : information: including C:\Fx101Validation1791994721312511558\Fx101GoatBridge.mq5
+C:\Fx101Validation1791994721312511558\Fx101GoatBridge.mq5 : information: including C:\Fx101Validation1791994721312511558\include\DnbBroker.mqh
+C:\Fx101Validation1791994721312511558\Fx101GoatBridge.mq5 : information: including C:\Fx101Validation1791994721312511558\include\DnbHistory.mqh
+ : information: generating code
+ : information: generating code 3%
+ : information: generating code 6%
+ : information: generating code 9%
+ : information: generating code 12%
+ : information: generating code 15%
+ : information: generating code 18%
+ : information: generating code 21%
+ : information: generating code 24%
+ : information: generating code 27%
+ : information: generating code 30%
+ : information: generating code 33%
+ : information: generating code 36%
+ : information: generating code 39%
+ : information: generating code 42%
+ : information: generating code 45%
+ : information: generating code 48%
+ : information: generating code 51%
+ : information: generating code 54%
+ : information: generating code 57%
+ : information: generating code 60%
+ : information: generating code 63%
+ : information: generating code 66%
+ : information: generating code 69%
+ : information: generating code 72%
+ : information: generating code 75%
+ : information: generating code 78%
+ : information: generating code 81%
+ : information: generating code 84%
+ : information: generating code 87%
+ : information: generating code 90%
+ : information: generating code 93%
+ : information: generating code 95%
+ : information: generating code 100%
+ : information: code generated
+Result: 0 errors, 0 warnings, 2665 ms elapsed, cpu='X64 Regular'

@@ -39,8 +39,10 @@ def request_signature(method,path,stamp,nonce,body):
 
 def _ensure_schema():
     from dnb_history import SCHEMA as HISTORY_SCHEMA
+    from dnb_history import DEMO_SCHEMA as DEMO_HISTORY_SCHEMA
     from dnb_authority import SCHEMA as AUTHORITY_SCHEMA
     from dnb_demo import SCHEMA as DEMO_SCHEMA
+    from dnb_sources import SCHEMA as SOURCE_SCHEMA
     store.ensure_schema((
         'CREATE TABLE IF NOT EXISTS mt5_v2_nonces (nonce TEXT PRIMARY KEY, received_at INTEGER NOT NULL)',
         'CREATE INDEX IF NOT EXISTS mt5_v2_nonce_time ON mt5_v2_nonces(received_at)',
@@ -50,7 +52,7 @@ def _ensure_schema():
         'CREATE TABLE IF NOT EXISTS mt5_v2_reconciliation (id TEXT PRIMARY KEY, snapshot_id TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL)',
         'CREATE TABLE IF NOT EXISTS dnb_thesis_legs (command_id TEXT PRIMARY KEY, thesis_id TEXT NOT NULL, confirmation_id TEXT NOT NULL, payload TEXT NOT NULL, UNIQUE(thesis_id,confirmation_id))',
         'CREATE TABLE IF NOT EXISTS dnb_alert_intents (trade_id TEXT PRIMARY KEY, symbol TEXT NOT NULL, side TEXT NOT NULL, state TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL, delivery TEXT)',
-    )+HISTORY_SCHEMA+AUTHORITY_SCHEMA+DEMO_SCHEMA)
+    )+HISTORY_SCHEMA+DEMO_HISTORY_SCHEMA+AUTHORITY_SCHEMA+DEMO_SCHEMA+SOURCE_SCHEMA)
 
 @bp.teardown_request
 def close_store(error):
@@ -339,6 +341,31 @@ def telegram_test():
         return jsonify(ok=ok,delivery_status=status,broker_order_sent=False),200 if ok else 503
     except Exception:
         return jsonify(ok=False,error='telegram_delivery_unconfirmed',broker_order_sent=False),503
+
+@bp.get('/fx101/mt5/sources')
+def source_status():
+    import dnb_sources
+    return jsonify(ok=True,sources=dnb_sources.status(),broker_execution_authorised=False)
+
+@bp.post('/fx101/mt5/demo/snapshot')
+def demo_snapshot():
+    import dnb_demo
+    try:return jsonify(dnb_demo.snapshot(strict_json(),clock()))
+    except risk.Reject as exc:return jsonify(ok=False,error=str(exc)),400
+
+@bp.post('/fx101/mt5/demo/history')
+def demo_history():
+    import dnb_history
+    try:return jsonify(dnb_history.ingest(strict_json(),clock(),demo=True))
+    except risk.Reject as exc:
+        store.db().rollback()
+        return jsonify(ok=False,error=str(exc)),400
+
+@bp.get('/fx101/mt5/demo/status')
+def demo_status():
+    import dnb_demo,dnb_history
+    return jsonify(ok=True,purpose='DEMO',snapshot=dnb_demo.latest(clock()),
+                   history=dnb_history.latest(demo=True),live_goat_authorised=False)
 
 
 @bp.post('/fx101/mt5/demo/intent')

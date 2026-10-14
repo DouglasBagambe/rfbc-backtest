@@ -5,9 +5,15 @@
 enum FX101_MODE { MODE_OFF=0, MODE_OBSERVE=1, MODE_SHADOW=2, MODE_AUTO=3 };
 input string InpApiBase="https://dnb-fx.onrender.com";
 input string InpCredentialFile="Fx101Bridge\\token.txt";
+#ifdef DNB_DEMO_OBSERVER
+input long InpExpectedLogin=5057377621;
+input string InpExpectedServer="MetaQuotes-Demo";
+input FX101_MODE InpMode=MODE_OBSERVE;
+#else
 input long InpExpectedLogin=315307814;
 input string InpExpectedServer="GoatFunded-Server";
 input FX101_MODE InpMode=MODE_SHADOW;
+#endif
 input bool InpLocalKill=true;
 input int InpPollSeconds=5;
 
@@ -21,6 +27,40 @@ bool g_snapshot_ok=false;
 int g_http_status=0;
 bool g_contract_validation=false;
 string g_symbols[];
+
+string DnbBridgeDirectory()
+  {
+   #ifdef DNB_DEMO_OBSERVER
+   return "DnbDemoBridge";
+   #else
+   return "Fx101Bridge";
+   #endif
+  }
+string DnbBrokerSymbol(string symbol)
+  {
+   #ifdef DNB_DEMO_OBSERVER
+   if(StringLen(symbol)==8 && StringSubstr(symbol,6)==".x") return StringSubstr(symbol,0,6);
+   #endif
+   return symbol;
+  }
+string DnbCanonicalSymbol(string symbol)
+  {
+   #ifdef DNB_DEMO_OBSERVER
+   if(StringLen(symbol)==6)
+     {
+      for(int i=0;i<ArraySize(g_symbols);i++) if(g_symbols[i]==symbol+".x") return symbol+".x";
+     }
+   #endif
+   return symbol;
+  }
+double DnbSymbolDouble(string symbol,ENUM_SYMBOL_INFO_DOUBLE property) { return SymbolInfoDouble(DnbBrokerSymbol(symbol),property); }
+long DnbSymbolInteger(string symbol,ENUM_SYMBOL_INFO_INTEGER property) { return SymbolInfoInteger(DnbBrokerSymbol(symbol),property); }
+bool DnbSymbolTick(string symbol,MqlTick &tick) { return SymbolInfoTick(DnbBrokerSymbol(symbol),tick); }
+bool DnbSymbolSelect(string symbol,bool select) { return SymbolSelect(DnbBrokerSymbol(symbol),select); }
+bool DnbCalcProfit(ENUM_ORDER_TYPE type,string symbol,double volume,double entry,double exit,double &profit)
+  { return OrderCalcProfit(type,DnbBrokerSymbol(symbol),volume,entry,exit,profit); }
+bool DnbCalcMargin(ENUM_ORDER_TYPE type,string symbol,double volume,double entry,double &margin)
+  { return OrderCalcMargin(type,DnbBrokerSymbol(symbol),volume,entry,margin); }
 
 string Escape(string s)
   {
@@ -86,7 +126,7 @@ bool AccountBound()
    return AccountInfoInteger(ACCOUNT_LOGIN)==InpExpectedLogin && AccountInfoString(ACCOUNT_SERVER)==InpExpectedServer
           && AccountInfoString(ACCOUNT_CURRENCY)=="USD";
   }
-bool Killed() { return InpLocalKill || FileIsExist("Fx101Bridge\\KILL"); }
+bool Killed() { return InpLocalKill || FileIsExist(DnbBridgeDirectory()+"\\KILL"); }
 
 bool WritePrivate(string path,string body)
   {
@@ -128,7 +168,7 @@ string PositionJson()
      {
       ulong ticket=PositionGetTicket(i);
       if(ticket==0 || !PositionSelectByTicket(ticket)) return "";
-      string symbol=PositionGetString(POSITION_SYMBOL); AddSymbol(symbol);
+      string symbol=DnbCanonicalSymbol(PositionGetString(POSITION_SYMBOL)); AddSymbol(symbol);
       string side=PositionGetInteger(POSITION_TYPE)==POSITION_TYPE_BUY ? "BUY" : "SELL";
       if(i>0) s+=",";
       s+=StringFormat("{\"ticket\":\"%I64u\",\"symbol\":\"%s\",\"side\":\"%s\",\"order_type\":\"%s\",",ticket,Escape(symbol),side,side);
@@ -147,7 +187,7 @@ string OrdersJson()
      {
       ulong ticket=OrderGetTicket(i);
       if(ticket==0 || !OrderSelect(ticket)) return "";
-      string symbol=OrderGetString(ORDER_SYMBOL); AddSymbol(symbol);
+      string symbol=DnbCanonicalSymbol(OrderGetString(ORDER_SYMBOL)); AddSymbol(symbol);
       string type=OrderName(OrderGetInteger(ORDER_TYPE));
       string side=StringFind(type,"BUY")==0 ? "BUY" : "SELL";
       if(i>0) s+=",";
@@ -161,21 +201,21 @@ string OrdersJson()
   }
 string SpecJson(string symbol)
   {
-   if(!SymbolSelect(symbol,true)) return "";
+   if(!DnbSymbolSelect(symbol,true)) return "";
    MqlTick quote;
-   if(!SymbolInfoTick(symbol,quote)) return "";
-   double vmin=SymbolInfoDouble(symbol,SYMBOL_VOLUME_MIN),mb=0,ms=0;
-   if(!FinitePositive(vmin) || !OrderCalcMargin(ORDER_TYPE_BUY,symbol,vmin,quote.ask,mb) || !OrderCalcMargin(ORDER_TYPE_SELL,symbol,vmin,quote.bid,ms)) return "";
+   if(!DnbSymbolTick(symbol,quote)) return "";
+   double vmin=DnbSymbolDouble(symbol,SYMBOL_VOLUME_MIN),mb=0,ms=0;
+   if(!FinitePositive(vmin) || !DnbCalcMargin(ORDER_TYPE_BUY,symbol,vmin,quote.ask,mb) || !DnbCalcMargin(ORDER_TYPE_SELL,symbol,vmin,quote.bid,ms)) return "";
    long utc_quote=(long)quote.time+(long)TimeGMT()-(long)TimeTradeServer();
-   string s="{\"tick_size\":"+Num(SymbolInfoDouble(symbol,SYMBOL_TRADE_TICK_SIZE));
-   s+=",\"tick_value_loss\":"+Num(SymbolInfoDouble(symbol,SYMBOL_TRADE_TICK_VALUE_LOSS));
-   s+=",\"tick_value_profit\":"+Num(SymbolInfoDouble(symbol,SYMBOL_TRADE_TICK_VALUE_PROFIT));
-   s+=",\"contract_size\":"+Num(SymbolInfoDouble(symbol,SYMBOL_TRADE_CONTRACT_SIZE));
-   s+=",\"volume_min\":"+Num(vmin)+",\"volume_max\":"+Num(SymbolInfoDouble(symbol,SYMBOL_VOLUME_MAX));
-   s+=",\"volume_step\":"+Num(SymbolInfoDouble(symbol,SYMBOL_VOLUME_STEP));
+   string s="{\"tick_size\":"+Num(DnbSymbolDouble(symbol,SYMBOL_TRADE_TICK_SIZE));
+   s+=",\"tick_value_loss\":"+Num(DnbSymbolDouble(symbol,SYMBOL_TRADE_TICK_VALUE_LOSS));
+   s+=",\"tick_value_profit\":"+Num(DnbSymbolDouble(symbol,SYMBOL_TRADE_TICK_VALUE_PROFIT));
+   s+=",\"contract_size\":"+Num(DnbSymbolDouble(symbol,SYMBOL_TRADE_CONTRACT_SIZE));
+   s+=",\"volume_min\":"+Num(vmin)+",\"volume_max\":"+Num(DnbSymbolDouble(symbol,SYMBOL_VOLUME_MAX));
+   s+=",\"volume_step\":"+Num(DnbSymbolDouble(symbol,SYMBOL_VOLUME_STEP));
    s+=StringFormat(",\"stops_level\":%I64d,\"freeze_level\":%I64d,\"trade_mode\":%I64d,\"order_mode\":%I64d,\"quote_at\":%I64d",
-         SymbolInfoInteger(symbol,SYMBOL_TRADE_STOPS_LEVEL),SymbolInfoInteger(symbol,SYMBOL_TRADE_FREEZE_LEVEL),SymbolInfoInteger(symbol,SYMBOL_TRADE_MODE),SymbolInfoInteger(symbol,SYMBOL_ORDER_MODE),utc_quote);
-   s+=",\"bid\":"+Num(quote.bid)+",\"ask\":"+Num(quote.ask)+",\"point\":"+Num(SymbolInfoDouble(symbol,SYMBOL_POINT));
+         DnbSymbolInteger(symbol,SYMBOL_TRADE_STOPS_LEVEL),DnbSymbolInteger(symbol,SYMBOL_TRADE_FREEZE_LEVEL),DnbSymbolInteger(symbol,SYMBOL_TRADE_MODE),DnbSymbolInteger(symbol,SYMBOL_ORDER_MODE),utc_quote);
+   s+=",\"bid\":"+Num(quote.bid)+",\"ask\":"+Num(quote.ask)+",\"point\":"+Num(DnbSymbolDouble(symbol,SYMBOL_POINT));
    s+=",\"margin_buy\":"+Num(mb/vmin)+",\"margin_sell\":"+Num(ms/vmin)+"}";
    return s;
   }
@@ -191,8 +231,8 @@ string Snapshot()
         {
          // Never omit specifications for active manual exposure.
          bool active=false;
-         for(int j=0;j<PositionsTotal();j++) if(PositionGetTicket(j)>0 && PositionGetString(POSITION_SYMBOL)==g_symbols[i]) active=true;
-         for(int j=0;j<OrdersTotal();j++) if(OrderGetTicket(j)>0 && OrderGetString(ORDER_SYMBOL)==g_symbols[i]) active=true;
+         for(int j=0;j<PositionsTotal();j++) if(PositionGetTicket(j)>0 && DnbCanonicalSymbol(PositionGetString(POSITION_SYMBOL))==g_symbols[i]) active=true;
+         for(int j=0;j<OrdersTotal();j++) if(OrderGetTicket(j)>0 && DnbCanonicalSymbol(OrderGetString(ORDER_SYMBOL))==g_symbols[i]) active=true;
          if(active) return "";
          continue;
         }
@@ -218,6 +258,11 @@ string Snapshot()
 bool Http(string method,string path,string body,string &response,string &nonce)
   {
    if(!Hex(g_key,64) || !AccountBound() || StringFind(InpApiBase,"https://")!=0) return false;
+   #ifdef DNB_DEMO_OBSERVER
+   if(path=="/fx101/mt5/snapshot") path="/fx101/mt5/demo/snapshot";
+   else if(path=="/fx101/mt5/history") path="/fx101/mt5/demo/history";
+   else return false; // No funded endpoints and no command execution in the observer.
+   #endif
    string stamp=(string)(long)TimeGMT(); g_counter++;
    nonce=Hmac(g_session+":"+(string)g_counter+":"+(string)GetMicrosecondCount(),g_key);
    string signature=Hmac(method+"\n"+path+"\n"+stamp+"\n"+nonce+"\n"+body,g_key);
@@ -229,7 +274,7 @@ bool Http(string method,string path,string body,string &response,string &nonce)
    ResetLastError();
    int code=WebRequest(method,InpApiBase+path,headers,3000,data,result,result_headers);
    int error=GetLastError(); g_http_status=code;
-   WritePrivate("Fx101Bridge\\transport.txt",StringFormat("http_status=%d last_error=%d utc=%I64d",code,error,(long)TimeGMT()));
+   WritePrivate(DnbBridgeDirectory()+"\\transport.txt",StringFormat("http_status=%d last_error=%d utc=%I64d",code,error,(long)TimeGMT()));
    if(code!=200) { Print("FX101 transport unavailable code=",code," error=",error); return false; }
    if(ArraySize(result)>16384) return false;
    response=CharArrayToString(result,0,-1,CP_UTF8);
@@ -258,13 +303,13 @@ bool ExistingRisk(double &total,double &directed,string symbol,string side,strin
         {
          ulong ticket=group==0 ? PositionGetTicket(i) : OrderGetTicket(i);
          if(ticket==0) { reason="exposure_selection_failed"; return false; }
-         string sym=group==0 ? PositionGetString(POSITION_SYMBOL) : OrderGetString(ORDER_SYMBOL);
+         string sym=DnbCanonicalSymbol(group==0 ? PositionGetString(POSITION_SYMBOL) : OrderGetString(ORDER_SYMBOL));
          string dir=group==0 ? (PositionGetInteger(POSITION_TYPE)==POSITION_TYPE_BUY ? "BUY" : "SELL") : (StringFind(OrderName(OrderGetInteger(ORDER_TYPE)),"BUY")==0 ? "BUY" : "SELL");
          if(sym==symbol) { reason=side==dir ? "duplicate_symbol" : "hedging_prohibited"; return false; }
          double sl=group==0 ? PositionGetDouble(POSITION_SL) : OrderGetDouble(ORDER_SL);
          double volume=group==0 ? PositionGetDouble(POSITION_VOLUME) : OrderGetDouble(ORDER_VOLUME_CURRENT);
          if(!FinitePositive(sl)) { reason="existing_exposure_without_sl"; return false; }
-         MqlTick q; if(!SymbolInfoTick(sym,q) || TimeTradeServer()-q.time>10 || q.time>TimeTradeServer()+1) { reason="exposure_quote_failed"; return false; }
+         MqlTick q; if(!DnbSymbolTick(sym,q) || TimeTradeServer()-q.time>10 || q.time>TimeTradeServer()+1) { reason="exposure_quote_failed"; return false; }
          double entry=dir=="BUY" ? q.bid : q.ask;
          if(group==1)
            {
@@ -274,7 +319,7 @@ bool ExistingRisk(double &total,double &directed,string symbol,string side,strin
            }
          if(!FinitePositive(entry) || (dir=="BUY" ? sl>=entry : sl<=entry)) { reason="exposure_stop_breached"; return false; }
          double profit=0;
-         if(!OrderCalcProfit(dir=="BUY" ? ORDER_TYPE_BUY : ORDER_TYPE_SELL,sym,volume,entry,sl,profit)) { reason="exposure_risk_failed"; return false; }
+         if(!DnbCalcProfit(dir=="BUY" ? ORDER_TYPE_BUY : ORDER_TYPE_SELL,sym,volume,entry,sl,profit)) { reason="exposure_risk_failed"; return false; }
          double loss=MathMax(0,-profit); total+=loss;
          bool known=false;
          for(int k=0;k<ArraySize(g_symbols);k++) if(g_symbols[k]==sym) known=true;
@@ -303,21 +348,21 @@ bool Plan(string &f[],double &volume,double &usd,string &reason)
    if(f[17]!="1") { reason="historical_anchors_unverified"; return false; }
    string symbol=f[8],type=f[9]; bool allowed=false;
    for(int i=0;i<ArraySize(g_symbols);i++) if(g_symbols[i]==symbol && StringSubstr(symbol,StringLen(symbol)-2)==".x") allowed=true;
-   if(!allowed || !SymbolSelect(symbol,true)) { reason="symbol_unavailable"; return false; }
+   if(!allowed || !DnbSymbolSelect(symbol,true)) { reason="symbol_unavailable"; return false; }
    int order=-1;
    for(int i=0;i<8;i++) if(OrderName(i)==type) order=i;
    if(order<0) { reason="order_type"; return false; }
    bool buy=StringFind(type,"BUY")==0; string side=buy ? "BUY" : "SELL";
-   long trade_mode=SymbolInfoInteger(symbol,SYMBOL_TRADE_MODE);
+   long trade_mode=DnbSymbolInteger(symbol,SYMBOL_TRADE_MODE);
    if(trade_mode!=SYMBOL_TRADE_MODE_FULL && !(trade_mode==SYMBOL_TRADE_MODE_LONGONLY && buy) && !(trade_mode==SYMBOL_TRADE_MODE_SHORTONLY && !buy)) { reason="trade_mode"; return false; }
-   long bits=SymbolInfoInteger(symbol,SYMBOL_ORDER_MODE);
+   long bits=DnbSymbolInteger(symbol,SYMBOL_ORDER_MODE);
    long needed=order<2 ? 1 : order<4 ? 2 : order<6 ? 4 : 8;
    if((bits&needed)==0 || (bits&16)==0 || (bits&32)==0) { reason="broker_order_mode"; return false; }
-   MqlTick quote; if(!SymbolInfoTick(symbol,quote)) { reason="quote_failed"; return false; }
+   MqlTick quote; if(!DnbSymbolTick(symbol,quote)) { reason="quote_failed"; return false; }
    if(TimeTradeServer()-quote.time>10 || quote.time>TimeTradeServer()+1) { reason="stale_quote"; return false; }
-   double tick=SymbolInfoDouble(symbol,SYMBOL_TRADE_TICK_SIZE),tv=SymbolInfoDouble(symbol,SYMBOL_TRADE_TICK_VALUE_LOSS);
-   double step=SymbolInfoDouble(symbol,SYMBOL_VOLUME_STEP),vmin=SymbolInfoDouble(symbol,SYMBOL_VOLUME_MIN),vmax=SymbolInfoDouble(symbol,SYMBOL_VOLUME_MAX);
-   if(!FinitePositive(tick) || !FinitePositive(tv) || !FinitePositive(step) || !FinitePositive(vmin) || !FinitePositive(vmax) || !FinitePositive(SymbolInfoDouble(symbol,SYMBOL_TRADE_CONTRACT_SIZE))) { reason="contract_invalid"; return false; }
+   double tick=DnbSymbolDouble(symbol,SYMBOL_TRADE_TICK_SIZE),tv=DnbSymbolDouble(symbol,SYMBOL_TRADE_TICK_VALUE_LOSS);
+   double step=DnbSymbolDouble(symbol,SYMBOL_VOLUME_STEP),vmin=DnbSymbolDouble(symbol,SYMBOL_VOLUME_MIN),vmax=DnbSymbolDouble(symbol,SYMBOL_VOLUME_MAX);
+   if(!FinitePositive(tick) || !FinitePositive(tv) || !FinitePositive(step) || !FinitePositive(vmin) || !FinitePositive(vmax) || !FinitePositive(DnbSymbolDouble(symbol,SYMBOL_TRADE_CONTRACT_SIZE))) { reason="contract_invalid"; return false; }
    if(quote.ask<quote.bid || (quote.ask-quote.bid)/tick>30) { reason="spread"; return false; }
    if(order<2)
      {
@@ -328,8 +373,8 @@ bool Plan(string &f[],double &volume,double &usd,string &reason)
    if(!(buy ? sl<entry && entry<tp : tp<entry && entry<sl) || !FinitePositive(sl) || !FinitePositive(tp)) { reason="sltp_geometry"; return false; }
    double price_values[]={entry,sl,tp};
    for(int i=0;i<3;i++) if(MathAbs(price_values[i]/tick-MathRound(price_values[i]/tick))>1e-6) { reason="tick_alignment"; return false; }
-   long levels=MathMax(SymbolInfoInteger(symbol,SYMBOL_TRADE_STOPS_LEVEL),SymbolInfoInteger(symbol,SYMBOL_TRADE_FREEZE_LEVEL));
-   double distance=(double)levels*SymbolInfoDouble(symbol,SYMBOL_POINT),ref=buy ? quote.bid : quote.ask;
+   long levels=MathMax(DnbSymbolInteger(symbol,SYMBOL_TRADE_STOPS_LEVEL),DnbSymbolInteger(symbol,SYMBOL_TRADE_FREEZE_LEVEL));
+   double distance=(double)levels*DnbSymbolDouble(symbol,SYMBOL_POINT),ref=buy ? quote.bid : quote.ask;
    if(MathMin(MathMin(MathAbs(entry-sl),MathAbs(tp-entry)),MathMin(MathAbs(ref-sl),MathAbs(tp-ref)))<=distance) { reason="stop_freeze_level"; return false; }
    if(order>=2)
      {
@@ -358,14 +403,14 @@ bool Plan(string &f[],double &volume,double &usd,string &reason)
    if(budget<=0) { reason="aggregate_or_drawdown"; return false; }
    double profit=0,worst=entry+(buy ? 5*tick : -5*tick);
    ENUM_ORDER_TYPE market_type=buy ? ORDER_TYPE_BUY : ORDER_TYPE_SELL;
-   if(!OrderCalcProfit(market_type,symbol,vmin,worst,sl,profit) || profit>=0) { reason="risk_calculation"; return false; }
+   if(!DnbCalcProfit(market_type,symbol,vmin,worst,sl,profit) || profit>=0) { reason="risk_calculation"; return false; }
    double unit=MathMax(-profit/vmin,(MathAbs(entry-sl)/tick+5)*tv);
    volume=MathFloor(MathMin(vmax,budget/unit)/step)*step; // Always DOWN, without an upward epsilon.
    if(volume<vmin || volume<=0) { volume=0; reason="lot_minimum"; return false; }
    usd=unit*volume;
    if(usd>budget) { reason="risk_rounding"; return false; }
    double margin=0;
-   if(!OrderCalcMargin(market_type,symbol,volume,entry,margin) || margin>AccountInfoDouble(ACCOUNT_MARGIN_FREE)*0.8) { reason="margin"; return false; }
+   if(!DnbCalcMargin(market_type,symbol,volume,entry,margin) || margin>AccountInfoDouble(ACCOUNT_MARGIN_FREE)*0.8) { reason="margin"; return false; }
    reason="synthetic_shadow_only";
    return true;
   }
@@ -374,29 +419,29 @@ void Ack(string id,string body)
    string response,nonce;
    if(Http("POST","/fx101/mt5/ack",body,response,nonce))
      {
-      if(!WritePrivate("Fx101Bridge\\"+id+".sent","ACKED")) Print("FX101 ACK marker failed; retry remains safe");
+      if(!WritePrivate(DnbBridgeDirectory()+"\\"+id+".sent","ACKED")) Print("FX101 ACK marker failed; retry remains safe");
       Print("dnb EA ACK confirmed command=",id);
      }
    else
      {
       // Unknown/corrupt ACKs remain as evidence; backoff prevents scan starvation.
       long delay=g_http_status==404 ? 3600 : 60;
-      WritePrivate("Fx101Bridge\\"+id+".retry",(string)((long)TimeGMT()+delay));
+      WritePrivate(DnbBridgeDirectory()+"\\"+id+".retry",(string)((long)TimeGMT()+delay));
      }
   }
 void DrainAcks()
   {
    string name;
-   long handle=FileFindFirst("Fx101Bridge\\*.ack",name);
+   long handle=FileFindFirst(DnbBridgeDirectory()+"\\*.ack",name);
    if(handle==INVALID_HANDLE) return;
    int attempted=0;
    do
      {
       if(StringLen(name)!=36 || !Hex(StringSubstr(name,0,32),32)) continue;
       string id=StringSubstr(name,0,32);
-      if(FileIsExist("Fx101Bridge\\"+id+".sent")) continue;
-      if((long)StringToInteger(ReadPrivate("Fx101Bridge\\"+id+".retry"))>(long)TimeGMT()) continue;
-      string body=ReadPrivate("Fx101Bridge\\"+name);
+      if(FileIsExist(DnbBridgeDirectory()+"\\"+id+".sent")) continue;
+      if((long)StringToInteger(ReadPrivate(DnbBridgeDirectory()+"\\"+id+".retry"))>(long)TimeGMT()) continue;
+      string body=ReadPrivate(DnbBridgeDirectory()+"\\"+name);
       if(body=="") continue;
       Ack(id,body); attempted++;
       // Bound traffic; durable ACK retry is independent of command expiry.
@@ -414,7 +459,7 @@ void Poll()
    if(count!=19 || f[0]!="FX101v2" || !Equal(f[1],nonce) || !Hex(f[2],32) || !Hex(f[18],64)) { Print("FX101 invalid command envelope"); return; }
    int split=StringLen(response)-65;
    if(!Equal(Hmac(StringSubstr(response,0,split),g_key),f[18])) { Print("FX101 invalid command signature"); return; }
-   string journal="Fx101Bridge\\"+f[2]+".ack";
+   string journal=DnbBridgeDirectory()+"\\"+f[2]+".ack";
    if(FileIsExist(journal))
      {
       string existing=ReadPrivate(journal);
@@ -434,19 +479,23 @@ void Poll()
 int OnInit()
   {
    if(InpMode==MODE_AUTO) { Print("FX101 AUTO unavailable: critical paths unvalidated"); return INIT_PARAMETERS_INCORRECT; }
+   #ifdef DNB_DEMO_OBSERVER
+   if(InpExpectedLogin!=5057377621 || InpExpectedServer!="MetaQuotes-Demo" || InpMode!=MODE_OBSERVE || AccountInfoInteger(ACCOUNT_TRADE_MODE)!=ACCOUNT_TRADE_MODE_DEMO) return INIT_PARAMETERS_INCORRECT;
+   #else
    if(InpExpectedLogin!=315307814 || InpExpectedServer!="GoatFunded-Server") return INIT_PARAMETERS_INCORRECT;
+   #endif
    if(StringFind(InpApiBase,"https://")!=0 || StringFind(InpApiBase,"\r")>=0 || StringFind(InpApiBase,"\n")>=0 || InpPollSeconds<5 || InpPollSeconds>10) return INIT_PARAMETERS_INCORRECT;
    if(Hmac("The quick brown fox jumps over the lazy dog","key")!="f7bc83f430538424b13298e6aa6fb143ef4d59a14946175997479dbc2d1a3cd8") { Print("FX101 cryptographic selftest failed"); return INIT_FAILED; }
-   FolderCreate("Fx101Bridge");
+   FolderCreate(DnbBridgeDirectory());
    g_key=ReadPrivate(InpCredentialFile);
    if(g_key!="" && !Hex(g_key,64)) return INIT_PARAMETERS_INCORRECT;
-   string counter_path="Fx101Bridge\\boot.txt";
+   string counter_path=DnbBridgeDirectory()+"\\boot.txt";
    double boot=StringToDouble(ReadPrivate(counter_path))+1;
    if(!WritePrivate(counter_path,DoubleToString(boot,0))) return INIT_FAILED;
    g_session=DoubleToString(boot,0)+":"+(string)(long)TimeGMT()+":"+(string)GetMicrosecondCount();
    string symbols="EURUSD.x,GBPUSD.x,GBPJPY.x,USDCAD.x,EURJPY.x,AUDUSD.x,NZDUSD.x,USDCHF.x,EURGBP.x,CADJPY.x,CHFJPY.x,EURAUD.x,GBPAUD.x,EURCAD.x,GBPCAD.x,XAUUSD.x,USDJPY.x,AUDJPY.x";
    StringSplit(symbols,',',g_symbols);
-   for(int i=0;i<ArraySize(g_symbols);i++) SymbolSelect(g_symbols[i],true);
+   for(int i=0;i<ArraySize(g_symbols);i++) DnbSymbolSelect(g_symbols[i],true);
    if(!EventSetTimer(InpPollSeconds)) return INIT_FAILED;
    Print("FX101 v2 started SHADOW/OBSERVE only login=",InpExpectedLogin," server=",InpExpectedServer," markets=",ArraySize(g_symbols)," local_kill=",Killed());
    return INIT_SUCCEEDED;
@@ -460,13 +509,13 @@ void ValidateContracts()
    for(int n=0;n<18;n++)
      {
       string symbol=g_symbols[n];
-      if(!SymbolSelect(symbol,true)) continue;
-      MqlTick q; if(!SymbolInfoTick(symbol,q)) continue;
-      double tick=SymbolInfoDouble(symbol,SYMBOL_TRADE_TICK_SIZE);
-      double point=SymbolInfoDouble(symbol,SYMBOL_POINT);
-      double vmin=SymbolInfoDouble(symbol,SYMBOL_VOLUME_MIN);
+      if(!DnbSymbolSelect(symbol,true)) continue;
+      MqlTick q; if(!DnbSymbolTick(symbol,q)) continue;
+      double tick=DnbSymbolDouble(symbol,SYMBOL_TRADE_TICK_SIZE);
+      double point=DnbSymbolDouble(symbol,SYMBOL_POINT);
+      double vmin=DnbSymbolDouble(symbol,SYMBOL_VOLUME_MIN);
       if(!FinitePositive(tick) || !FinitePositive(point) || !FinitePositive(vmin)) continue;
-      long levels=MathMax(SymbolInfoInteger(symbol,SYMBOL_TRADE_STOPS_LEVEL),SymbolInfoInteger(symbol,SYMBOL_TRADE_FREEZE_LEVEL));
+      long levels=MathMax(DnbSymbolInteger(symbol,SYMBOL_TRADE_STOPS_LEVEL),DnbSymbolInteger(symbol,SYMBOL_TRADE_FREEZE_LEVEL));
       double d=MathCeil(MathMax(200*tick,2*levels*point)/tick)*tick;
       for(int k=0;k<8;k++)
         {
@@ -482,10 +531,10 @@ void ValidateContracts()
          req.type_time=ORDER_TIME_GTC; req.type_filling=ORDER_FILLING_RETURN;
          double profit=0,margin=0;
          ENUM_ORDER_TYPE direction=buy ? ORDER_TYPE_BUY : ORDER_TYPE_SELL;
-         bool pc=OrderCalcProfit(direction,symbol,vmin,req.price+(buy ? 5*tick : -5*tick),req.sl,profit);
-         bool mc=OrderCalcMargin(direction,symbol,vmin,req.price,margin);
+         bool pc=DnbCalcProfit(direction,symbol,vmin,req.price+(buy ? 5*tick : -5*tick),req.sl,profit);
+         bool mc=DnbCalcMargin(direction,symbol,vmin,req.price,margin);
          long bit=k<2 ? 1 : k<4 ? 2 : k<6 ? 4 : 8;
-         bool supported=(SymbolInfoInteger(symbol,SYMBOL_ORDER_MODE)&bit)!=0;
+         bool supported=(DnbSymbolInteger(symbol,SYMBOL_ORDER_MODE)&bit)!=0;
          datetime session_from=0,session_to=0;
          MqlDateTime current; TimeToStruct(TimeTradeServer(),current);
          bool session=SymbolInfoSessionTrade(symbol,(ENUM_DAY_OF_WEEK)current.day_of_week,0,session_from,session_to);
@@ -498,7 +547,7 @@ void ValidateContracts()
         }
      }
    out+="]}";
-   g_contract_validation=WritePrivate("Fx101Bridge\\native-contract-validation.json",out);
+   g_contract_validation=WritePrivate(DnbBridgeDirectory()+"\\native-contract-validation.json",out);
   }
 
 #include "include/DnbHistory.mqh"
@@ -511,7 +560,7 @@ void OnTimer()
    if(!g_contract_validation) ValidateContracts();
    string body=Snapshot(); g_snapshot_ok=false;
    if(body=="") { Print("FX101 incomplete broker snapshot; commands blocked"); return; }
-   if(!WritePrivate("Fx101Bridge\\snapshot.json",body)) return;
+   if(!WritePrivate(DnbBridgeDirectory()+"\\snapshot.json",body)) return;
    string response,nonce;
    g_snapshot_ok=Http("POST","/fx101/mt5/snapshot",body,response,nonce);
    if(g_snapshot_ok) DnbPumpHistory();

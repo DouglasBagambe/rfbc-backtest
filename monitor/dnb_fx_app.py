@@ -27,6 +27,8 @@ def health():
                        auto_available=False), 503
 
 if __name__ == '__main__':
+    import dnb_source_worker
+    dnb_source_worker.start(app)
     proxy = os.getenv('FX101_MT5_TRUST_PROXY') == '1'
     serve(app, host='0.0.0.0', port=int(os.getenv('PORT','10000')), threads=4,
           trusted_proxy='*' if proxy else None,

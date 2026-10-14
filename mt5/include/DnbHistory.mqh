@@ -59,7 +59,7 @@ void DnbPumpHistory()
    if(g_history_page>=pages) { g_history_page=0;g_history_kind++; }
    if(g_history_kind>=2)
      {
-      WritePrivate("Fx101Bridge\\history-capture.txt",g_history_capture+"|"+(string)g_history_at+"|"+(string)ArraySize(g_history_orders)+"|"+(string)ArraySize(g_history_deals));
+      WritePrivate(DnbBridgeDirectory()+"\\history-capture.txt",g_history_capture+"|"+(string)g_history_at+"|"+(string)ArraySize(g_history_orders)+"|"+(string)ArraySize(g_history_deals));
       g_history_capture="";
      }
   }

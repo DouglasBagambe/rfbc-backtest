@@ -3,3 +3,6 @@
 {"event":"lost_response","id":"528a76987af84199503bb2d648449d05","status":"UNRESOLVED","retcode":10012,"send_calls":1,"volume":0.0100,"risk_usd":2.00}
 {"event":"identity_recovery","id":"528a76987af84199503bb2d648449d05","status":"RECOVERED","order":"58897095310","deal":"58502419659","resubmitted":false}
 {"event":"binding","login":5057377621,"server":"MetaQuotes-Demo","balance":2476.00,"currency":"USD","trade_mode":0,"terminal_algo":0,"ea_algo":1,"run_enabled":1}
+{"event":"binding","login":5057377621,"server":"MetaQuotes-Demo","balance":2476.00,"currency":"USD","trade_mode":0,"terminal_algo":1,"ea_algo":1,"run_enabled":1}
+{"event":"terminal_restart_recovery","id":"528a76987af84199503bb2d648449d05","status":"RECOVERED","order":"58897095310","deal":"58502419659","entry_resubmitted":false}
+{"event":"synthetic_cleanup","status":"ACCEPTED","retcode":10009,"order":"58897443784","deal":"58502763194","volume":0.0100}

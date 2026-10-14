@@ -56,13 +56,13 @@ def symbol_spec(spec):
     if number(spec['ask']) < number(spec['bid']) or number(spec['volume_max']) < number(spec['volume_min']):
         raise Reject('invalid_symbol_spec')
 
-def validate_snapshot(s, now):
+def validate_snapshot(s, now, *, expected_login=LOGIN, expected_server=SERVER):
     required = {'login','server','currency','captured_at','balance','equity','free_margin','margin','floating_pnl',
                 'terminal_connected','positions','orders','symbols','daily_anchor','high_water_equity','anchors_verified','day_key'}
     keys(s, required)
-    if type(s['login']) is not int or s['login'] != LOGIN:
+    if type(s['login']) is not int or s['login'] != expected_login:
         raise Reject('wrong_account')
-    if s['server'] != SERVER:
+    if s['server'] != expected_server:
         raise Reject('wrong_server')
     if s['currency'] != 'USD':
         raise Reject('account_currency')
@@ -150,14 +150,14 @@ def exposure_budgets(s, symbol, side, basis, now):
     if remaining <= 0: raise Reject('metal_risk')
     return remaining
 
-def plan(s, command, now, *, require_anchors=True, scale_in_tickets=frozenset()):
-    validate_snapshot(s, now)
+def plan(s, command, now, *, require_anchors=True, scale_in_tickets=frozenset(), expected_login=LOGIN, expected_server=SERVER):
+    validate_snapshot(s, now, expected_login=expected_login, expected_server=expected_server)
     required = {'command_id','login','server','created_at','expires_at','symbol','order_type','entry','sl','tp','risk_pct','stop_limit','cancel'}
     keys(command, required)
     if not re.fullmatch(r'[a-f0-9]{32}',str(command['command_id'])):
         raise Reject('invalid_command_id')
-    if command['login'] != LOGIN: raise Reject('wrong_account')
-    if command['server'] != SERVER: raise Reject('wrong_server')
+    if command['login'] != expected_login: raise Reject('wrong_account')
+    if command['server'] != expected_server: raise Reject('wrong_server')
     if type(command['created_at']) is not int or type(command['expires_at']) is not int or not 0 <= now-command['created_at'] <= 30 or not now < command['expires_at'] <= command['created_at']+30:
         raise Reject('stale_command')
     if not s['terminal_connected']: raise Reject('terminal_disconnected')
