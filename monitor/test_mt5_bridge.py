@@ -55,10 +55,10 @@ class RiskTests(unittest.TestCase):
     def test_duplicate_symbol(self): self.s['positions']=[item('EURUSD.x')]; self.rejected('duplicate_symbol')
     def test_opposite_position(self): self.s['positions']=[item('EURUSD.x','SELL')]; self.rejected('hedging')
     def test_manual_position_counts(self):
-        self.s['positions']=[item(volume=.1)]; p=risk.plan(self.s,self.c,NOW); self.assertEqual(p['existing_risk_usd'],11); self.assertEqual(p['volume'],.03)
+        self.s['positions']=[item(volume=.06)]; p=risk.plan(self.s,self.c,NOW); self.assertEqual(p['existing_risk_usd'],6.6); self.assertEqual(p['volume'],.02)
     def test_manual_pending_counts(self):
-        pending=item(volume=.1); pending['order_type']='BUY_LIMIT'; self.s['orders']=[pending]
-        p=risk.plan(self.s,self.c,NOW); self.assertEqual(p['existing_risk_usd'],12); self.assertEqual(p['volume'],.02)
+        pending=item(volume=.06); pending['order_type']='BUY_LIMIT'; self.s['orders']=[pending]
+        p=risk.plan(self.s,self.c,NOW); self.assertEqual(p['existing_risk_usd'],7.2); self.assertEqual(p['volume'],.02)
     def test_no_sl_position(self): self.s['positions']=[item(sl=0)]; self.rejected('existing_exposure_without_sl')
     def test_no_sl_pending(self): self.s['orders']=[item(sl=0)]; self.rejected('existing_exposure_without_sl')
     def loss(self, amount):

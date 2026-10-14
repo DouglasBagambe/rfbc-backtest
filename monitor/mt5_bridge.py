@@ -16,6 +16,7 @@ from datetime import datetime, timezone
 from flask import Blueprint, Response, jsonify, request
 import fx101
 import mt5_risk as risk
+import mt5_store as store
 
 bp = Blueprint('mt5_bridge', __name__)
 ACCOUNT_ID = 'goat-stride-2500-instant-hero'
@@ -37,16 +38,18 @@ def request_signature(method,path,stamp,nonce,body):
     return sign(f'{method}\n{path}\n{stamp}\n{nonce}\n'.encode()+body)
 
 def _ensure_schema():
-    c = fx101.db()
-    for sql in (
+    store.ensure_schema((
         'CREATE TABLE IF NOT EXISTS mt5_v2_nonces (nonce TEXT PRIMARY KEY, received_at INTEGER NOT NULL)',
         'CREATE INDEX IF NOT EXISTS mt5_v2_nonce_time ON mt5_v2_nonces(received_at)',
         'CREATE TABLE IF NOT EXISTS mt5_v2_snapshots (id TEXT PRIMARY KEY, captured_at INTEGER NOT NULL, received_at INTEGER NOT NULL, payload TEXT NOT NULL)',
         'CREATE INDEX IF NOT EXISTS mt5_v2_snapshot_time ON mt5_v2_snapshots(captured_at)',
         'CREATE TABLE IF NOT EXISTS mt5_v2_commands (id TEXT PRIMARY KEY, trade_id TEXT UNIQUE NOT NULL, state TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL, expires_at INTEGER NOT NULL, ack TEXT)',
         'CREATE TABLE IF NOT EXISTS mt5_v2_reconciliation (id TEXT PRIMARY KEY, snapshot_id TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL)',
-    ): c.execute(sql)
-    c.commit()
+    ))
+
+@bp.teardown_request
+def close_store(error):
+    store.close_request(error)
 
 @bp.before_request
 def authenticate():
@@ -67,8 +70,9 @@ def authenticate():
         expected = request_signature(request.method,request.path,stamp,nonce,request.get_data())
         if not hmac.compare_digest(expected,signature): raise risk.Reject('unauthorized')
         _ensure_schema()
-        c = fx101.db()
-        count = c.execute('SELECT COUNT(*) FROM mt5_v2_nonces WHERE received_at>=?',(now-60,)).fetchone()[0]
+        c = store.lock_account()
+        count = c.execute('SELECT COUNT(*) AS count FROM mt5_v2_nonces WHERE received_at>=?',(now-60,)).fetchone()
+        count = count['count'] if store.remote() else count[0]
         if count >= 90: return jsonify(ok=False,error='rate_limited'),429
         # Atomic unique nonce insertion protects multiple threads/processes and restarts.
         c.execute('INSERT INTO mt5_v2_nonces VALUES (?,?)',(nonce,now))
@@ -77,7 +81,7 @@ def authenticate():
     except risk.Reject:
         return jsonify(ok=False,error='unauthorized'),401
     except Exception:
-        fx101.db().rollback()
+        store.db().rollback()
         return jsonify(ok=False,error='replay_or_storage_unavailable'),409
 
 @bp.errorhandler(413)
@@ -103,7 +107,7 @@ def strict_json():
 
 def latest_snapshot():
     _ensure_schema()
-    row = fx101.db().execute('SELECT * FROM mt5_v2_snapshots ORDER BY captured_at DESC,received_at DESC LIMIT 1').fetchone()
+    row = store.db().execute('SELECT * FROM mt5_v2_snapshots ORDER BY captured_at DESC,received_at DESC LIMIT 1').fetchone()
     if not row: return None
     out = dict(row); out['payload'] = json.loads(out['payload'])
     out['age_seconds'] = clock()-out['captured_at']
@@ -145,12 +149,14 @@ def preflight_decision(d):
 def _queue_command(d, *, synthetic=False):
     """Durable idempotent insertion. Synthetic commands are SHADOW-only, not trades."""
     if not enabled() or killed() or mode() != 'SHADOW': raise risk.Reject('shadow_unavailable')
+    _ensure_schema()
+    c = store.lock_account()
     snap = latest_snapshot()
     if not snap or not snap['fresh']: raise risk.Reject('stale_snapshot')
     command = make_command(d)
     quote = risk.plan(snap['payload'],command,clock(),require_anchors=not synthetic)
     payload = {**command,'synthetic':synthetic,'quote':quote,'snapshot_id':snap['id']}
-    c = fx101.db()
+    c = store.lock_account()
     existing=c.execute('SELECT * FROM mt5_v2_commands WHERE trade_id=?',(d['trade_id'],)).fetchone()
     if existing:
         old=json.loads(existing['payload'])
@@ -161,7 +167,11 @@ def _queue_command(d, *, synthetic=False):
     c.execute('INSERT OR IGNORE INTO mt5_v2_commands VALUES (?,?,?,?,?,?,?)',
               (command['command_id'],d['trade_id'],'QUEUED',json.dumps(payload,separators=(',',':')),clock(),command['expires_at'],None))
     c.commit()
-    return dict(c.execute('SELECT * FROM mt5_v2_commands WHERE trade_id=?',(d['trade_id'],)).fetchone())
+    saved = dict(c.execute('SELECT * FROM mt5_v2_commands WHERE trade_id=?',(d['trade_id'],)).fetchone())
+    old = json.loads(saved['payload'])
+    frozen = ('login','server','symbol','order_type','entry','sl','tp','risk_pct','stop_limit','cancel','synthetic')
+    if any(old[k] != payload[k] for k in frozen): raise risk.Reject('duplicate_command_conflict')
+    return saved
 
 def wire(command, nonce):
     # Exact flat ASCII protocol: no permissive substring JSON parser in the EA.
@@ -176,7 +186,7 @@ def wire(command, nonce):
 def ingest_snapshot():
     try:
         body = strict_json(); risk.validate_snapshot(body,clock())
-        c = fx101.db(); prior = latest_snapshot()
+        c = store.lock_account(); prior = latest_snapshot()
         if prior and body['captured_at'] <= prior['captured_at']: raise risk.Reject('out_of_order_snapshot')
         # Client assertions cannot establish historical anchors in this validation build.
         body['anchors_verified'] = False
@@ -191,8 +201,11 @@ def ingest_snapshot():
         differences = {'added':[k for k in current if k not in previous],
                        'missing':[k for k in previous if k not in current],
                        'changed':[k for k in current if k in previous and current[k]!=previous[k]],
-                       'unresolved_internal_trades':[x['id'] for x in c.execute("SELECT id FROM trades WHERE state IN ('PLACED','OPEN')")]}
+                       'unresolved_internal_trades':[] if store.remote() else [x['id'] for x in c.execute("SELECT id FROM trades WHERE state IN ('PLACED','OPEN')")]}
         c.execute('INSERT INTO mt5_v2_reconciliation VALUES (?,?,?,?)',(uuid.uuid4().hex,sid,json.dumps(differences),clock()))
+        # Bounded raw observations, separate from permanent command/ACK evidence.
+        c.execute('DELETE FROM mt5_v2_snapshots WHERE captured_at<?',(clock()-86400,))
+        c.execute('DELETE FROM mt5_v2_reconciliation WHERE created_at<?',(clock()-30*86400,))
         c.commit()
     except (risk.Reject,ValueError,KeyError,TypeError) as exc:
         return jsonify(ok=False,error=str(exc) if isinstance(exc,risk.Reject) else 'invalid_snapshot'),400
@@ -201,7 +214,7 @@ def ingest_snapshot():
 @bp.get('/fx101/mt5/command')
 def next_command():
     if request.args: return jsonify(ok=False,error='unexpected_query'),400
-    c = fx101.db(); now = clock()
+    c = store.db(); now = clock()
     c.execute("UPDATE mt5_v2_commands SET state='EXPIRED' WHERE state='QUEUED' AND expires_at<=?",(now,)); c.commit()
     if killed() or mode() != 'SHADOW': return Response('NONE',mimetype='text/plain')
     snap = latest_snapshot()
@@ -220,7 +233,7 @@ def ack_command():
         if not isinstance(body['detail'],str) or not re.fullmatch(r'[a-z0-9_]{1,64}',body['detail']): raise risk.Reject('invalid_detail')
         for k in ('volume','risk_usd'):
             if risk.number(body[k]) < 0: raise risk.Reject('invalid_ack')
-        c = fx101.db(); row = c.execute('SELECT * FROM mt5_v2_commands WHERE id=?',(body['command_id'],)).fetchone()
+        c = store.lock_account(); row = c.execute('SELECT * FROM mt5_v2_commands WHERE id=?',(body['command_id'],)).fetchone()
         if not row: return jsonify(ok=False,error='unknown_command'),404
         canonical = json.dumps(body,sort_keys=True,separators=(',',':'))
         if row['ack']:
@@ -228,7 +241,12 @@ def ack_command():
             return jsonify(ok=True,idempotent=True)
         # Late ACK retained as evidence; it cannot resurrect an expired command.
         c.execute("UPDATE mt5_v2_commands SET state=?,ack=? WHERE id=? AND ack IS NULL",
-                  (body['status'],canonical,body['command_id'])); c.commit()
+                  (body['status'],canonical,body['command_id']))
+        saved = c.execute('SELECT ack FROM mt5_v2_commands WHERE id=?',(body['command_id'],)).fetchone()
+        if saved['ack'] != canonical:
+            c.rollback()
+            raise risk.Reject('conflicting_ack')
+        c.commit()
     except (risk.Reject,ValueError,KeyError,TypeError) as exc:
         return jsonify(ok=False,error=str(exc) if isinstance(exc,risk.Reject) else 'invalid_ack'),400
     return jsonify(ok=True,state=body['status'])
@@ -237,7 +255,7 @@ def ack_command():
 def mt5_status():
     snap = latest_snapshot()
     recent=[{'id':r['id'],'state':r['state'],'expires_at':r['expires_at'],'ack':json.loads(r['ack']) if r['ack'] else None}
-            for r in fx101.db().execute('SELECT * FROM mt5_v2_commands ORDER BY created_at DESC LIMIT 10')]
+            for r in store.db().execute('SELECT * FROM mt5_v2_commands ORDER BY created_at DESC LIMIT 10')]
     return jsonify(ok=True,recent_commands=recent,bridge_enabled=enabled(),mode=mode(),kill_switch=killed(),auto_available=False,
                    connected=bool(snap and snap['fresh']),snapshot=snap,
                    validation_blockers=['historical_anchors','goat_hosted_decisions_policy','broker_execution_paths'])

@@ -1,9 +1,9 @@
 #property strict
 #property version "2.00"
-#property description "Fx101 broker observation and SHADOW validation. AUTO unavailable."
+#property description "dnb EA broker observation and SHADOW validation. AUTO unavailable."
 
 enum FX101_MODE { MODE_OFF=0, MODE_OBSERVE=1, MODE_SHADOW=2, MODE_AUTO=3 };
-input string InpApiBase="https://rfbc-usdjpy-monitor.onrender.com";
+input string InpApiBase="https://dnb-fx.onrender.com";
 input string InpCredentialFile="Fx101Bridge\\token.txt";
 input long InpExpectedLogin=315307814;
 input string InpExpectedServer="GoatFunded-Server";
@@ -16,6 +16,8 @@ string g_key="";
 string g_session="";
 ulong g_counter=0;
 bool g_snapshot_ok=false;
+int g_http_status=0;
+bool g_contract_validation=false;
 string g_symbols[];
 
 string Escape(string s)
@@ -223,7 +225,7 @@ bool Http(string method,string path,string body,string &response,string &nonce)
    string result_headers;
    ResetLastError();
    int code=WebRequest(method,InpApiBase+path,headers,3000,data,result,result_headers);
-   int error=GetLastError();
+   int error=GetLastError(); g_http_status=code;
    WritePrivate("Fx101Bridge\\transport.txt",StringFormat("http_status=%d last_error=%d utc=%I64d",code,error,(long)TimeGMT()));
    if(code!=200) { Print("FX101 transport unavailable code=",code," error=",error); return false; }
    if(ArraySize(result)>16384) return false;
@@ -243,9 +245,9 @@ bool StrictNumber(string s,double &v)
    v=StringToDouble(s);
    return digits>0 && dots<=1 && MathIsValidNumber(v) && v>=0;
   }
-bool ExistingRisk(double &total,string symbol,string side,string &reason)
+bool ExistingRisk(double &total,double &directed,string symbol,string side,string &reason)
   {
-   total=0;
+   total=0; directed=0; double base_risk=0,quote_risk=0;
    for(int group=0;group<2;group++)
      {
       int count=group==0 ? PositionsTotal() : OrdersTotal();
@@ -259,7 +261,7 @@ bool ExistingRisk(double &total,string symbol,string side,string &reason)
          double sl=group==0 ? PositionGetDouble(POSITION_SL) : OrderGetDouble(ORDER_SL);
          double volume=group==0 ? PositionGetDouble(POSITION_VOLUME) : OrderGetDouble(ORDER_VOLUME_CURRENT);
          if(!FinitePositive(sl)) { reason="existing_exposure_without_sl"; return false; }
-         MqlTick q; if(!SymbolInfoTick(sym,q)) { reason="exposure_quote_failed"; return false; }
+         MqlTick q; if(!SymbolInfoTick(sym,q) || TimeTradeServer()-q.time>10 || q.time>TimeTradeServer()+1) { reason="exposure_quote_failed"; return false; }
          double entry=dir=="BUY" ? q.bid : q.ask;
          if(group==1)
            {
@@ -267,11 +269,21 @@ bool ExistingRisk(double &total,string symbol,string side,string &reason)
             long type=OrderGetInteger(ORDER_TYPE);
             if(type==ORDER_TYPE_BUY_STOP_LIMIT || type==ORDER_TYPE_SELL_STOP_LIMIT) entry=OrderGetDouble(ORDER_PRICE_STOPLIMIT);
            }
+         if(!FinitePositive(entry) || (dir=="BUY" ? sl>=entry : sl<=entry)) { reason="exposure_stop_breached"; return false; }
          double profit=0;
          if(!OrderCalcProfit(dir=="BUY" ? ORDER_TYPE_BUY : ORDER_TYPE_SELL,sym,volume,entry,sl,profit)) { reason="exposure_risk_failed"; return false; }
-         total+=MathMax(0,-profit);
+         double loss=MathMax(0,-profit); total+=loss;
+         bool known=false;
+         for(int k=0;k<ArraySize(g_symbols);k++) if(g_symbols[k]==sym) known=true;
+         if(!known) { reason="unsupported_exposure_symbol"; return false; }
+         string cb=StringSubstr(symbol,0,3),cq=StringSubstr(symbol,3,3);
+         string eb=StringSubstr(sym,0,3),eq=StringSubstr(sym,3,3);
+         bool same=side==dir;
+         if((cb==eb && same) || (cb==eq && !same)) base_risk+=loss;
+         if((cq==eq && same) || (cq==eb && !same)) quote_risk+=loss;
         }
      }
+   directed=MathMax(base_risk,quote_risk);
    return true;
   }
 bool Plan(string &f[],double &volume,double &usd,string &reason)
@@ -332,12 +344,14 @@ bool Plan(string &f[],double &volume,double &usd,string &reason)
    if(pct<=0 || pct>0.25) { reason="per_trade_risk"; return false; }
    double balance=AccountInfoDouble(ACCOUNT_BALANCE),equity=AccountInfoDouble(ACCOUNT_EQUITY),floating=AccountInfoDouble(ACCOUNT_PROFIT);
    if(!FinitePositive(balance) || !FinitePositive(equity) || floating<=-balance*0.007) { reason="floating_loss"; return false; }
-   double existing=0; if(!ExistingRisk(existing,symbol,side,reason)) return false;
+   double existing=0,directed=0; if(!ExistingRisk(existing,directed,symbol,side,reason)) return false;
    double budget=MathMin(MathMin(balance,equity)*pct/100,MathMin(balance,equity)*0.006-existing);
+   budget=MathMin(budget,MathMin(balance,equity)*0.004-directed);
+   if(symbol=="XAUUSD.x") budget=MathMin(budget,MathMin(balance,equity)*0.0025);
    budget=MathMin(budget,balance*0.007+floating);
    string peak_key=StringFormat("FX101.%I64d.peak",InpExpectedLogin);
    if(!GlobalVariableCheck(peak_key)) { reason="missing_peak"; return false; }
-   budget=MathMin(budget,equity-GlobalVariableGet(peak_key)*0.955);
+   budget=MathMin(budget,MathMin(balance,equity)-(MathMin(2500.0,GlobalVariableGet(peak_key)-125.0)+12.5));
    if(budget<=0) { reason="aggregate_or_drawdown"; return false; }
    double profit=0,worst=entry+(buy ? 5*tick : -5*tick);
    ENUM_ORDER_TYPE market_type=buy ? ORDER_TYPE_BUY : ORDER_TYPE_SELL;
@@ -358,7 +372,13 @@ void Ack(string id,string body)
    if(Http("POST","/fx101/mt5/ack",body,response,nonce))
      {
       if(!WritePrivate("Fx101Bridge\\"+id+".sent","ACKED")) Print("FX101 ACK marker failed; retry remains safe");
-      Print("FX101 ACK confirmed command=",id);
+      Print("dnb EA ACK confirmed command=",id);
+     }
+   else
+     {
+      // Unknown/corrupt ACKs remain as evidence; backoff prevents scan starvation.
+      long delay=g_http_status==404 ? 3600 : 60;
+      WritePrivate("Fx101Bridge\\"+id+".retry",(string)((long)TimeGMT()+delay));
      }
   }
 void DrainAcks()
@@ -372,6 +392,7 @@ void DrainAcks()
       if(StringLen(name)!=36 || !Hex(StringSubstr(name,0,32),32)) continue;
       string id=StringSubstr(name,0,32);
       if(FileIsExist("Fx101Bridge\\"+id+".sent")) continue;
+      if((long)StringToInteger(ReadPrivate("Fx101Bridge\\"+id+".retry"))>(long)TimeGMT()) continue;
       string body=ReadPrivate("Fx101Bridge\\"+name);
       if(body=="") continue;
       Ack(id,body); attempted++;
@@ -428,9 +449,59 @@ int OnInit()
    return INIT_SUCCEEDED;
   }
 void OnDeinit(const int reason) { EventKillTimer(); }
+
+void ValidateContracts()
+  {
+   string out="{\"synthetic_construction_only\":true,\"broker_orders_sent\":0,\"captured_at\":"+(string)(long)TimeGMT()+",\"cases\":[";
+   bool first=true;
+   for(int n=0;n<18;n++)
+     {
+      string symbol=g_symbols[n];
+      if(!SymbolSelect(symbol,true)) continue;
+      MqlTick q; if(!SymbolInfoTick(symbol,q)) continue;
+      double tick=SymbolInfoDouble(symbol,SYMBOL_TRADE_TICK_SIZE);
+      double point=SymbolInfoDouble(symbol,SYMBOL_POINT);
+      double vmin=SymbolInfoDouble(symbol,SYMBOL_VOLUME_MIN);
+      if(!FinitePositive(tick) || !FinitePositive(point) || !FinitePositive(vmin)) continue;
+      long levels=MathMax(SymbolInfoInteger(symbol,SYMBOL_TRADE_STOPS_LEVEL),SymbolInfoInteger(symbol,SYMBOL_TRADE_FREEZE_LEVEL));
+      double d=MathCeil(MathMax(200*tick,2*levels*point)/tick)*tick;
+      for(int k=0;k<8;k++)
+        {
+         bool buy=k%2==0;
+         MqlTradeRequest req={};
+         req.action=k<2 ? TRADE_ACTION_DEAL : TRADE_ACTION_PENDING;
+         req.symbol=symbol; req.type=(ENUM_ORDER_TYPE)k; req.volume=vmin;
+         double market=buy ? q.ask : q.bid;
+         req.price=k<2 ? market : (k<4 ? market+(buy ? -d : d) : market+(buy ? d : -d));
+         req.price=MathRound(req.price/tick)*tick;
+         req.sl=req.price+(buy ? -d : d); req.tp=req.price+(buy ? 2*d : -2*d);
+         if(k>=6) req.stoplimit=req.price+(buy ? -d/2 : d/2);
+         req.type_time=ORDER_TIME_GTC; req.type_filling=ORDER_FILLING_RETURN;
+         double profit=0,margin=0;
+         ENUM_ORDER_TYPE direction=buy ? ORDER_TYPE_BUY : ORDER_TYPE_SELL;
+         bool pc=OrderCalcProfit(direction,symbol,vmin,req.price+(buy ? 5*tick : -5*tick),req.sl,profit);
+         bool mc=OrderCalcMargin(direction,symbol,vmin,req.price,margin);
+         long bit=k<2 ? 1 : k<4 ? 2 : k<6 ? 4 : 8;
+         bool supported=(SymbolInfoInteger(symbol,SYMBOL_ORDER_MODE)&bit)!=0;
+         datetime session_from=0,session_to=0;
+         MqlDateTime current; TimeToStruct(TimeTradeServer(),current);
+         bool session=SymbolInfoSessionTrade(symbol,(ENUM_DAY_OF_WEEK)current.day_of_week,0,session_from,session_to);
+         if(!first) out+=","; first=false;
+         out+="{\"symbol\":\""+symbol+"\",\"type\":\""+OrderName(k)+"\",\"supported\":"+(supported ? "true" : "false");
+         out+=",\"profit_calculation\":"+(pc && profit<0 ? "true" : "false")+",\"margin_calculation\":"+(mc && margin>=0 ? "true" : "false");
+         out+=",\"volume\":"+Num(vmin)+",\"entry\":"+Num(req.price)+",\"sl\":"+Num(req.sl)+",\"tp\":"+Num(req.tp)+",\"stop_limit\":"+Num(req.stoplimit);
+         out+=",\"risk_usd\":"+Num(-profit)+",\"margin_usd\":"+Num(margin)+",\"session_metadata\":"+(session ? "true" : "false");
+         out+=",\"session_from\":"+(string)(long)session_from+",\"session_to\":"+(string)(long)session_to+"}";
+        }
+     }
+   out+="]}";
+   g_contract_validation=WritePrivate("Fx101Bridge\\native-contract-validation.json",out);
+  }
+
 void OnTimer()
   {
    if(InpMode==MODE_OFF || !AccountBound()) return;
+   if(!g_contract_validation) ValidateContracts();
    string body=Snapshot(); g_snapshot_ok=false;
    if(body=="") { Print("FX101 incomplete broker snapshot; commands blocked"); return; }
    if(!WritePrivate("Fx101Bridge\\snapshot.json",body)) return;

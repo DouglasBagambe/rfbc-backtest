@@ -17,6 +17,8 @@ AGGREGATE = Decimal('0.60')
 FLOATING = Decimal('0.70')
 DAILY = Decimal('2.50')
 TRAILING = Decimal('4.50')
+DIRECTIONAL = Decimal('0.40')
+METAL = Decimal('0.25')
 MAX_SPREAD_TICKS = Decimal('30')
 
 class Reject(ValueError):
@@ -110,19 +112,43 @@ def validate_snapshot(s, now):
 def risk_usd(spec, volume, entry, stop):
     return abs(positive(entry)-positive(stop))/positive(spec['tick_size'])*positive(spec['tick_value_loss'])*positive(volume)
 
-def portfolio_risk(s):
+def portfolio_risk(s, now=None):
     total = Decimal('0')
     for item in s['positions'] + s['orders']:
         if number(item['sl']) <= 0:
             raise Reject('existing_exposure_without_sl')
         spec = s['symbols'][item['symbol']]
+        if now is not None and not 0 <= now-spec['quote_at'] <= 10:
+            raise Reject('stale_exposure_quote')
         # From liquidation quote, so profitable positions cannot erase downside risk.
         entry = spec['bid'] if item['side']=='BUY' else spec['ask']
         if item in s['orders']:
             entry = item['stop_limit'] if item['order_type'].endswith('STOP_LIMIT') else item['entry']
+        if number(entry) <= 0: raise Reject('invalid_exposure_entry')
         distance = (number(entry)-number(item['sl'])) if item['side']=='BUY' else (number(item['sl'])-number(entry))
-        total += max(Decimal('0'),distance)/positive(spec['tick_size'])*positive(spec['tick_value_loss'])*positive(item['volume'])
+        if distance <= 0: raise Reject('exposure_stop_breached')
+        total += distance/positive(spec['tick_size'])*positive(spec['tick_value_loss'])*positive(item['volume'])
     return total
+
+def directional_legs(symbol, side):
+    if symbol not in SYMBOLS: raise Reject('unsupported_exposure_symbol')
+    sign = 1 if side == 'BUY' else -1
+    return ((symbol[:3], sign), (symbol[3:6], -sign))
+
+def exposure_budgets(s, symbol, side, basis, now):
+    directed = {}; metal = Decimal(0)
+    for item in s['positions'] + s['orders']:
+        usd = portfolio_risk({**s,'positions':[item],'orders':[]} if item in s['positions']
+                             else {**s,'positions':[],'orders':[item]}, now)
+        for leg in directional_legs(item['symbol'],item['side']):
+            directed[leg] = directed.get(leg,Decimal(0)) + usd
+        if item['symbol'] == 'XAUUSD.x': metal += usd
+    remaining = min(basis*DIRECTIONAL/100-directed.get(leg,Decimal(0))
+                    for leg in directional_legs(symbol,side))
+    if remaining <= 0: raise Reject('directional_currency_risk')
+    if symbol == 'XAUUSD.x': remaining = min(remaining,basis*METAL/100-metal)
+    if remaining <= 0: raise Reject('metal_risk')
+    return remaining
 
 def plan(s, command, now, *, require_anchors=True):
     validate_snapshot(s, now)
@@ -140,7 +166,9 @@ def plan(s, command, now, *, require_anchors=True):
     basis = min(balance,equity)
     if number(s['floating_pnl']) <= -balance*FLOATING/100: raise Reject('floating_loss')
     if equity <= positive(s['daily_anchor'])*(1-DAILY/100): raise Reject('daily_drawdown')
-    if equity <= positive(s['high_water_equity'])*(1-TRAILING/100): raise Reject('trailing_drawdown')
+    from dnb_policy import conservative_trailing_floor
+    trailing = conservative_trailing_floor(s['high_water_equity'])
+    if min(balance,equity) <= trailing: raise Reject('trailing_drawdown')
     requested = positive(command['risk_pct'])
     if requested > PER_TRADE: raise Reject('per_trade_risk')
     symbol, order_type = command['symbol'], command['order_type']
@@ -149,7 +177,7 @@ def plan(s, command, now, *, require_anchors=True):
     side = 'BUY' if order_type.startswith('BUY') else 'SELL'
     for item in s['positions']+s['orders']:
         if item['symbol']==symbol: raise Reject('hedging' if side != item['side'] else 'duplicate_symbol')
-    existing = portfolio_risk(s)
+    existing = portfolio_risk(s, now)
     spec = s['symbols'][symbol]
     mode = spec['trade_mode']
     if mode not in {1,2,4} or mode==1 and side=='SELL' or mode==2 and side=='BUY': raise Reject('symbol_trade_mode')
@@ -192,8 +220,9 @@ def plan(s, command, now, *, require_anchors=True):
     budget = min(basis*requested/100, basis*AGGREGATE/100-existing,
                  balance*FLOATING/100+number(s['floating_pnl']),
                  equity-positive(s['daily_anchor'])*(1-DAILY/100),
-                 equity-positive(s['high_water_equity'])*(1-TRAILING/100))
+                 min(balance,equity)-trailing)
     if budget <= 0: raise Reject('aggregate_risk')
+    budget = min(budget,exposure_budgets(s,symbol,side,basis,now))
     step = positive(spec['volume_step'])
     volume = (min(budget/unit,positive(spec['volume_max']))/step).to_integral_value(rounding=ROUND_FLOOR)*step
     if volume < positive(spec['volume_min']): raise Reject('lot_minimum')

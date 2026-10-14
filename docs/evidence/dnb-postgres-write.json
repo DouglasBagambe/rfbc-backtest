@@ -1,0 +1,1 @@
+{"real_postgres": true, "concurrent_nonce_unique": true, "concurrent_command_conflicts": true, "concurrent_ack_conflicts": true, "rollback_isolated": true, "command_id": "262b0d07320e4f23bbf30ca7ae716d26", "broker_execution_test": false}
