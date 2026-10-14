@@ -51,3 +51,9 @@ class NotificationTests(unittest.TestCase):
     def test_deal_scan_order_does_not_fabricate_new_lifecycle_event(self):
         self.setup_winner();execution.reconcile(NOW)
         self.assertEqual(execution.reconcile(NOW),[])
+
+    def test_matching_broker_identity_without_submission_intent_is_not_adopted(self):
+        row,_,_,_=self.setup_winner();c=self.bridge.store.db()
+        c.execute('DELETE FROM dnb_demo_submission_intents WHERE command_id=?',(row['id'],));c.commit()
+        self.assertEqual(execution.reconcile(NOW),[])
+        self.assertEqual(c.execute('SELECT COUNT(*) FROM dnb_broker_notifications').fetchone()[0],0)

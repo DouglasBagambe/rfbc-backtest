@@ -25,6 +25,15 @@ SCHEMA=(
 def enabled():
     return os.getenv('DNB_DEMO_EXECUTION_ENABLED','0')=='1' and os.getenv('DNB_DEMO_KILL_SWITCH','1')=='0'
 
+def execution_status(now):
+    row=store.db().execute('SELECT * FROM dnb_demo_epochs ORDER BY created_at DESC LIMIT 1').fetchone()
+    value=json.loads(row['payload']) if row else None
+    valid=bool(row and row['created_at']<=now<value['valid_until'])
+    counts={r['state']:r['n'] for r in store.db().execute('SELECT state,COUNT(*) AS n FROM dnb_demo_strategy_commands GROUP BY state')}
+    return {'enabled':enabled(),'new_risk_blocked':not enabled() or not valid,
+            'epoch_valid':valid,'epoch':value,'command_counts':counts,
+            'live_goat_authorised':False,'native_executor_attached_verified':False}
+
 def status_wire(now,nonce):
     from mt5_bridge import sign
     try:_,a=epoch(now)
@@ -47,7 +56,11 @@ def epoch(now):
     if not row:raise risk.Reject('demo_epoch_missing')
     value=json.loads(row['payload'])
     # Explicit prospective test session, not an invented GOAT historical anchor.
-    if not row['created_at']<=now<value['valid_until']:raise risk.Reject('demo_epoch_expired')
+    if now<row['created_at']:raise risk.Reject('demo_epoch_expired')
+    if now>=value['valid_until']:
+        if value.get('reset_clock')!='DEMO_FIXED_22_UTC':raise risk.Reject('demo_epoch_expired')
+        import dnb_demo_reset
+        value=dnb_demo_reset.advance(row,value,now)
     return dict(row),value
 
 def initialise_epoch(now):
@@ -73,10 +86,12 @@ def initialise_epoch(now):
     p=snap['payload'];basis=min(risk.positive(p['balance']),risk.positive(p['equity']))
     # Mirror GOAT's fixed-$125 drawdown and $12.50 buffer, with a prospective
     # starting anchor. The initial cap is a policy input, not a claimed GOAT high.
+    import dnb_demo_reset
     payload={'purpose':'DEMO_PROSPECTIVE_VALIDATION','login':dnb_demo.DEMO_LOGIN,'server':dnb_demo.DEMO_SERVER,
              'daily_anchor':float(basis),'historical_peak':float(max(Decimal('2500'),basis)),
              'initial_balance':float(basis),'peak_policy':'prospective_simulated_goat_initial_2500',
-             'valid_until':now+86400,'snapshot_id':snap['id'],'history_capture':history['id']}
+             'valid_until':dnb_demo_reset.next_boundary(now),'reset_clock':'DEMO_FIXED_22_UTC',
+             'snapshot_id':snap['id'],'history_capture':history['id']}
     identifier=uuid.uuid4().hex;c.execute('INSERT INTO dnb_demo_epochs VALUES (?,?,?)',(identifier,now,encode(payload)));c.commit()
     return {'id':identifier,'created_at':now,'payload':payload}
 
@@ -98,12 +113,17 @@ def queue(decision,now):
     _ensure_schema()
     if not enabled():raise risk.Reject('demo_execution_killed')
     c=store.lock_account()
+    expire_queued(c,now)
     old=c.execute('SELECT * FROM dnb_demo_strategy_commands WHERE trade_id=?',(decision['trade_id'],)).fetchone()
     if old:return existing_proposal(old,decision)
     if c.execute("SELECT id FROM dnb_demo_strategy_commands WHERE state IN ('QUEUED','INTENT','UNRESOLVED','PARTIAL','ACCEPTED','PLACED') LIMIT 1").fetchone():raise risk.Reject('demo_submission_or_lifecycle_unresolved')
     s,authority=effective_snapshot(now)
     # Protect the target; this never increases risk to catch up to it.
     if risk.number(s['balance'])>=Decimal('2650'):raise risk.Reject('payout_target_pause')
+    import dnb_alerts
+    dnb_alerts.require_reconciled(decision['symbol'])
+    if c.execute('SELECT trade_id FROM dnb_manual_bindings WHERE trade_id=?',(decision['trade_id'],)).fetchone():
+        raise risk.Reject('decision_already_manually_executed')
     receipt=c.execute('SELECT * FROM dnb_source_receipts WHERE id=?',(decision.get('source_receipt_id'),)).fetchone()
     if not receipt or receipt['source']!=decision['source'] or receipt['result']!='TRADE':raise risk.Reject('genuine_source_receipt_required')
     if not 0<=now-receipt['generated_at']<=3600:raise risk.Reject('source_stale_or_future')
@@ -154,6 +174,9 @@ def queue(decision,now):
     # Peak advancement can commit a transaction. Reacquire the account lock and
     # re-read the reservation before inserting so concurrent producers cannot
     # reserve different signals against the same unconsumed account snapshot.
+    dnb_alerts.require_reconciled(decision['symbol'])
+    if c.execute('SELECT trade_id FROM dnb_manual_bindings WHERE trade_id=?',(decision['trade_id'],)).fetchone():
+        raise risk.Reject('decision_already_manually_executed')
     old=c.execute('SELECT * FROM dnb_demo_strategy_commands WHERE trade_id=?',(decision['trade_id'],)).fetchone()
     if old:return existing_proposal(old,decision)
     if c.execute("SELECT id FROM dnb_demo_strategy_commands WHERE state IN ('QUEUED','INTENT','UNRESOLVED','PARTIAL','ACCEPTED','PLACED') LIMIT 1").fetchone():raise risk.Reject('demo_submission_or_lifecycle_unresolved')
@@ -164,11 +187,22 @@ def queue(decision,now):
        (command['command_id'],decision['trade_id'],'QUEUED',encode(payload),now,command['expires_at'],None));c.commit()
     return dict(c.execute('SELECT * FROM dnb_demo_strategy_commands WHERE id=?',(command['command_id'],)).fetchone())
 
+def expire_queued(c,now):
+    # Expiration only releases requests which never acquired a remote intent.
+    # An uncertain submission remains reserved regardless of lease age.
+    c.execute("UPDATE dnb_demo_strategy_commands SET state='EXPIRED' WHERE state='QUEUED' AND expires_at<=? AND id NOT IN (SELECT command_id FROM dnb_demo_submission_intents)",(now,))
+
 def next_command(now,nonce):
     if not enabled():return 'NONE'
+    c=store.lock_account();expire_queued(c,now);c.commit()
     row=store.db().execute("SELECT * FROM dnb_demo_strategy_commands WHERE state IN ('QUEUED','INTENT','UNRESOLVED') ORDER BY created_at LIMIT 1").fetchone()
     if not row:return 'NONE'
     p=json.loads(row['payload']);a=p['authority']
+    if row['state']=='QUEUED':
+        # Daily leases are evaluated again; a yesterday command never carries
+        # its old daily anchor through a reset. Recovery keeps its original proof.
+        try:_,a=epoch(now)
+        except risk.Reject:return 'NONE'
     # Native execution gets a distinct protocol and exact demo binding. The
     # existing funded SHADOW command parser cannot mistake it for permission.
     fields=['DNBdemo1',nonce,p['command_id'],str(dnb_demo.DEMO_LOGIN),dnb_demo.DEMO_SERVER,'DEMO',
@@ -205,6 +239,8 @@ def submission_intent(body,now):
     p=json.loads(row['payload'])
     if body['symbol']!=p['symbol'] or body['order_type']!=p['order_type'] or risk.number(body['sl'])!=risk.number(p['sl']) or risk.number(body['tp'])!=risk.number(p['tp']):raise risk.Reject('demo_request_conflict')
     s,_=effective_snapshot(now)
+    import dnb_alerts
+    dnb_alerts.require_reconciled(p['symbol'])
     cmd={k:p[k] for k in ('command_id','login','server','created_at','expires_at','symbol','order_type','entry','sl','tp','risk_pct','stop_limit','cancel')}
     scale=None
     if p.get('scale_in_number'):
@@ -221,6 +257,7 @@ def submission_intent(body,now):
     if old:
         if old['payload']!=canonical:raise risk.Reject('demo_intent_conflict')
         c.commit();return {'ok':True,'state':'INTENT','idempotent':True}
+    dnb_alerts.require_reconciled(p['symbol'])
     row=c.execute('SELECT * FROM dnb_demo_strategy_commands WHERE id=?',(body['command_id'],)).fetchone()
     if row['state']!='QUEUED' or row['expires_at']<=now:raise risk.Reject('demo_submission_unavailable')
     c.execute('INSERT INTO dnb_demo_submission_intents VALUES (?,?,?)',(body['command_id'],now,canonical))
@@ -271,8 +308,16 @@ def reconcile(now):
     rows=list(c.execute("SELECT * FROM dnb_demo_strategy_commands WHERE state NOT IN ('REJECTED','EXPIRED')"))
     notices=[]
     for row in rows:
+        if not c.execute('SELECT command_id FROM dnb_demo_submission_intents WHERE command_id=?',(row['id'],)).fetchone():continue
         p=json.loads(row['payload']);magic=int(hashlib.sha256(('dnb:'+row['id']).encode()).hexdigest()[:15],16)
         roots=[o for o in orders if o['magic']==magic and o['comment']=='dnb:'+row['id'][:24] and o['symbol']==p['symbol'][:-2]]
+        if not roots:
+            # Working pending orders are not yet in MT5's historical-order list.
+            # Snapshot identity can root them, but never imply an entry fill.
+            for pending_order in snap['payload']['orders']:
+                if pending_order.get('magic')==magic and pending_order.get('comment')=='dnb:'+row['id'][:24] and pending_order['symbol']==p['symbol']:
+                    roots.append({'ticket':pending_order['ticket'],'position_id':'0',
+                                  'volume_initial':pending_order['volume'],'state':1})
         if len(roots)!=1:continue # Missing or ambiguous identity never frees a reservation.
         projected=dnb_lifecycle.project(roots[0],deals,snap['payload']['positions'],snap['payload']['orders'])
         # Store only actual broker states. A late transport receipt cannot turn

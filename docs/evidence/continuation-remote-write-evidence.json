@@ -1,0 +1,1 @@
+{"real_postgres": true, "isolated_test_branch_and_schema": true, "intent_idempotency": true, "explicit_manual_binding": true, "evidence_bound_daily_reset": true, "broker_orders_sent": 0, "fixture_data_only": true}

@@ -41,6 +41,8 @@ def offer_demo(decisions,now):
 
 def reconcile_demo(now):
     import dnb_demo_execution,dnb_notifications
+    import dnb_manual
+    dnb_manual.reconcile(now)
     dnb_demo_execution.reconcile(now)
     if os.getenv('DNB_BROKER_NOTIFICATIONS_ENABLED','0')!='1':return
     ids=[r['id'] for r in mt5_store.db().execute("SELECT id FROM dnb_broker_notifications WHERE state='PREPARED' ORDER BY created_at LIMIT 10")]

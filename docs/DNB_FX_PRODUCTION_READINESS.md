@@ -1,5 +1,7 @@
 # dnb Fx production readiness — 14 October 2026
 
+Latest continuation: [verified backend changes and remaining commissioning blockers](DNB_FX_CONTINUATION_2026-10-14.md). Historical statements below are checkpoint evidence, not a current running-state attestation.
+
 **NOT READY FOR LIVE AUTO.** GOAT automatic execution remains blocked. Native broker submission/recovery primitives now exist, and an isolated MetaQuotes demo test placed and closed one synthetic minimum-volume order. This was a transport/recovery test, not a strategy trade. The full unattended strategy executor and native scale-in lifecycle remain unfinished; attaching the EA to GOAT does not authorise trading. Production `strategy2-round2-wip` was not changed.
 
 ## Continuation checkpoint — native recovery and signal diagnostics

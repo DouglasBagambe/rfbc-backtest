@@ -1,0 +1,34 @@
+{
+  "wine_terminal_attempt_exit_code": 159,
+  "fresh_compilation_verified": false,
+  "compiler_result": "No compiler log: compilation not verified",
+  "native_sources_modified": false,
+  "checkpoint_dependency_hashes": [
+    {
+      "path": "mt5/include/DnbBroker.mqh",
+      "matches_checkpoint_compilation": true
+    },
+    {
+      "path": "mt5/include/DnbDemoManagement.mqh",
+      "matches_checkpoint_compilation": true
+    },
+    {
+      "path": "mt5/include/DnbDemoScale.mqh",
+      "matches_checkpoint_compilation": true
+    },
+    {
+      "path": "mt5/include/DnbHistory.mqh",
+      "matches_checkpoint_compilation": true
+    },
+    {
+      "path": "mt5/include/DnbStrategyDemo.mqh",
+      "matches_checkpoint_compilation": true
+    },
+    {
+      "path": "mt5/Fx101GoatBridge.mq5",
+      "matches_checkpoint_compilation": true
+    }
+  ],
+  "executor_installed": false,
+  "new_broker_orders_sent": 0
+}

@@ -8,6 +8,10 @@ from datetime import datetime, timezone
 import mt5_risk as risk
 import mt5_store as store
 
+def require_reconciled(symbol):
+    row=store.db().execute("SELECT trade_id FROM dnb_alert_intents WHERE symbol=? AND state IN ('SENDING','SENT','DELIVERY_UNKNOWN','MANUAL_POSSIBLE','MANUAL_BOUND') LIMIT 1",(symbol,)).fetchone()
+    if row:raise risk.Reject('manual_alert_requires_broker_history_reconciliation')
+
 def prepare(decision, now):
     from mt5_bridge import _ensure_schema, adapt_symbol
     _ensure_schema()

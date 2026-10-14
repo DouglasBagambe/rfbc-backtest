@@ -22,7 +22,9 @@ class DemoScaleTests(unittest.TestCase):
         b=h.body();b['decision_id']='GDESK-SCALE-INITIAL'
         b['decisions'][0].update(target=1.104,context={'order_type':'BUY','machine_cancel':{'kind':'price_below','price':1.0985}})
         d=dnb_sources.ingest_gdesk(b,NOW)[0]
-        with self.flags():row=execution.queue(d,NOW)
+        with self.flags():
+            row=execution.queue(d,NOW)
+            execution.submission_intent(fixtures.DemoExecutionTests.native_intent(self,row),NOW)
         p=json.loads(row['payload']);magic=int(hashlib.sha256(('dnb:'+row['id']).encode()).hexdigest()[:15],16)
         c=self.bridge.store.db()
         c.execute("UPDATE dnb_demo_strategy_commands SET state='OPEN',created_at=? WHERE id=?",(NOW-3700,row['id']))

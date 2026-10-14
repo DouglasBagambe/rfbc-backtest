@@ -45,6 +45,8 @@ def _ensure_schema():
     from dnb_sources import SCHEMA as SOURCE_SCHEMA
     from dnb_demo_execution import SCHEMA as DEMO_EXECUTION_SCHEMA
     from dnb_notifications import SCHEMA as NOTIFICATION_SCHEMA
+    from dnb_demo_reset import SCHEMA as DEMO_RESET_SCHEMA
+    from dnb_manual import SCHEMA as MANUAL_SCHEMA
     store.ensure_schema((
         'CREATE TABLE IF NOT EXISTS mt5_v2_nonces (nonce TEXT PRIMARY KEY, received_at INTEGER NOT NULL)',
         'CREATE INDEX IF NOT EXISTS mt5_v2_nonce_time ON mt5_v2_nonces(received_at)',
@@ -54,7 +56,7 @@ def _ensure_schema():
         'CREATE TABLE IF NOT EXISTS mt5_v2_reconciliation (id TEXT PRIMARY KEY, snapshot_id TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL)',
         'CREATE TABLE IF NOT EXISTS dnb_thesis_legs (command_id TEXT PRIMARY KEY, thesis_id TEXT NOT NULL, confirmation_id TEXT NOT NULL, payload TEXT NOT NULL, UNIQUE(thesis_id,confirmation_id))',
         'CREATE TABLE IF NOT EXISTS dnb_alert_intents (trade_id TEXT PRIMARY KEY, symbol TEXT NOT NULL, side TEXT NOT NULL, state TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL, delivery TEXT)',
-    )+HISTORY_SCHEMA+DEMO_HISTORY_SCHEMA+AUTHORITY_SCHEMA+DEMO_SCHEMA+SOURCE_SCHEMA+DEMO_EXECUTION_SCHEMA+NOTIFICATION_SCHEMA)
+    )+HISTORY_SCHEMA+DEMO_HISTORY_SCHEMA+AUTHORITY_SCHEMA+DEMO_SCHEMA+SOURCE_SCHEMA+DEMO_EXECUTION_SCHEMA+NOTIFICATION_SCHEMA+DEMO_RESET_SCHEMA+MANUAL_SCHEMA)
 
 @bp.teardown_request
 def close_store(error):
@@ -367,9 +369,15 @@ def demo_history():
 
 @bp.get('/fx101/mt5/demo/status')
 def demo_status():
-    import dnb_demo,dnb_history
+    import dnb_demo,dnb_history,dnb_demo_execution
     return jsonify(ok=True,purpose='DEMO',snapshot=dnb_demo.latest(clock()),
-                   history=dnb_history.latest(demo=True),live_goat_authorised=False)
+                   history=dnb_history.latest(demo=True),execution=dnb_demo_execution.execution_status(clock()),live_goat_authorised=False)
+
+@bp.post('/fx101/mt5/manual/bind')
+def manual_bind():
+    import dnb_manual
+    try:return jsonify(dnb_manual.bind(strict_json(),clock()))
+    except risk.Reject as exc:return jsonify(ok=False,error=str(exc)),409
 
 @bp.get('/fx101/mt5/demo/command')
 def demo_strategy_command():
