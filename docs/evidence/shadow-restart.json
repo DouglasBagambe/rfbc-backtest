@@ -1,0 +1,48 @@
+{
+  "phase": "normal-profile-before-final-restart",
+  "connected": true,
+  "ack_outbox_confirmed": [
+    "7414ee93e8b54aee8e5b32d06497cc30.sent"
+  ],
+  "recent_commands": [
+    {
+      "ack": {
+        "command_id": "7414ee93e8b54aee8e5b32d06497cc30",
+        "detail": "synthetic_shadow_only",
+        "login": 315307814,
+        "risk_usd": 4.14,
+        "server": "GoatFunded-Server",
+        "status": "SHADOW_OK",
+        "volume": 0.02
+      },
+      "expires_at": 1791979509,
+      "id": "7414ee93e8b54aee8e5b32d06497cc30",
+      "state": "SHADOW_OK"
+    }
+  ],
+  "broker_snapshot": {
+    "login": 315307814,
+    "server": "GoatFunded-Server",
+    "balance": 2476.17,
+    "equity": 2476.17,
+    "captured_at": 1791980785,
+    "positions": [],
+    "orders": []
+  },
+  "normal_restart_after": {
+    "connected": true,
+    "ack_outbox_confirmed": [
+      "7414ee93e8b54aee8e5b32d06497cc30.sent"
+    ],
+    "snapshot": {
+      "login": 315307814,
+      "server": "GoatFunded-Server",
+      "balance": 2476.17,
+      "equity": 2476.17,
+      "captured_at": 1791980893,
+      "positions": [],
+      "orders": []
+    },
+    "snapshot_age_seconds": 3
+  }
+}

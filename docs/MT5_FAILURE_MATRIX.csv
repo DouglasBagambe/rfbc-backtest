@@ -1,0 +1,38 @@
+Path,Protection,Validation,Remaining before AUTO
+Clean order,"Broker metadata sizing downward; 0.25% cap; conservative quote allowance",Python fixtures and real synthetic SHADOW ACK,Actual fills/fees/slippage untested
+Wrong account/login,Hardcoded binding on server and EA,Python deterministic tests,EA rejection runtime permutations not exercised
+Wrong server,Exact binding on server and EA,Python deterministic tests,EA rejection runtime permutations not exercised
+Stale/future account snapshot,15-second capture bound and connected flag,Python deterministic tests,Long real network outage needs expanded testing
+Stale/future command,30-second lifetime and signature-bound times,Python deterministic tests,Live order expiration not implemented
+Duplicate command,Durable server ID and unique trade key,Python restart/idempotency/conflict tests,Real broker idempotency not implemented
+Replay after terminal restart,Persistent per-command ACK journals,Real SHADOW journal; normal restart and persisted ACK confirmation passed,No live broker execution journal exists
+Duplicate/opposite/manual same symbol,Portfolio rejection across positions and orders,Python deterministic tests,Real account currently empty
+Manual position/manual pending order,All tickets synchronized and accounted regardless of magic,Python synthetic manual fixtures; real empty arrays,Nonempty real account synchronization not exercised
+Manual exposure without SL,New risk blocked,Python deterministic tests,Broker position/order snapshots need further race testing
+Floating loss,0.70% internal guard below 1% firm boundary,Python threshold tests; live P&L observed zero,Protective broker close/cancel not implemented
+Daily loss,2.50% internal guard; unknown historical anchors block signals,Python threshold tests,Official daily anchor/reset semantics unresolved; local anchor gate blocks real commands
+Trailing loss,4.50% equity-peak guard with no initial-balance cap,Python uncapped-floor tests; observed peak persisted,Historical peak/payout resets and EOD-versus-intraday ambiguity unresolved
+Per-trade risk,0.25% internal cap based on lesser balance/equity,Python tests and real SHADOW volume/risk,Commission/gap/fill risk needs validation
+Aggregate risk,0.60% internal guard counting manual exposure,Python position/order fixtures,Currency directional cap not implemented in both engines
+Directional exposure,Real commands blocked pending validation,Not implemented,Must implement independent currency exposure checks on both sides
+Minimum lot,Reject when floor below broker minimum,Python deterministic tests and actual broker specification reads,Across-symbol native executable tests required
+Lot step,Round down without positive epsilon,Python arbitrary-step test; native volume observed,Across-symbol rounding tests required
+Margin,Native OrderCalcMargin; server reported margin estimate; reserve 20%,Python insufficiency test and native synthetic planning,Pending/portfolio concurrent margin races untested
+Stops/freeze,Geometry and quote-distance checks,Python deterministic tests; native shadow check,Live modification/freeze behavior unimplemented
+Spread/quote/contract,Required finite broker values and spread/freshness checks,Python deterministic tests; all 18 live specs observed,Volatile/news/gap stress paths untested
+BUY/SELL/limit/stop/stop-limit,All eight planning order types; unsupported type rejection,Python eight-type planning tests,All eight broker submission paths absent
+Cancellation condition,Only measurable price-above/price-below accepted,Python deterministic tests,Pending management/cancellation execution absent
+Broker rejection,No broker operation permitted,Not implemented or broker tested,Need deterministic submission adapter and broker error tests
+Partial fills/pending fills,No broker operation permitted,Not implemented or broker tested,Need order/deal reconciliation and actual native tests
+SL/TP modification/cancel/close/expiration,No broker operation permitted,Not implemented or broker tested,Need management command protocol and independent local guards
+Manual close/external edit,Snapshot ticket differences recorded without fabricated outcomes,Python manual-change snapshot test,Deal-history reconciliation and true closure attribution absent
+HTTP timeout before command,Same durable command redelivered until expiry,Python repeated-delivery test,Physical timeout injection not performed
+ACK loss after SHADOW calculation,ACK flushed locally before HTTP; independent outbox retry,Python late/duplicate ACK tests; native outbox resend confirmed after restart,Full offline/reconnect duration testing incomplete
+Trade accepted then connection lost before ACK,AUTO impossible; all broker calls removed,Live path deliberately absent,CRITICAL: must prove broker history/order identity recovery before implementing AUTO
+Render restart/redeploy,Real commands blocked; isolated service is only for SHADOW,Actual rollout showed queue loss; SQLite reconnect tests pass,CRITICAL: persistent remote storage plus deployment recovery verification required
+SHADOW cannot trade,No broker order/mutation calls in EA; server rejects EXECUTED ACK,Source check; real unchanged broker exposure,Does not validate future order-sending code
+Server AUTO/local SHADOW,Server maps unsupported AUTO to OFF; no command served,Python deterministic test,Actual AUTO setting never enabled
+Local AUTO/server SHADOW,EA rejects AUTO at initialization; no broker order calls,Source assertion and compiled code,Actual AUTO setting never enabled
+Kill switches,Server gates command delivery; local KILL gates planning/outbox,Python server-kill test and local configuration,Switch behavior around future in-flight orders untested
+TLS/auth/schema/replay/limits,HMAC-SHA256 body/method/path/time/nonce; nonce persistence; strict schema; TLS; limits,Python security tests; authenticated real HTTPS synchronization,External audit; persistent nonce store; multi-instance/concurrency stress outstanding
+News/holding time/consistency/hosting,Live commands blocked,Official documentation research only,Account-specific rules and written architecture approval needed
