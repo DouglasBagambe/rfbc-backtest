@@ -199,6 +199,7 @@ def next_command(now,nonce):
     if not row:return 'NONE'
     p=json.loads(row['payload']);a=p['authority']
     if row['state']=='QUEUED':
+        if c.execute('SELECT trade_id FROM dnb_manual_bindings WHERE trade_id=?',(row['trade_id'],)).fetchone():return 'NONE'
         # Daily leases are evaluated again; a yesterday command never carries
         # its old daily anchor through a reset. Recovery keeps its original proof.
         try:_,a=epoch(now)
@@ -241,6 +242,8 @@ def submission_intent(body,now):
     s,_=effective_snapshot(now)
     import dnb_alerts
     dnb_alerts.require_reconciled(p['symbol'])
+    if c.execute('SELECT trade_id FROM dnb_manual_bindings WHERE trade_id=?',(row['trade_id'],)).fetchone():
+        raise risk.Reject('decision_already_manually_executed')
     cmd={k:p[k] for k in ('command_id','login','server','created_at','expires_at','symbol','order_type','entry','sl','tp','risk_pct','stop_limit','cancel')}
     scale=None
     if p.get('scale_in_number'):
@@ -258,6 +261,8 @@ def submission_intent(body,now):
         if old['payload']!=canonical:raise risk.Reject('demo_intent_conflict')
         c.commit();return {'ok':True,'state':'INTENT','idempotent':True}
     dnb_alerts.require_reconciled(p['symbol'])
+    if c.execute('SELECT trade_id FROM dnb_manual_bindings WHERE trade_id=?',(row['trade_id'],)).fetchone():
+        raise risk.Reject('decision_already_manually_executed')
     row=c.execute('SELECT * FROM dnb_demo_strategy_commands WHERE id=?',(body['command_id'],)).fetchone()
     if row['state']!='QUEUED' or row['expires_at']<=now:raise risk.Reject('demo_submission_unavailable')
     c.execute('INSERT INTO dnb_demo_submission_intents VALUES (?,?,?)',(body['command_id'],now,canonical))

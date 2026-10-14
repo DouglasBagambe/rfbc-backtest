@@ -6,14 +6,14 @@ The requested unattended strategy run is **not commissioned**. The dedicated Met
 
 - Expire only never-submitted queue leases. Committed submission intents and uncertain broker outcomes survive expiration and restart.
 - Require a committed submission intent before adopting a matching broker lifecycle; recognise active pending orders before they enter historical-order records.
-- Keep manual-alert quarantine in the demo admission and submission paths. Recheck it after reacquiring account locks. A manually executed decision cannot subsequently be reused by AUTO, even after its position closes.
+- Keep manual-alert quarantine in the demo admission and submission paths. Explicitly block a queued decision if it was manually filled and closed before submission. Recheck it after reacquiring account locks. A manually executed decision cannot subsequently be reused by AUTO, even after its position closes.
 - Add authenticated explicit manual ticket binding (`POST /fx101/mt5/manual/bind`): require a delivered alert, fresh complete account-bound history, matching symbol/side/window, manual broker identity and unmixed position history. Never infer fills from similar prices. Binding is immutable and unique per account/order. Actual broker exits update the bound alert; uncertain or mixed states retain quarantine. This does not authorise funded AUTO or guarantee the safety of a manual trade.
 - Add prospective demo flat-reset continuity on an explicitly labelled fixed 22:00 UTC demo clock. Closely bracketed, flat, equal-balance observations plus complete history and absence of intervening activity provide a durable reset proof. Preserve peaks, initial balance, commands and reservations. Reject missing/conflicting boundary evidence, hidden round trips, changed balances, multiple missed boundaries and open exposure without a boundary valuation. This clock is not verified as the GOAT firm's timezone.
 - Expose demo enablement, epoch validity and command counts separately from transport health. Snapshot freshness does not attest the attached executor binary.
 
 ## Evidence
 
-`docs/evidence/continuation-backend-tests.log`: 203 backend tests and eight subtests pass. This includes unchanged frozen RFBC regressions; deterministic tests cannot prove broker execution.
+`docs/evidence/continuation-backend-tests.log`: 204 backend tests and eight subtests pass. This includes unchanged frozen RFBC regressions; deterministic tests cannot prove broker execution.
 
 `docs/evidence/continuation-remote-write-evidence.json` and `continuation-remote-recovery-evidence.json`: actual Neon Postgres on the existing isolated validation branch, with an isolated fixture schema. Verified committed intent reuse, explicit manual binding, durable reset proof and recovery in a separate process. No MT5 requests, broker orders or Telegram I/O occur in this fixture harness. `tools/validate_dnb_continuation.py` makes these checks reproducible.
 
@@ -31,4 +31,14 @@ GOAT additionally requires written architecture approval and verified historical
 
 Frozen RFBC files, G_DESK publication and automations were not edited. Remote `strategy2-round2-wip` was observed at `b2c372eeeeb2774705b2bc1b82058fec11908a27`; all changes and deployment target only `feature/mt5-goat-auto` and the dedicated dnb gateway.
 
-Deployment and final runtime evidence will be recorded after the verified backend release is live. Demo execution is explicitly disabled/killed during this rollout; observation and genuine source consumption may continue.
+## Runtime verification after release
+
+Backend implementation commit: `1a00f717e4ad67752e5b91371cd0e9e9897fbb81`, pushed only to `feature/mt5-goat-auto`. Dedicated Render release: `dep-db7t86mk1f9s73culf0g`. The final deployment status and authenticated running state are saved in `docs/evidence/continuation-runtime.json` and `continuation-deploy.json`.
+
+At 22:14:35 Africa/Kampala on 14 October, the permanent health endpoint returned HTTP 200, durable Postgres, SHADOW, AUTO unavailable. Exact demo account `5057377621` / `MetaQuotes-Demo` had a fresh two-second observation, balance/equity $2,476.79, zero positions/orders and 18 contracts. Complete broker history was 25 seconds old with two historical orders and three deals, unchanged from the prior isolated synthetic transport test. No new broker order was sent during this continuation.
+
+The new authenticated demo execution status reported `enabled=false`, `new_risk_blocked=true`, `epoch=null` and empty command counts. This is active observation and analysis consumption, **not a running strategy executor**. RFBC reported NO_TRADE with stale-window outcomes; the G_DESK consumer rejected the old mailbox decision as `source_stale_or_future`.
+
+Funded status remains `kill_switch=true`, SHADOW, `auto_available=false`; its account observation is stale and cannot establish current funded exposure. The native executor was not installed or armed. Frozen sources, the production branch, publication and automations remain unchanged.
+
+Render still reported `update_in_progress` during verification even while the new endpoints served HTTP 200. Deployment completion must be checked separately; no successful final rollout is inferred from application responses. Build-stage customization warnings referenced packages before installation, while the dedicated runtime subsequently served broker state and source health.

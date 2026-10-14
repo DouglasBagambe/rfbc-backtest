@@ -93,3 +93,15 @@ class ManualTests(unittest.TestCase):
         c.execute('INSERT INTO dnb_demo_broker_deals VALUES (?,?,?)',('801',NOW,json.dumps(deal)));c.commit()
         dnb_manual.reconcile(NOW)
         self.assertEqual(c.execute('SELECT state FROM dnb_alert_intents WHERE trade_id=?',(body['trade_id'],)).fetchone()[0],'MANUAL_CLOSED')
+
+    def test_manual_roundtrip_after_queue_cannot_be_followed_by_automatic_submission(self):
+        body,decision=self.evidence(closed=True);c=self.bridge.store.db()
+        # Fixture chronology: queue first, then manual alert delivery/fill/close.
+        c.execute("UPDATE dnb_alert_intents SET state='PREPARED' WHERE trade_id=?",(body['trade_id'],));c.commit()
+        with self.flags():row=execution.queue(decision,NOW)
+        dnb_alerts.dispatch(body['trade_id'],lambda _:(True,'fixture'));dnb_manual.bind(body,NOW)
+        with self.flags():
+            self.assertEqual(execution.next_command(NOW,'f'*64),'NONE')
+            with self.assertRaisesRegex(self.bridge.risk.Reject,'already_manually_executed'):
+                execution.submission_intent(fixtures.DemoExecutionTests.native_intent(self,row),NOW)
+        self.assertEqual(c.execute('SELECT COUNT(*) FROM dnb_demo_submission_intents').fetchone()[0],0)
