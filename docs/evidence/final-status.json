@@ -1,0 +1,38 @@
+{
+  "server_mode": "SHADOW",
+  "server_kill": true,
+  "local_kill": true,
+  "auto_available": false,
+  "connected": true,
+  "broker_snapshot": {
+    "login": 315307814,
+    "server": "GoatFunded-Server",
+    "balance": 2476.17,
+    "equity": 2476.17,
+    "captured_at": 1791981308,
+    "positions": [],
+    "orders": []
+  },
+  "observed_symbols": [
+    "AUDJPY.x",
+    "AUDUSD.x",
+    "CADJPY.x",
+    "CHFJPY.x",
+    "EURAUD.x",
+    "EURCAD.x",
+    "EURGBP.x",
+    "EURJPY.x",
+    "EURUSD.x",
+    "GBPAUD.x",
+    "GBPCAD.x",
+    "GBPJPY.x",
+    "GBPUSD.x",
+    "NZDUSD.x",
+    "USDCAD.x",
+    "USDCHF.x",
+    "USDJPY.x",
+    "XAUUSD.x"
+  ],
+  "service_id": "srv-db7mlbjncjis73erud60",
+  "deployed_backend_commit": "1c0e31e70ad24004c0a7437b4b17d445db740ce5"
+}
