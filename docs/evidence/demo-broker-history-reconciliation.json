@@ -1,0 +1,28 @@
+{
+  "command_id": "528a76987af84199503bb2d648449d05",
+  "root_order": "58897095310",
+  "account_namespace": "5057377621 / MetaQuotes-Demo",
+  "broker_history_result": {
+    "state": "CLOSED",
+    "order_ticket": "58897095310",
+    "position_ids": [
+      "58897095310"
+    ],
+    "deal_tickets": [
+      "58502419659",
+      "58502763194"
+    ],
+    "filled_volume": 0.01,
+    "remaining_volume": 0.0,
+    "realised_net_usd": 0.79,
+    "exit_reasons": [
+      3
+    ],
+    "manual_or_external_exit": false,
+    "stop_out": false
+  },
+  "limitations": [
+    "Synthetic test did not originate from backend command queue",
+    "Funded approval and anchors remain unverified"
+  ]
+}

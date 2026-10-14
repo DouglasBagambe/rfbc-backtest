@@ -1,0 +1,70 @@
+{
+  "checked_at": 1791995173,
+  "demo": {
+    "login": 5057377621,
+    "server": "MetaQuotes-Demo",
+    "fresh": true,
+    "capture_age": 4,
+    "balance": 2476.79,
+    "equity": 2476.79,
+    "positions": 0,
+    "orders": 0,
+    "symbols": [
+      "AUDJPY.x",
+      "AUDUSD.x",
+      "CADJPY.x",
+      "CHFJPY.x",
+      "EURAUD.x",
+      "EURCAD.x",
+      "EURGBP.x",
+      "EURJPY.x",
+      "EURUSD.x",
+      "GBPAUD.x",
+      "GBPCAD.x",
+      "GBPJPY.x",
+      "GBPUSD.x",
+      "NZDUSD.x",
+      "USDCAD.x",
+      "USDCHF.x",
+      "USDJPY.x",
+      "XAUUSD.x"
+    ],
+    "history": {
+      "captured_at": 1791995159,
+      "id": "6345d04a49d1b8ea295d3f8617ebb6af",
+      "payload": {
+        "deals": 3,
+        "from_server_time": 0,
+        "orders": 2,
+        "to_server_time": 1792005959
+      }
+    }
+  },
+  "sources": {
+    "broker_execution_authorised": false,
+    "ok": true,
+    "sources": [
+      {
+        "check_age_seconds": 2,
+        "checked_at": 1791995172,
+        "detail": "source_fetch_or_storage_failed",
+        "source": "G_DESK",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "check_age_seconds": 65,
+        "checked_at": 1791995109,
+        "detail": "fresh_account_equity_required",
+        "source": "RFBC",
+        "status": "BLOCKED"
+      }
+    ]
+  },
+  "funded": {
+    "kill_switch": true,
+    "mode": "SHADOW",
+    "auto_available": false,
+    "connected": false,
+    "snapshot_login": 315307814
+  }
+}

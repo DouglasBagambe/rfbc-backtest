@@ -9,7 +9,7 @@ work=prefix/'drive_c'/job;work.mkdir()
 source=root/'mt5'/a.source;copied=work/source.name;shutil.copyfile(source,copied)
 shutil.copytree(root/'mt5/include',work/'include',dirs_exist_ok=True)
 dependencies=[]
-if a.source=='DnbDemoObserver.mq5':
+if a.source in {'DnbDemoObserver.mq5','DnbStrategyDemo.mq5'}:
     dependency=root/'mt5/Fx101GoatBridge.mq5'
     shutil.copyfile(dependency,work/dependency.name)
     dependencies.append(dependency)

@@ -24,7 +24,7 @@ def project(order, deals, positions, pending):
     else:state='UNRESOLVED'
     realised=sum((risk.number(d[k]) for d in lifecycle for k in ('profit','commission','swap','fee')),Decimal(0))
     return {'state':state,'order_ticket':order['ticket'],'position_ids':sorted(ids),
-            'deal_tickets':[d['ticket'] for d in lifecycle],'filled_volume':float(filled),'remaining_volume':float(remaining),
+            'deal_tickets':sorted((d['ticket'] for d in lifecycle),key=int),'filled_volume':float(filled),'remaining_volume':float(remaining),
             'realised_net_usd':float(realised),'exit_reasons':reasons,
             'manual_or_external_exit':any(d['reason'] in (0,1,2) for d in exits),
             'stop_out':any(d['reason']==6 for d in exits)}

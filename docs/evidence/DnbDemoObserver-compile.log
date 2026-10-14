@@ -2,13 +2,13 @@ INCLUDE_SHA256 mt5/include/DnbBroker.mqh: 0089b8a3c4b4ca9d9b0dc3b584de2d14970e3d
 INCLUDE_SHA256 mt5/include/DnbHistory.mqh: 765b8aff988ebfb70593e486cc19aca5d7739a8d2342b6d7b683e936dff2f709
 DEPENDENCY_SHA256 mt5/Fx101GoatBridge.mq5: 309a2885002eb18f7e7a4b6e23893d86d73207851034f7f954d9beae7dc909f1
 SOURCE_SHA256=dc3efc740156afffec8fa2151bf4a45d02b7dfa3991997206d99b311db3568fd
-EX5_SHA256=a16d9523d4a375574fb6d977fd8d94602342946dc85ff0b13530029a1c8a369f
+EX5_SHA256=fa5eb2a10ecf79a355dab5a59559c58eaad6a3b7438233f4760f6708dc6ff8a4
 
 
-C:\Fx101Validation1791994721312511558\DnbDemoObserver.mq5 : information: compiling C:\Fx101Validation1791994721312511558\DnbDemoObserver.mq5
-C:\Fx101Validation1791994721312511558\DnbDemoObserver.mq5 : information: including C:\Fx101Validation1791994721312511558\Fx101GoatBridge.mq5
-C:\Fx101Validation1791994721312511558\Fx101GoatBridge.mq5 : information: including C:\Fx101Validation1791994721312511558\include\DnbBroker.mqh
-C:\Fx101Validation1791994721312511558\Fx101GoatBridge.mq5 : information: including C:\Fx101Validation1791994721312511558\include\DnbHistory.mqh
+C:\Fx101Validation1791995055409875430\DnbDemoObserver.mq5 : information: compiling C:\Fx101Validation1791995055409875430\DnbDemoObserver.mq5
+C:\Fx101Validation1791995055409875430\DnbDemoObserver.mq5 : information: including C:\Fx101Validation1791995055409875430\Fx101GoatBridge.mq5
+C:\Fx101Validation1791995055409875430\Fx101GoatBridge.mq5 : information: including C:\Fx101Validation1791995055409875430\include\DnbBroker.mqh
+C:\Fx101Validation1791995055409875430\Fx101GoatBridge.mq5 : information: including C:\Fx101Validation1791995055409875430\include\DnbHistory.mqh
  : information: generating code
  : information: generating code 3%
  : information: generating code 6%
@@ -44,4 +44,4 @@ C:\Fx101Validation1791994721312511558\Fx101GoatBridge.mq5 : information: includi
  : information: generating code 95%
  : information: generating code 100%
  : information: code generated
-Result: 0 errors, 0 warnings, 2665 ms elapsed, cpu='X64 Regular'
+Result: 0 errors, 0 warnings, 2602 ms elapsed, cpu='X64 Regular'

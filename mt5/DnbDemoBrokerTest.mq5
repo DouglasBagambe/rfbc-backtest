@@ -47,13 +47,14 @@ void OnTick() {}
 void RecoverAndCloseSynthetic()
   {
    string fields[];string text=DnbRead("DnbDemoTests\\restart.case");
-   if(StringSplit(text,'|',fields)!=17) { Record("{\"event\":\"restart_error\",\"detail\":\"case_corrupt\"}");return; }
+   int count=StringSplit(text,'|',fields);
+   if(count!=17 && count!=18) { Record("{\"event\":\"restart_error\",\"detail\":\"case_corrupt\"}");return; }
    MqlTradeRequest r={};
    r.action=(ENUM_TRADE_REQUEST_ACTIONS)StringToInteger(fields[1]);r.symbol=fields[2];r.type=(ENUM_ORDER_TYPE)StringToInteger(fields[3]);
    r.order=(ulong)StringToInteger(fields[4]);r.position=(ulong)StringToInteger(fields[5]);r.volume=StringToDouble(fields[6]);r.price=StringToDouble(fields[7]);
    r.sl=StringToDouble(fields[8]);r.tp=StringToDouble(fields[9]);r.stoplimit=StringToDouble(fields[10]);r.type_filling=(ENUM_ORDER_TYPE_FILLING)StringToInteger(fields[11]);
    r.type_time=(ENUM_ORDER_TYPE_TIME)StringToInteger(fields[12]);r.expiration=(datetime)StringToInteger(fields[13]);
-   r.magic=(ulong)StringToInteger(fields[14]);r.comment=fields[15];r.deviation=5;
+   r.magic=(ulong)StringToInteger(fields[14]);r.comment=fields[15];r.deviation=count==18 ? (ulong)StringToInteger(fields[17]) : 5;
    DnbNativeBroker broker;ulong order=0,deal=0;uint code=0;
    string status=DnbSubmitOnce(broker,"DnbDemoTests",fields[0],fields[16],r,order,deal,code);
    Record(StringFormat("{\"event\":\"terminal_restart_recovery\",\"id\":\"%s\",\"status\":\"%s\",\"order\":\"%I64u\",\"deal\":\"%I64u\",\"entry_resubmitted\":false}",fields[0],status,order,deal));

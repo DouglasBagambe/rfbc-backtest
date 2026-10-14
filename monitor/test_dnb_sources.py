@@ -32,6 +32,18 @@ class SourceTests(unittest.TestCase):
         b=self.body();b['context']['market_state']='MARKET_CLOSED'
         with self.assertRaisesRegex(self.bridge.risk.Reject,'source_context'):sources.gdesk_decisions(b,NOW)
 
+    def test_api_quota_fallback_still_validates_publication_freshness(self):
+        import requests
+        from unittest.mock import Mock
+        failed=Mock();failed.raise_for_status.side_effect=requests.HTTPError('quota')
+        raw=Mock();raw.content=json.dumps(self.body()).encode()
+        with patch.object(sources.requests,'get',side_effect=[failed,raw]) as get:
+            body=sources.fetch_gdesk(NOW)
+        self.assertEqual(get.call_args.args[0],sources.RAW_MAILBOX)
+        self.assertEqual(len(sources.gdesk_decisions(body,NOW)),1)
+        with self.assertRaisesRegex(self.bridge.risk.Reject,'source_stale'):
+            sources.gdesk_decisions(body,NOW+3601)
+
     def test_one_stale_bar_blocks_even_when_source_claims_fresh(self):
         b=self.body();b['context']['latest_completed_bar']=iso(((NOW-120)//3600-2)*3600)
         with self.assertRaisesRegex(self.bridge.risk.Reject,'source_bar_stale'):sources.gdesk_decisions(b,NOW)
@@ -73,6 +85,8 @@ class SourceTests(unittest.TestCase):
         out=sources.rfbc_decisions(self.rfbc(),NOW)
         self.assertEqual(len(out),1);self.assertEqual(out[0]['symbol'],'USDJPY.x')
         self.assertEqual(out[0]['stop'],149.8)
+        self.assertEqual(out[0]['risk_pct'],.25)
+        self.assertEqual(out[0]['context']['reference_risk_pct'],.1)
 
     def test_rfbc_risk_rejection_not_promoted(self):
         rows=self.rfbc();rows[0]['action']['kind']='skip_risk'

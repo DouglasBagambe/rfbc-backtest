@@ -15,6 +15,18 @@ The user now authorises ongoing demo validation using genuine G_DESK/RFBC signal
 
 The remaining sections describe the accepted earlier SHADOW foundations. Their historical “not implemented” statements about native primitives/Telegram credentials are superseded only by the narrow evidence above. End-to-end strategy execution, native management/scale-ins, actual auto-trade Telegram messages, funded manual-fill identity resolution, full restart/outage tests, and self-service verified GOAT activation remain work to finish. Missing GOAT approval/anchors are not the only current blockers.
 
+### Execution protocol implementation checkpoint
+
+The next implementation adds `DnbStrategyDemo`, an account-bound genuine-signal parser and native submission path. It uses committed Postgres submission intent, immutable local request/intent records, broker identity search, and a recovery-only branch whenever the server reports an existing intent. A new local journal key preserves ownership proofs through transport credential rotation. Native lifetime thesis reservations and broker-derived profitable-leg admission support at most two add-ons. Netting additions must preserve the merged SL/TP and reject unmapped/manual entries. Own pending cancellation, emergency downside closure and the frozen RFBC Friday exit are implemented behind the demo binding.
+
+The server now has separate strategy commands, prospective demo validation epochs, lifecycle events and atomic notification intents. [179 backend tests](evidence/dnb-execution-python-tests.log) pass, including restart/lost-response intent reuse, scale-in admission, conflicting requests, late ACKs, snapshot receive ordering and notification ambiguity. [Demo strategy compilation](evidence/DnbStrategyDemo-compile.log) records zero errors/warnings for the recorded source hash. Compilation and fixture tests do not establish unattended operational readiness.
+
+**This executor remains unarmed and is not the currently attached EA.** The running chart is `DnbDemoObserver`; [permanent observation](evidence/dnb-source-demo-observation.json) proves all 18 contracts, fresh snapshots and complete isolated history from one chart. [Actual broker-history reconciliation](evidence/demo-broker-history-reconciliation.json) identifies the earlier synthetic entry and its real close, with $0.79 net. No further synthetic position was placed.
+
+Still required before commissioning this executor: renewed native protocol/recovery simulations against the exact final binary; authenticated strategy-driven SL/TP/modification management; prospective daily-reset continuity; complete manual Telegram fill identity resolution; integrated native scale-in/management recovery; final deployment/installation and extended outage validation. The prospective demo epoch currently expires after 24 hours and fails closed rather than inventing a reset anchor. GOAT authority remains separately absent and its AUTO path stays disabled.
+
+The user clarified that the 15:04/16:05 UTC G_DESK scans were analyzed but publication was blocked by safety checks, with no specific GitHub HTTP error. Publication troubleshooting is explicitly separate from this build. No old decision was republished; stale mailbox decisions are rejected. The permanent consumer has also observed normal RFBC `stale` entry-window results outside the completed-H4 admission window. Telegram transport works, but no genuine strategy-trade notification is claimed by the system-test evidence.
+
 ## Implemented architecture
 
 ```mermaid

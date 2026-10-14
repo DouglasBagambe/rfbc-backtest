@@ -8,7 +8,11 @@ input string InpCredentialFile="Fx101Bridge\\token.txt";
 #ifdef DNB_DEMO_OBSERVER
 input long InpExpectedLogin=5057377621;
 input string InpExpectedServer="MetaQuotes-Demo";
+   #ifdef DNB_DEMO_EXECUTOR
+input FX101_MODE InpMode=MODE_AUTO;
+   #else
 input FX101_MODE InpMode=MODE_OBSERVE;
+   #endif
 #else
 input long InpExpectedLogin=315307814;
 input string InpExpectedServer="GoatFunded-Server";
@@ -19,14 +23,37 @@ input int InpPollSeconds=5;
 
 // Broker operations are implemented behind a closed live-authorisation gate.
 #include "include/DnbBroker.mqh"
-bool DnbBrokerIoAuthorised() { return false; } // Compliance, anchors and native validation unresolved.
+// The funded build never obtains broker permission from a demo command.
 string g_key="";
+string g_journal_key="";
 string g_session="";
 ulong g_counter=0;
 bool g_snapshot_ok=false;
 int g_http_status=0;
 bool g_contract_validation=false;
 string g_symbols[];
+string g_demo_fields[];
+ulong g_demo_allowed_tickets[];
+double g_demo_request_volume=0;
+long g_demo_send_deadline=0;
+long g_demo_status_at=0;
+bool g_demo_server_killed=true;
+int g_instance_lock=INVALID_HANDLE;
+bool Plan(string &f[],double &volume,double &usd,string &reason);
+bool DnbBrokerIoAuthorised()
+  {
+   #ifdef DNB_DEMO_EXECUTOR
+   bool allowed=InpMode==MODE_AUTO && !Killed() && g_snapshot_ok && (long)TimeGMT()<g_demo_send_deadline &&
+      AccountInfoInteger(ACCOUNT_LOGIN)==5057377621 && AccountInfoString(ACCOUNT_SERVER)=="MetaQuotes-Demo" &&
+      AccountInfoInteger(ACCOUNT_TRADE_MODE)==ACCOUNT_TRADE_MODE_DEMO && AccountInfoString(ACCOUNT_CURRENCY)=="USD" &&
+      TerminalInfoInteger(TERMINAL_CONNECTED) && TerminalInfoInteger(TERMINAL_TRADE_ALLOWED) && MQLInfoInteger(MQL_TRADE_ALLOWED);
+   if(!allowed)return false;
+   double permitted=0,usd=0;string reason="";
+   return Plan(g_demo_fields,permitted,usd,reason) && g_demo_request_volume>0 && g_demo_request_volume<=permitted;
+   #else
+   return false;
+   #endif
+  }
 
 string DnbBridgeDirectory()
   {
@@ -126,7 +153,15 @@ bool AccountBound()
    return AccountInfoInteger(ACCOUNT_LOGIN)==InpExpectedLogin && AccountInfoString(ACCOUNT_SERVER)==InpExpectedServer
           && AccountInfoString(ACCOUNT_CURRENCY)=="USD";
   }
-bool Killed() { return InpLocalKill || FileIsExist(DnbBridgeDirectory()+"\\KILL"); }
+bool Killed()
+  {
+   bool local=InpLocalKill || FileIsExist(DnbBridgeDirectory()+"\\KILL");
+   #ifdef DNB_DEMO_EXECUTOR
+   return local || g_demo_server_killed || (long)TimeGMT()-g_demo_status_at>15;
+   #else
+   return local;
+   #endif
+  }
 
 bool WritePrivate(string path,string body)
   {
@@ -251,6 +286,7 @@ string Snapshot()
    s+="\"balance\":"+Num(balance)+",\"equity\":"+Num(equity)+",\"free_margin\":"+Num(AccountInfoDouble(ACCOUNT_MARGIN_FREE));
    s+=",\"margin\":"+Num(AccountInfoDouble(ACCOUNT_MARGIN))+",\"floating_pnl\":"+Num(AccountInfoDouble(ACCOUNT_PROFIT));
    s+=",\"terminal_connected\":"+(TerminalInfoInteger(TERMINAL_CONNECTED) ? "true" : "false");
+   s+=",\"account_margin_mode\":"+(string)AccountInfoInteger(ACCOUNT_MARGIN_MODE);
    s+=",\"daily_anchor\":"+Num(MathMax(balance,equity))+",\"high_water_equity\":"+Num(peak)+",\"anchors_verified\":false,\"day_key\":\""+day+"\"";
    s+=",\"positions\":"+positions+",\"orders\":"+orders+",\"symbols\":"+specs+"}";
    return s;
@@ -261,7 +297,13 @@ bool Http(string method,string path,string body,string &response,string &nonce)
    #ifdef DNB_DEMO_OBSERVER
    if(path=="/fx101/mt5/snapshot") path="/fx101/mt5/demo/snapshot";
    else if(path=="/fx101/mt5/history") path="/fx101/mt5/demo/history";
+      #ifdef DNB_DEMO_EXECUTOR
+    else if(path=="/fx101/mt5/command") path="/fx101/mt5/demo/command";
+    else if(path=="/fx101/mt5/ack") path="/fx101/mt5/demo/strategy-ack";
+    else if(path!="/fx101/mt5/demo/strategy-intent") return false;
+      #else
    else return false; // No funded endpoints and no command execution in the observer.
+      #endif
    #endif
    string stamp=(string)(long)TimeGMT(); g_counter++;
    nonce=Hmac(g_session+":"+(string)g_counter+":"+(string)GetMicrosecondCount(),g_key);
@@ -305,7 +347,14 @@ bool ExistingRisk(double &total,double &directed,string symbol,string side,strin
          if(ticket==0) { reason="exposure_selection_failed"; return false; }
          string sym=DnbCanonicalSymbol(group==0 ? PositionGetString(POSITION_SYMBOL) : OrderGetString(ORDER_SYMBOL));
          string dir=group==0 ? (PositionGetInteger(POSITION_TYPE)==POSITION_TYPE_BUY ? "BUY" : "SELL") : (StringFind(OrderName(OrderGetInteger(ORDER_TYPE)),"BUY")==0 ? "BUY" : "SELL");
-         if(sym==symbol) { reason=side==dir ? "duplicate_symbol" : "hedging_prohibited"; return false; }
+         if(sym==symbol)
+           {
+            bool mapped=false;
+            #ifdef DNB_DEMO_EXECUTOR
+            for(int k=0;k<ArraySize(g_demo_allowed_tickets);k++)if(g_demo_allowed_tickets[k]==ticket && group==0)mapped=true;
+            #endif
+            if(side!=dir || !mapped) { reason=side==dir ? "duplicate_symbol" : "hedging_prohibited";return false; }
+           }
          double sl=group==0 ? PositionGetDouble(POSITION_SL) : OrderGetDouble(ORDER_SL);
          double volume=group==0 ? PositionGetDouble(POSITION_VOLUME) : OrderGetDouble(ORDER_VOLUME_CURRENT);
          if(!FinitePositive(sl)) { reason="existing_exposure_without_sl"; return false; }
@@ -320,7 +369,11 @@ bool ExistingRisk(double &total,double &directed,string symbol,string side,strin
          if(!FinitePositive(entry) || (dir=="BUY" ? sl>=entry : sl<=entry)) { reason="exposure_stop_breached"; return false; }
          double profit=0;
          if(!DnbCalcProfit(dir=="BUY" ? ORDER_TYPE_BUY : ORDER_TYPE_SELL,sym,volume,entry,sl,profit)) { reason="exposure_risk_failed"; return false; }
-         double loss=MathMax(0,-profit); total+=loss;
+   double loss=MathMax(0,-profit);
+   #ifdef DNB_DEMO_EXECUTOR
+   loss+=12.0*volume;
+   #endif
+   total+=loss;
          bool known=false;
          for(int k=0;k<ArraySize(g_symbols);k++) if(g_symbols[k]==sym) known=true;
          if(!known) { reason="unsupported_exposure_symbol"; return false; }
@@ -334,18 +387,36 @@ bool ExistingRisk(double &total,double &directed,string symbol,string side,strin
    directed=MathMax(base_risk,quote_risk);
    return true;
   }
+#ifdef DNB_DEMO_EXECUTOR
+#include "include/DnbDemoScale.mqh"
+#endif
 bool Plan(string &f[],double &volume,double &usd,string &reason)
   {
    volume=0; usd=0;
    if(!AccountBound() || !TerminalInfoInteger(TERMINAL_CONNECTED)) { reason="account_or_connection"; return false; }
-   if(f[3]!=(string)InpExpectedLogin || f[4]!=InpExpectedServer || f[5]!="SHADOW") { reason="account_or_mode"; return false; }
+   string required_mode="SHADOW";
+   #ifdef DNB_DEMO_EXECUTOR
+   required_mode="DEMO";
+   #endif
+   if(f[3]!=(string)InpExpectedLogin || f[4]!=InpExpectedServer || f[5]!=required_mode) { reason="account_or_mode"; return false; }
    double created=0,expires=0,entry=0,sl=0,tp=0,pct=0,stoplimit=0,cancel=0;
    if(!StrictNumber(f[6],created) || !StrictNumber(f[7],expires) || !StrictNumber(f[10],entry) || !StrictNumber(f[11],sl) || !StrictNumber(f[12],tp) || !StrictNumber(f[13],pct) || !StrictNumber(f[14],stoplimit) || !StrictNumber(f[16],cancel)) { reason="invalid_number"; return false; }
    long now=(long)TimeGMT();
    if(created>now || now-created>30 || expires<=now || expires>created+30) { reason="stale_command"; return false; }
    if(f[17]!="0" && f[17]!="1") { reason="invalid_synthetic_flag"; return false; }
    // Only synthetic SHADOW planning can bypass unknown historical rule anchors.
+   #ifdef DNB_DEMO_EXECUTOR
+   if(!TerminalInfoInteger(TERMINAL_TRADE_ALLOWED) || !MQLInfoInteger(MQL_TRADE_ALLOWED)) { reason="algo_permission_disabled";return false; }
+   if(f[17]!="0") { reason="synthetic_execution_forbidden"; return false; }
+   double daily_anchor=0,authority_peak=0,authority_until=0,server_volume=0,server_risk=0;
+   if(ArraySize(f)!=36 || !StrictNumber(f[20],server_volume) || !StrictNumber(f[21],daily_anchor) ||
+      !StrictNumber(f[22],authority_peak) || !StrictNumber(f[23],authority_until) || !StrictNumber(f[25],server_risk) ||
+      daily_anchor<=0 || authority_peak<=0 || authority_until<=now || server_volume<=0 || server_risk<=0)
+      { reason="demo_authority_invalid";return false; }
+   if(!DnbValidateDemoScale(f,reason))return false;
+   #else
    if(f[17]!="1") { reason="historical_anchors_unverified"; return false; }
+   #endif
    string symbol=f[8],type=f[9]; bool allowed=false;
    for(int i=0;i<ArraySize(g_symbols);i++) if(g_symbols[i]==symbol && StringSubstr(symbol,StringLen(symbol)-2)==".x") allowed=true;
    if(!allowed || !DnbSymbolSelect(symbol,true)) { reason="symbol_unavailable"; return false; }
@@ -397,6 +468,12 @@ bool Plan(string &f[],double &volume,double &usd,string &reason)
    budget=MathMin(budget,MathMin(balance,equity)*0.004-directed);
    if(symbol=="XAUUSD.x") budget=MathMin(budget,MathMin(balance,equity)*0.0025);
    budget=MathMin(budget,balance*0.007+floating);
+   #ifdef DNB_DEMO_EXECUTOR
+   budget=MathMin(budget,equity-daily_anchor*0.975);
+   budget=MathMin(budget,MathMin(balance,equity)-(MathMin(2500.0,authority_peak-125.0)+12.5));
+   budget=MathMin(budget,server_risk);
+   if(StringToInteger(f[28])>0)budget=MathMin(budget,StringToDouble(f[32]));
+   #endif
    string peak_key=StringFormat("FX101.%I64d.peak",InpExpectedLogin);
    if(!GlobalVariableCheck(peak_key)) { reason="missing_peak"; return false; }
    budget=MathMin(budget,MathMin(balance,equity)-(MathMin(2500.0,GlobalVariableGet(peak_key)-125.0)+12.5));
@@ -405,6 +482,13 @@ bool Plan(string &f[],double &volume,double &usd,string &reason)
    ENUM_ORDER_TYPE market_type=buy ? ORDER_TYPE_BUY : ORDER_TYPE_SELL;
    if(!DnbCalcProfit(market_type,symbol,vmin,worst,sl,profit) || profit>=0) { reason="risk_calculation"; return false; }
    double unit=MathMax(-profit/vmin,(MathAbs(entry-sl)/tick+5)*tv);
+   #ifdef DNB_DEMO_EXECUTOR
+   unit+=12.0; // Conservative round-trip fee allowance per lot, never a tighter SL.
+   double reward=0;
+   double favourable=entry+(buy ? -5*tick : 5*tick);
+   if(!DnbCalcProfit(market_type,symbol,vmin,favourable,tp,reward) || reward<=0) { reason="reward_calculation";return false; }
+   vmax=MathMin(vmax,MathMin(server_volume,25.0/(reward/vmin)));
+   #endif
    volume=MathFloor(MathMin(vmax,budget/unit)/step)*step; // Always DOWN, without an upward epsilon.
    if(volume<vmin || volume<=0) { volume=0; reason="lot_minimum"; return false; }
    usd=unit*volume;
@@ -450,8 +534,16 @@ void DrainAcks()
    while(FileFindNext(handle,name));
    FileFindClose(handle);
   }
+#include "include/DnbHistory.mqh"
+#ifdef DNB_DEMO_EXECUTOR
+#include "include/DnbStrategyDemo.mqh"
+#include "include/DnbDemoManagement.mqh"
+#endif
 void Poll()
   {
+   #ifdef DNB_DEMO_EXECUTOR
+   DnbPollStrategyDemo();return;
+   #endif
    if(InpMode!=MODE_SHADOW || Killed() || !g_snapshot_ok) return;
    string response,nonce;
    if(!Http("GET","/fx101/mt5/command","",response,nonce) || response=="NONE") return;
@@ -478,17 +570,37 @@ void Poll()
   }
 int OnInit()
   {
+   #ifndef DNB_DEMO_EXECUTOR
    if(InpMode==MODE_AUTO) { Print("FX101 AUTO unavailable: critical paths unvalidated"); return INIT_PARAMETERS_INCORRECT; }
+   #endif
    #ifdef DNB_DEMO_OBSERVER
-   if(InpExpectedLogin!=5057377621 || InpExpectedServer!="MetaQuotes-Demo" || InpMode!=MODE_OBSERVE || AccountInfoInteger(ACCOUNT_TRADE_MODE)!=ACCOUNT_TRADE_MODE_DEMO) return INIT_PARAMETERS_INCORRECT;
+   if(InpExpectedLogin!=5057377621 || InpExpectedServer!="MetaQuotes-Demo" || AccountInfoInteger(ACCOUNT_TRADE_MODE)!=ACCOUNT_TRADE_MODE_DEMO || InpApiBase!="https://dnb-fx.onrender.com") return INIT_PARAMETERS_INCORRECT;
+      #ifdef DNB_DEMO_EXECUTOR
+   if(InpMode!=MODE_AUTO) return INIT_PARAMETERS_INCORRECT;
+      #else
+   if(InpMode!=MODE_OBSERVE) return INIT_PARAMETERS_INCORRECT;
+      #endif
    #else
    if(InpExpectedLogin!=315307814 || InpExpectedServer!="GoatFunded-Server") return INIT_PARAMETERS_INCORRECT;
    #endif
    if(StringFind(InpApiBase,"https://")!=0 || StringFind(InpApiBase,"\r")>=0 || StringFind(InpApiBase,"\n")>=0 || InpPollSeconds<5 || InpPollSeconds>10) return INIT_PARAMETERS_INCORRECT;
    if(Hmac("The quick brown fox jumps over the lazy dog","key")!="f7bc83f430538424b13298e6aa6fb143ef4d59a14946175997479dbc2d1a3cd8") { Print("FX101 cryptographic selftest failed"); return INIT_FAILED; }
    FolderCreate(DnbBridgeDirectory());
+   g_instance_lock=FileOpen(DnbBridgeDirectory()+"\\instance.lock",FILE_WRITE|FILE_BIN);
+   if(g_instance_lock==INVALID_HANDLE) { Print("dnb one-chart observer/executor already attached; second instance blocked");return INIT_FAILED; }
    g_key=ReadPrivate(InpCredentialFile);
    if(g_key!="" && !Hex(g_key,64)) return INIT_PARAMETERS_INCORRECT;
+   #ifdef DNB_DEMO_EXECUTOR
+   if(!Hex(g_key,64))return INIT_PARAMETERS_INCORRECT;
+   string journal_key_path=DnbBridgeDirectory()+"\\journal-key.txt";
+   if(FileIsExist(journal_key_path))g_journal_key=ReadPrivate(journal_key_path);
+   else
+     {
+      g_journal_key=Hmac("dnb local journal domain:"+(string)InpExpectedLogin+":"+InpExpectedServer,g_key);
+      if(!WritePrivate(journal_key_path,g_journal_key))return INIT_FAILED;
+     }
+   if(!Hex(g_journal_key,64))return INIT_FAILED; // Never reset an existing corrupt key.
+   #endif
    string counter_path=DnbBridgeDirectory()+"\\boot.txt";
    double boot=StringToDouble(ReadPrivate(counter_path))+1;
    if(!WritePrivate(counter_path,DoubleToString(boot,0))) return INIT_FAILED;
@@ -500,7 +612,8 @@ int OnInit()
    Print("FX101 v2 started SHADOW/OBSERVE only login=",InpExpectedLogin," server=",InpExpectedServer," markets=",ArraySize(g_symbols)," local_kill=",Killed());
    return INIT_SUCCEEDED;
   }
-void OnDeinit(const int reason) { EventKillTimer(); }
+void OnDeinit(const int reason)
+  { EventKillTimer();if(g_instance_lock!=INVALID_HANDLE) { FileClose(g_instance_lock);g_instance_lock=INVALID_HANDLE; } }
 
 void ValidateContracts()
   {
@@ -522,7 +635,7 @@ void ValidateContracts()
          bool buy=k%2==0;
          MqlTradeRequest req={};
          req.action=k<2 ? TRADE_ACTION_DEAL : TRADE_ACTION_PENDING;
-         req.symbol=symbol; req.type=(ENUM_ORDER_TYPE)k; req.volume=vmin;
+         req.symbol=DnbBrokerSymbol(symbol); req.type=(ENUM_ORDER_TYPE)k; req.volume=vmin;
          double market=buy ? q.ask : q.bid;
          req.price=k<2 ? market : (k<4 ? market+(buy ? -d : d) : market+(buy ? d : -d));
          req.price=MathRound(req.price/tick)*tick;
@@ -537,7 +650,7 @@ void ValidateContracts()
          bool supported=(DnbSymbolInteger(symbol,SYMBOL_ORDER_MODE)&bit)!=0;
          datetime session_from=0,session_to=0;
          MqlDateTime current; TimeToStruct(TimeTradeServer(),current);
-         bool session=SymbolInfoSessionTrade(symbol,(ENUM_DAY_OF_WEEK)current.day_of_week,0,session_from,session_to);
+         bool session=SymbolInfoSessionTrade(DnbBrokerSymbol(symbol),(ENUM_DAY_OF_WEEK)current.day_of_week,0,session_from,session_to);
          if(!first) out+=","; first=false;
          out+="{\"symbol\":\""+symbol+"\",\"type\":\""+OrderName(k)+"\",\"supported\":"+(supported ? "true" : "false");
          out+=",\"profit_calculation\":"+(pc && profit<0 ? "true" : "false")+",\"margin_calculation\":"+(mc && margin>=0 ? "true" : "false");
@@ -550,20 +663,29 @@ void ValidateContracts()
    g_contract_validation=WritePrivate(DnbBridgeDirectory()+"\\native-contract-validation.json",out);
   }
 
-#include "include/DnbHistory.mqh"
 void OnTradeTransaction(const MqlTradeTransaction &transaction,const MqlTradeRequest &request,const MqlTradeResult &result)
   { g_history_dirty=true; }
 
 void OnTimer()
   {
    if(InpMode==MODE_OFF || !AccountBound()) return;
+   #ifdef DNB_DEMO_EXECUTOR
+   DnbManageStrategyDemo(); // Protective owned-order actions continue through a new-risk kill.
+   #endif
    if(!g_contract_validation) ValidateContracts();
    string body=Snapshot(); g_snapshot_ok=false;
    if(body=="") { Print("FX101 incomplete broker snapshot; commands blocked"); return; }
    if(!WritePrivate(DnbBridgeDirectory()+"\\snapshot.json",body)) return;
    string response,nonce;
    g_snapshot_ok=Http("POST","/fx101/mt5/snapshot",body,response,nonce);
+   #ifdef DNB_DEMO_EXECUTOR
+   if(g_snapshot_ok)g_snapshot_ok=DnbReadDemoStatus(response,nonce);
+   #endif
    if(g_snapshot_ok) DnbPumpHistory();
+   #ifdef DNB_DEMO_EXECUTOR
+   if(g_snapshot_ok) DrainAcks(); // Reconciliation/outbox continues when new-risk kill is engaged.
+   #else
    if(g_snapshot_ok && InpMode==MODE_SHADOW && !Killed()) DrainAcks();
+   #endif
    Poll();
   }

@@ -59,7 +59,8 @@ def symbol_spec(spec):
 def validate_snapshot(s, now, *, expected_login=LOGIN, expected_server=SERVER):
     required = {'login','server','currency','captured_at','balance','equity','free_margin','margin','floating_pnl',
                 'terminal_connected','positions','orders','symbols','daily_anchor','high_water_equity','anchors_verified','day_key'}
-    keys(s, required)
+    keys(s, required, optional={'account_margin_mode'})
+    if 'account_margin_mode' in s and (type(s['account_margin_mode']) is not int or s['account_margin_mode'] not in {0,1,2}):raise Reject('account_margin_mode')
     if type(s['login']) is not int or s['login'] != expected_login:
         raise Reject('wrong_account')
     if s['server'] != expected_server:
@@ -135,11 +136,12 @@ def directional_legs(symbol, side):
     sign = 1 if side == 'BUY' else -1
     return ((symbol[:3], sign), (symbol[3:6], -sign))
 
-def exposure_budgets(s, symbol, side, basis, now):
+def exposure_budgets(s, symbol, side, basis, now, *, fee_per_lot=Decimal(0)):
     directed = {}; metal = Decimal(0)
     for item in s['positions'] + s['orders']:
         usd = portfolio_risk({**s,'positions':[item],'orders':[]} if item in s['positions']
                              else {**s,'positions':[],'orders':[item]}, now)
+        usd += number(fee_per_lot)*positive(item['volume'])
         for leg in directional_legs(item['symbol'],item['side']):
             directed[leg] = directed.get(leg,Decimal(0)) + usd
         if item['symbol'] == 'XAUUSD.x': metal += usd
@@ -150,7 +152,7 @@ def exposure_budgets(s, symbol, side, basis, now):
     if remaining <= 0: raise Reject('metal_risk')
     return remaining
 
-def plan(s, command, now, *, require_anchors=True, scale_in_tickets=frozenset(), expected_login=LOGIN, expected_server=SERVER):
+def plan(s, command, now, *, require_anchors=True, scale_in_tickets=frozenset(), expected_login=LOGIN, expected_server=SERVER, fee_per_lot=Decimal(0)):
     validate_snapshot(s, now, expected_login=expected_login, expected_server=expected_server)
     required = {'command_id','login','server','created_at','expires_at','symbol','order_type','entry','sl','tp','risk_pct','stop_limit','cancel'}
     keys(command, required)
@@ -179,7 +181,9 @@ def plan(s, command, now, *, require_anchors=True, scale_in_tickets=frozenset(),
         if item['symbol']==symbol:
             if side != item['side']: raise Reject('hedging')
             if item['ticket'] not in scale_in_tickets: raise Reject('duplicate_symbol')
-    existing = portfolio_risk(s, now)
+    fee_per_lot=number(fee_per_lot)
+    if fee_per_lot<0:raise Reject('negative_fee_allowance')
+    existing = portfolio_risk(s, now)+fee_per_lot*sum((positive(p['volume']) for p in s['positions']+s['orders']),Decimal(0))
     spec = s['symbols'][symbol]
     mode = spec['trade_mode']
     if mode not in {1,2,4} or mode==1 and side=='SELL' or mode==2 and side=='BUY': raise Reject('symbol_trade_mode')
@@ -218,13 +222,13 @@ def plan(s, command, now, *, require_anchors=True, scale_in_tickets=frozenset(),
     if cancel['kind']=='price_below' and bid<=cancel_price or cancel['kind']=='price_above' and ask>=cancel_price:
         raise Reject('cancel_condition_met')
     # Include a conservative 5-tick entry allowance. Fees/gap limits still require verification.
-    unit = (abs(entry-sl)+5*tick)/tick*positive(spec['tick_value_loss'])
+    unit = (abs(entry-sl)+5*tick)/tick*positive(spec['tick_value_loss'])+fee_per_lot
     budget = min(basis*requested/100, basis*AGGREGATE/100-existing,
                  balance*FLOATING/100+number(s['floating_pnl']),
                  equity-positive(s['daily_anchor'])*(1-DAILY/100),
                  min(balance,equity)-trailing)
     if budget <= 0: raise Reject('aggregate_risk')
-    budget = min(budget,exposure_budgets(s,symbol,side,basis,now))
+    budget = min(budget,exposure_budgets(s,symbol,side,basis,now,fee_per_lot=fee_per_lot))
     step = positive(spec['volume_step'])
     volume = (min(budget/unit,positive(spec['volume_max']))/step).to_integral_value(rounding=ROUND_FLOOR)*step
     if volume < positive(spec['volume_min']): raise Reject('lot_minimum')

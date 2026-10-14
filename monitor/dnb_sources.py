@@ -5,12 +5,15 @@ receipt survives a worker restart; a stale/rejected decision never becomes an
 entry merely because the demo executor is available.
 """
 import json
+import re
+import hashlib
 from datetime import datetime, timezone
 import requests
 import mt5_risk as risk
 import mt5_store as store
 
 MAILBOX = 'https://api.github.com/repos/DouglasBagambe/rfbc-backtest/contents/runtime/gdesk_decision.json'
+RAW_MAILBOX = 'https://raw.githubusercontent.com/DouglasBagambe/rfbc-backtest/gdesk-runtime/runtime/gdesk_decision.json'
 SCHEMA = (
     'CREATE TABLE IF NOT EXISTS dnb_source_receipts (id TEXT PRIMARY KEY, source TEXT NOT NULL, generated_at INTEGER NOT NULL, received_at INTEGER NOT NULL, result TEXT NOT NULL, payload TEXT NOT NULL)',
     'CREATE TABLE IF NOT EXISTS dnb_source_health (source TEXT PRIMARY KEY, checked_at INTEGER NOT NULL, status TEXT NOT NULL, detail TEXT NOT NULL)',
@@ -23,9 +26,17 @@ def timestamp(value):
     return int(dt.timestamp())
 
 def fetch_gdesk(now):
-    response = requests.get(MAILBOX, params={'ref':'gdesk-runtime', 'cache_bust':now},
-                            headers={'Accept':'application/vnd.github.raw+json', 'Cache-Control':'no-cache'}, timeout=15)
-    response.raise_for_status()
+    try:
+        response = requests.get(MAILBOX, params={'ref':'gdesk-runtime', 'cache_bust':now},
+                                headers={'Accept':'application/vnd.github.raw+json', 'Cache-Control':'no-cache'}, timeout=15)
+        response.raise_for_status()
+    except requests.RequestException:
+        # Public unauthenticated API quotas can be shared by hosted outbound IPs.
+        # The same owned mailbox over HTTPS is an alternate transport, never an
+        # alternate strategy. Publication/bar freshness checks still fail closed.
+        response = requests.get(RAW_MAILBOX, params={'cache_bust':now},
+                                headers={'Cache-Control':'no-cache'}, timeout=15)
+        response.raise_for_status()
     if len(response.content) > 131072: raise risk.Reject('source_too_large')
     # Use the same strict decoder without requiring an HTTP request context.
     def pairs(items):
@@ -40,7 +51,7 @@ def fetch_gdesk(now):
 def gdesk_decisions(body, now):
     if not isinstance(body, dict): raise risk.Reject('source_not_object')
     identifier = body.get('decision_id')
-    if not isinstance(identifier, str) or not 1 <= len(identifier) <= 128: raise risk.Reject('source_id')
+    if not isinstance(identifier, str) or not re.fullmatch(r'[A-Za-z0-9_.:-]{1,128}',identifier): raise risk.Reject('source_id')
     generated = timestamp(body.get('generated_at'))
     if not 0 <= now-generated <= 3600: raise risk.Reject('source_stale_or_future')
     result = body.get('result')
@@ -74,7 +85,9 @@ def gdesk_decisions(body, now):
     # Producer volume is never trusted; preserve structure and cap the risk input.
     pct = min(risk.PER_TRADE, risk.positive(decision.get('risk_pct')))
     return [{**decision, 'symbol':symbol, 'risk_pct':float(pct), 'trade_id':identifier,
-             'source_receipt_id':identifier}]
+             'source_receipt_id':identifier,
+             'thesis_id':decision.get('thesis_id') or hashlib.sha256(identifier.encode()).hexdigest()[:32],
+             'analysis_context':context}]
 
 def health(source, now, status, detail):
     from mt5_bridge import _ensure_schema
@@ -117,12 +130,17 @@ def rfbc_decisions(results, now):
         entry, stop, target = [risk.positive(action.get(k)) for k in ('entry','stop','target')]
         if side not in {'BUY','SELL'} or not (stop<entry<target if side=='BUY' else target<entry<stop): raise risk.Reject('rfbc_geometry')
         identity = f"RFBC:{row['pair']}:{close}:{side}"
-        out.append({'trade_id':identity, 'source':'RFBC','symbol':row['pair']+'.x','side':side,
+        out.append({'trade_id':identity, 'thesis_id':hashlib.sha256(identity.encode()).hexdigest()[:32],
+                    'source':'RFBC','symbol':row['pair']+'.x','side':side,
                     'entry':float(entry),'stop':float(stop),'target':float(target),
-                    'risk_pct':float(min(risk.PER_TRADE, risk.positive(action.get('risk_pct')))),
+                    # Frozen RFBC risk_pct describes its reference 0.01 lot,
+                    # not a requested execution budget. Keep its eligibility
+                    # outcome, then size independently under dnb's 0.25% cap.
+                    'risk_pct':float(risk.PER_TRADE),
                     'valid_until':datetime.fromtimestamp(close+720,timezone.utc).isoformat(),
                     'cancel_condition':'Frozen RFBC entry expires after the eligible completed-H4 window.',
-                    'context':{'order_type':side}, 'source_receipt_id':identity})
+                    'context':{'order_type':side,'reference_risk_pct':float(risk.positive(action.get('risk_pct')))},
+                    'source_receipt_id':identity})
     return out
 
 def ingest_rfbc(decisions, now):

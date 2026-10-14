@@ -39,12 +39,14 @@ bool DnbWriteOnce(string path,string body)
    if(!FileMove(tmp,0,path,0)) return false;
    return DnbRead(path)==body;
   }
-string DnbCanonical(MqlTradeRequest &r,string thesis)
+string DnbCanonicalLegacy(MqlTradeRequest &r,string thesis)
   {
    return StringFormat("%d|%s|%d|%I64u|%I64u|%.10f|%.10f|%.10f|%.10f|%.10f|%d|%d|%I64d|%I64u|%s|%s",
      (int)r.action,r.symbol,(int)r.type,r.order,r.position,r.volume,r.price,r.sl,r.tp,r.stoplimit,
      (int)r.type_filling,(int)r.type_time,(long)r.expiration,r.magic,r.comment,thesis);
   }
+string DnbCanonical(MqlTradeRequest &r,string thesis)
+  { return DnbCanonicalLegacy(r,thesis)+"|"+(string)r.deviation; }
 class DnbBrokerPort
   {
 public:
@@ -139,11 +141,16 @@ string DnbSubmitOnce(DnbBrokerPort &broker,string directory,string id,string the
    request.magic=DnbMagic(id); request.comment=DnbComment(id);
    string fingerprint=DnbSha(DnbCanonical(request,thesis));
    string path=directory+"\\"+id+".intent";
-   string intent="DNB1|"+id+"|"+(string)AccountInfoInteger(ACCOUNT_LOGIN)+"|"+AccountInfoString(ACCOUNT_SERVER)+"|"+fingerprint+"|"+DnbCanonical(request,thesis);
+   string binding=id+"|"+(string)AccountInfoInteger(ACCOUNT_LOGIN)+"|"+AccountInfoString(ACCOUNT_SERVER)+"|";
+   string intent="DNB2|"+binding+fingerprint+"|"+DnbCanonical(request,thesis);
    if(FileIsExist(path))
      {
       string prior=DnbRead(path);
-      if(prior!=intent) { FileClose(lock);return "CORRUPT_OR_CONFLICT"; }
+      // Proven v1 factories used deviation=5. Legacy recovery is read-only and
+      // never recreates or resubmits a missing legacy intent.
+      string legacy=DnbCanonicalLegacy(request,thesis);
+      bool legacy_match=request.deviation==5 && prior=="DNB1|"+binding+DnbSha(legacy)+"|"+legacy;
+      if(prior!=intent && !legacy_match) { FileClose(lock);return "CORRUPT_OR_CONFLICT"; }
       int found=broker.Search(request.magic,request.comment,request.symbol,order,deal);
       FileClose(lock);
       return found==1 ? "RECOVERED" : "UNRESOLVED"; // Never call Send again.

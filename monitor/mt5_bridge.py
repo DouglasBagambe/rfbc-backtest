@@ -43,6 +43,8 @@ def _ensure_schema():
     from dnb_authority import SCHEMA as AUTHORITY_SCHEMA
     from dnb_demo import SCHEMA as DEMO_SCHEMA
     from dnb_sources import SCHEMA as SOURCE_SCHEMA
+    from dnb_demo_execution import SCHEMA as DEMO_EXECUTION_SCHEMA
+    from dnb_notifications import SCHEMA as NOTIFICATION_SCHEMA
     store.ensure_schema((
         'CREATE TABLE IF NOT EXISTS mt5_v2_nonces (nonce TEXT PRIMARY KEY, received_at INTEGER NOT NULL)',
         'CREATE INDEX IF NOT EXISTS mt5_v2_nonce_time ON mt5_v2_nonces(received_at)',
@@ -52,7 +54,7 @@ def _ensure_schema():
         'CREATE TABLE IF NOT EXISTS mt5_v2_reconciliation (id TEXT PRIMARY KEY, snapshot_id TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL)',
         'CREATE TABLE IF NOT EXISTS dnb_thesis_legs (command_id TEXT PRIMARY KEY, thesis_id TEXT NOT NULL, confirmation_id TEXT NOT NULL, payload TEXT NOT NULL, UNIQUE(thesis_id,confirmation_id))',
         'CREATE TABLE IF NOT EXISTS dnb_alert_intents (trade_id TEXT PRIMARY KEY, symbol TEXT NOT NULL, side TEXT NOT NULL, state TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL, delivery TEXT)',
-    )+HISTORY_SCHEMA+DEMO_HISTORY_SCHEMA+AUTHORITY_SCHEMA+DEMO_SCHEMA+SOURCE_SCHEMA)
+    )+HISTORY_SCHEMA+DEMO_HISTORY_SCHEMA+AUTHORITY_SCHEMA+DEMO_SCHEMA+SOURCE_SCHEMA+DEMO_EXECUTION_SCHEMA+NOTIFICATION_SCHEMA)
 
 @bp.teardown_request
 def close_store(error):
@@ -349,8 +351,10 @@ def source_status():
 
 @bp.post('/fx101/mt5/demo/snapshot')
 def demo_snapshot():
-    import dnb_demo
-    try:return jsonify(dnb_demo.snapshot(strict_json(),clock()))
+    import dnb_demo,dnb_demo_execution
+    try:
+        dnb_demo.snapshot(strict_json(),clock())
+        return Response(dnb_demo_execution.status_wire(clock(),request.headers['X-FX101-Nonce']),mimetype='text/plain')
     except risk.Reject as exc:return jsonify(ok=False,error=str(exc)),400
 
 @bp.post('/fx101/mt5/demo/history')
@@ -366,6 +370,27 @@ def demo_status():
     import dnb_demo,dnb_history
     return jsonify(ok=True,purpose='DEMO',snapshot=dnb_demo.latest(clock()),
                    history=dnb_history.latest(demo=True),live_goat_authorised=False)
+
+@bp.get('/fx101/mt5/demo/command')
+def demo_strategy_command():
+    import dnb_demo_execution
+    return Response(dnb_demo_execution.next_command(clock(),request.headers['X-FX101-Nonce']),mimetype='text/plain')
+
+@bp.post('/fx101/mt5/demo/strategy-intent')
+def demo_strategy_intent():
+    import dnb_demo_execution
+    try:return jsonify(dnb_demo_execution.submission_intent(strict_json(),clock()))
+    except risk.Reject as exc:
+        store.db().rollback()
+        return jsonify(ok=False,error=str(exc)),400
+
+@bp.post('/fx101/mt5/demo/strategy-ack')
+def demo_strategy_ack():
+    import dnb_demo_execution
+    try:return jsonify(dnb_demo_execution.acknowledge(strict_json(),clock()))
+    except risk.Reject as exc:
+        store.db().rollback()
+        return jsonify(ok=False,error=str(exc)),400
 
 
 @bp.post('/fx101/mt5/demo/intent')

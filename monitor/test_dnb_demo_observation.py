@@ -19,6 +19,12 @@ class DemoObservationTests(unittest.TestCase):
         self.assertEqual(dnb_demo.latest(NOW)['payload']['login'],dnb_demo.DEMO_LOGIN)
         self.assertIsNone(self.bridge.latest_snapshot())
 
+    def test_same_second_capture_uses_serial_received_order(self):
+        first=self.demo();dnb_demo.snapshot(first,NOW)
+        second=self.demo();second['day_key']='2026-10-15'
+        dnb_demo.snapshot(second,NOW)
+        self.assertEqual(dnb_demo.latest(NOW)['payload']['day_key'],'2026-10-15')
+
     def test_funded_account_rejected_by_demo_route(self):
         with self.assertRaises(self.bridge.risk.Reject):dnb_demo.snapshot(snapshot(),NOW)
 

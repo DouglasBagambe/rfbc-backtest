@@ -6,20 +6,34 @@ import mt5_store as store
 DEMO_LOGIN=5057377621
 DEMO_SERVER='MetaQuotes-Demo'
 SCHEMA=('CREATE TABLE IF NOT EXISTS dnb_demo_commands (id TEXT PRIMARY KEY, payload TEXT NOT NULL, state TEXT NOT NULL, ack TEXT, created_at INTEGER NOT NULL)',
-        'CREATE TABLE IF NOT EXISTS dnb_demo_snapshots (id TEXT PRIMARY KEY, captured_at INTEGER NOT NULL, received_at INTEGER NOT NULL, payload TEXT NOT NULL)')
+        'CREATE TABLE IF NOT EXISTS dnb_demo_snapshots (id TEXT PRIMARY KEY, captured_at INTEGER NOT NULL, received_at INTEGER NOT NULL, payload TEXT NOT NULL)',
+        'CREATE TABLE IF NOT EXISTS dnb_demo_snapshot_counter (id TEXT PRIMARY KEY, value INTEGER NOT NULL)',
+        'CREATE TABLE IF NOT EXISTS dnb_demo_snapshot_sequence (id TEXT PRIMARY KEY, value INTEGER UNIQUE NOT NULL)')
 
 def snapshot(body,now):
     risk.validate_snapshot(body,now,expected_login=DEMO_LOGIN,expected_server=DEMO_SERVER)
     from mt5_bridge import _ensure_schema
     import uuid
     _ensure_schema();c=store.lock_account()
-    c.execute('INSERT INTO dnb_demo_snapshots VALUES (?,?,?,?)',(uuid.uuid4().hex,body['captured_at'],now,json.dumps(body,separators=(',',':'),allow_nan=False)))
+    identifier=uuid.uuid4().hex
+    c.execute("INSERT INTO dnb_demo_snapshot_counter VALUES ('receiver',0) ON CONFLICT(id) DO NOTHING")
+    sequence=c.execute("UPDATE dnb_demo_snapshot_counter SET value=value+1 WHERE id='receiver' RETURNING value").fetchone()['value']
+    c.execute('INSERT INTO dnb_demo_snapshots VALUES (?,?,?,?)',(identifier,body['captured_at'],now,json.dumps(body,separators=(',',':'),allow_nan=False)))
+    c.execute('INSERT INTO dnb_demo_snapshot_sequence VALUES (?,?)',(identifier,sequence))
+    epoch=c.execute('SELECT * FROM dnb_demo_epochs ORDER BY created_at DESC LIMIT 1').fetchone()
+    if epoch:
+        value=json.loads(epoch['payload'])
+        peak=max(risk.positive(value['historical_peak']),risk.positive(body['balance']),risk.positive(body['equity']))
+        if peak>risk.number(value['historical_peak']):
+            value.update(historical_peak=float(peak),peak_snapshot_id=identifier)
+            c.execute('UPDATE dnb_demo_epochs SET payload=? WHERE id=?',(json.dumps(value,sort_keys=True,separators=(',',':'),allow_nan=False),epoch['id']))
     c.execute('DELETE FROM dnb_demo_snapshots WHERE received_at<?',(now-86400,))
+    c.execute('DELETE FROM dnb_demo_snapshot_sequence WHERE id NOT IN (SELECT id FROM dnb_demo_snapshots)')
     c.commit()
     return {'ok':True,'purpose':'DEMO','live_goat_authorised':False}
 
 def latest(now):
-    row=store.db().execute('SELECT * FROM dnb_demo_snapshots ORDER BY captured_at DESC,received_at DESC LIMIT 1').fetchone()
+    row=store.db().execute('SELECT s.* FROM dnb_demo_snapshots s LEFT JOIN dnb_demo_snapshot_sequence q ON q.id=s.id ORDER BY s.captured_at DESC,s.received_at DESC,COALESCE(q.value,0) DESC LIMIT 1').fetchone()
     if not row:return None
     out={**dict(row),'payload':json.loads(row['payload'])}
     out['age_seconds']=now-row['captured_at']
