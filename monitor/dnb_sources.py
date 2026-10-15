@@ -13,6 +13,8 @@ import requests
 import mt5_risk as risk
 import mt5_store as store
 
+_HEALTH_LOGGED = set()
+
 MAILBOX = 'https://api.github.com/repos/DouglasBagambe/rfbc-backtest/contents/runtime/gdesk_decision.json'
 RAW_MAILBOX = 'https://raw.githubusercontent.com/DouglasBagambe/rfbc-backtest/gdesk-runtime/runtime/gdesk_decision.json'
 SCHEMA = dnb_gdesk_reports.SCHEMA + (
@@ -98,7 +100,8 @@ def health(source, now, status, detail):
     c.execute('INSERT INTO dnb_source_health VALUES (?,?,?,?) ON CONFLICT(source) DO UPDATE SET checked_at=excluded.checked_at,status=excluded.status,detail=excluded.detail',
               (source, now, status, detail))
     c.commit()
-    if not previous or previous['status'] != status or previous['detail'] != detail:
+    if source not in _HEALTH_LOGGED or not previous or previous['status'] != status or previous['detail'] != detail:
+        _HEALTH_LOGGED.add(source)
         import fx101
         fx101.log('dnb_source_health', source=source, status=status, detail=detail)
 
