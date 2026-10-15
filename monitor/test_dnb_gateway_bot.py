@@ -11,17 +11,17 @@ class BotTests(unittest.TestCase):
     def client(self):
         self.app.register_blueprint(bot.bp)
         return self.app.test_client()
-    def env(self):return patch.dict(os.environ,{"TELEGRAM_BOT_TOKEN":"fixture-key","TELEGRAM_CHAT_ID":"123"})
+    def bot_env(self):return patch.dict(os.environ,{"TELEGRAM_BOT_TOKEN":"fixture-key","TELEGRAM_CHAT_ID":"123"})
 
     def test_auth_and_owner_chat_are_required(self):
-        with self.env():
+        with self.bot_env():
             client=self.client()
             self.assertEqual(client.post("/telegram/webhook",json={"update_id":1}).status_code,403)
             headers={"X-Telegram-Bot-Api-Secret-Token":bot.secret()}
             self.assertEqual(client.post("/telegram/webhook",headers=headers,json={"update_id":1,"message":{"chat":{"id":999},"text":"/start"}}).status_code,403)
 
     def test_menu_is_read_only_and_duplicate_update_is_suppressed(self):
-        with self.env(),patch("fx101.telegram_send",return_value=(True,"200")) as send:
+        with self.bot_env(),patch("fx101.telegram_send",return_value=(True,"200")) as send:
             client=self.client()
             headers={"X-Telegram-Bot-Api-Secret-Token":bot.secret()}
             update={"update_id":42,"message":{"chat":{"id":123},"text":"/start"}}
