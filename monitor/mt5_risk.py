@@ -1,4 +1,4 @@
-"""Deterministic SHADOW planning; never authorises broker operations.
+"""dnb Risk: deterministic SHADOW planning; never authorises broker operations.
 
 Broker metadata is mandatory. An observed peak is not proof of historical peak.
 Historical rule anchors remain an explicit validation gate, including after outages.
