@@ -1,18 +1,18 @@
 {
-  "decision_id": "GDESK-20261015T041849849Z-d081efb9-SYSTEM_FAILURE",
-  "generated_at": "2026-10-15T04:18:49.849Z",
+  "decision_id": "GDESK-20261015T081908767Z-ffec461cd8-SYSTEM_FAILURE",
+  "generated_at": "2026-10-15T08:19:08.767Z",
   "result": "SYSTEM_FAILURE",
   "decisions": [],
-  "message": "SYSTEM_FAILURE: XAUUSD.x Dukascopy H1 bars omit 2026-10-14 21:00 UTC (20:00 to 22:00 gap). MARKET_OPEN/FRESH, 18/18 symbol events present, but complete-universe continuity fails. No trade or NO_TRADE judgment authorized.",
+  "message": "SYSTEM_FAILURE: XAUUSD.x Dukascopy H1 series skips 2026-10-14 21:00 UTC (20:00 to 22:00 gap). MARKET_OPEN/FRESH and 18/18 symbol events received, but complete-universe bar continuity fails. No trade authorized; not NO_TRADE.",
   "context": {
-    "scan_id": "GDESK-2026-10-15T04-08b18c658e",
-    "source_generated_at": "2026-10-15T04:04:50.723642+00:00",
-    "ready_event_at": "2026-10-15T04:04:50.804892+00:00",
+    "scan_id": "GDESK-2026-10-15T08-ffec461cd8",
+    "source_generated_at": "2026-10-15T08:02:43.713083+00:00",
+    "ready_event_at": "2026-10-15T08:02:43.803295+00:00",
     "market_state": "MARKET_OPEN",
     "freshness": "FRESH",
     "symbols_reported": 18,
     "symbols_received": 18,
-    "latest_completed_bar": "2026-10-15T03:00:00+00:00",
+    "latest_completed_bar": "2026-10-15T07:00:00+00:00",
     "incomplete_symbols": [
       "XAUUSD.x"
     ],
