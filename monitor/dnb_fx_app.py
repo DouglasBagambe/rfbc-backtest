@@ -5,6 +5,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from waitress import serve
 import mt5_bridge
 import mt5_store
+import dnb_telegram
 
 if os.getenv('DNB_REQUIRE_DURABLE') != '1' or not mt5_store.remote():
     raise RuntimeError('dnb_requires_durable_database')
@@ -13,6 +14,7 @@ app = Flask(__name__)
 if os.getenv('FX101_MT5_TRUST_PROXY') == '1':
     app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1)
 app.register_blueprint(mt5_bridge.bp)
+app.register_blueprint(dnb_telegram.bp)
 app.teardown_appcontext(mt5_store.close_request)
 
 @app.get('/health')
@@ -35,6 +37,9 @@ if __name__ == '__main__':
     dnb_branding.install()
     import dnb_source_worker
     dnb_source_worker.start(app)
+    import dnb_market_context
+    dnb_market_context.start()
+    dnb_telegram.start()
     proxy = os.getenv('FX101_MT5_TRUST_PROXY') == '1'
     serve(app, host='0.0.0.0', port=int(os.getenv('PORT','10000')), threads=4,
           trusted_proxy='*' if proxy else None,

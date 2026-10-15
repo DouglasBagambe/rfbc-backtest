@@ -38,6 +38,7 @@ def request_signature(method,path,stamp,nonce,body):
     return sign(f'{method}\n{path}\n{stamp}\n{nonce}\n'.encode()+body)
 
 def _ensure_schema():
+    from dnb_telegram import SCHEMA as BOT_SCHEMA
     from dnb_history import SCHEMA as HISTORY_SCHEMA
     from dnb_history import DEMO_SCHEMA as DEMO_HISTORY_SCHEMA
     from dnb_authority import SCHEMA as AUTHORITY_SCHEMA
@@ -56,7 +57,7 @@ def _ensure_schema():
         'CREATE TABLE IF NOT EXISTS mt5_v2_reconciliation (id TEXT PRIMARY KEY, snapshot_id TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL)',
         'CREATE TABLE IF NOT EXISTS dnb_thesis_legs (command_id TEXT PRIMARY KEY, thesis_id TEXT NOT NULL, confirmation_id TEXT NOT NULL, payload TEXT NOT NULL, UNIQUE(thesis_id,confirmation_id))',
         'CREATE TABLE IF NOT EXISTS dnb_alert_intents (trade_id TEXT PRIMARY KEY, symbol TEXT NOT NULL, side TEXT NOT NULL, state TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL, delivery TEXT)',
-    )+HISTORY_SCHEMA+DEMO_HISTORY_SCHEMA+AUTHORITY_SCHEMA+DEMO_SCHEMA+SOURCE_SCHEMA+DEMO_EXECUTION_SCHEMA+NOTIFICATION_SCHEMA+DEMO_RESET_SCHEMA+MANUAL_SCHEMA)
+    )+BOT_SCHEMA+HISTORY_SCHEMA+DEMO_HISTORY_SCHEMA+AUTHORITY_SCHEMA+DEMO_SCHEMA+SOURCE_SCHEMA+DEMO_EXECUTION_SCHEMA+NOTIFICATION_SCHEMA+DEMO_RESET_SCHEMA+MANUAL_SCHEMA)
 
 @bp.teardown_request
 def close_store(error):

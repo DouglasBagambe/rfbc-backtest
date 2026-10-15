@@ -101,7 +101,7 @@ class DeliveryTests(unittest.TestCase):
 
     def test_watchdog_retry_dedup_and_restart(self):
         instant = datetime(2026, 10, 15, 12, 40, tzinfo=timezone.utc)
-        with patch.object(self.fx, "telegram_send", side_effect=[(False, "503"), (True, "200")]) as send:
+        with patch.object(self.fx, "now", return_value=instant.isoformat()), patch.object(self.fx, "telegram_send", side_effect=[(False, "503"), (True, "200")]) as send:
             self.worker._gdesk_delivery_watchdog(instant)
             self.worker._gdesk_delivery_watchdog(instant)
             self.worker = importlib.reload(self.worker)
