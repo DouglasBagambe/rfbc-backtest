@@ -27,11 +27,15 @@ def prepare(decision, now):
     # A stable producer ID is mandatory; prices alone cannot identify a trade thesis.
     tid=decision.get('trade_id')
     if not isinstance(tid,str) or not 1 <= len(tid) <= 128: raise risk.Reject('decision_id_required')
+    order_type = decision.get('order_type') or (decision.get('context') or {}).get('order_type') or side
+    if order_type not in risk.ORDER_TYPES or not order_type.startswith(side): raise risk.Reject('invalid_order_type')
     payload={k:decision[k] for k in ('source','side','entry','stop','target','risk_pct','valid_until')}
     payload.update(symbol=symbol,trade_id=tid,thesis_id=decision.get('thesis_id',tid),
                    scale_in_number=decision.get('scale_in_number',0),
                    total_thesis_risk_usd=decision.get('total_thesis_risk_usd'),
-                   broker_risk_authorised=False)
+                   broker_risk_authorised=False, order_type=order_type,
+                   cancel_condition=str(decision.get('cancel_condition') or 'Recheck structure before execution.'),
+                   reasoning=str(decision.get('reasoning') or '')[:600])
     canonical=json.dumps(payload,sort_keys=True,separators=(',',':'),allow_nan=False)
     c=store.lock_account()
     row=c.execute('SELECT * FROM dnb_alert_intents WHERE trade_id=?',(tid,)).fetchone()
@@ -45,11 +49,13 @@ def prepare(decision, now):
 def format_alert(payload):
     p=json.loads(payload)
     total=p['total_thesis_risk_usd']
-    return '\n'.join(['dnb Fx • manual analysis alert',f"{p['source']} • {p['symbol']} • {p['side']}",
+    return '\n'.join(['dnb Fx • manual analysis alert',f"{p['source']} • {p['symbol']} • {p.get('order_type',p['side']).replace('_',' ')}",
         f"Decision: {p['trade_id']} • Thesis: {p['thesis_id']} • Add-on: {p['scale_in_number']}",
         f"Entry {p['entry']} • Structure SL {p['stop']} • TP {p['target']}",
         f"Maximum risk input {p['risk_pct']}% • Thesis risk: {total if total is not None else 'unverified'} USD",
         f"Valid until {p['valid_until']}",
+        f"Cancel: {p.get('cancel_condition', 'Recheck structure before execution.')}",
+        p.get('reasoning', ''),
         'EA unavailable or execution blocked. No lot size is authorised.',
         'Verify current account, news, margin and structure before any manual execution.'])
 
@@ -74,6 +80,8 @@ def dispatch(trade_id, sender):
         state='DELIVERY_UNKNOWN';delivery='not_confirmed'
     c=store.lock_account()
     c.execute('UPDATE dnb_alert_intents SET state=?,delivery=? WHERE trade_id=?',(state,delivery,trade_id));c.commit()
+    import fx101
+    fx101.log('dnb_manual_alert_delivery', trade_id=trade_id, state=state, confirmed=state=='SENT')
     return state
 
 def reconnect_candidates(snapshot):

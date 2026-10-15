@@ -79,3 +79,10 @@ class AlertTests(unittest.TestCase):
         fixture.c['command_id']='c'*32;fixture.proof['confirmation_id']='SECOND-CONFIRMATION'
         with self.assertRaisesRegex(self.bridge.risk.Reject,'unresolved_thesis_submission'):
             dnb_thesis.reserve_scale_in(fixture.s,fixture.c,fixture.proof,NOW)
+
+    def test_pending_alert_preserves_order_type_and_cancellation(self):
+        row=dnb_alerts.prepare({**self.d,'order_type':'BUY_LIMIT','cancel_condition':'Cancel above 1.11'},NOW)
+        text=dnb_alerts.format_alert(row['payload'])
+        self.assertIn('BUY LIMIT',text)
+        self.assertIn('Cancel above 1.11',text)
+        self.assertNotIn('lot 0.01',text)
