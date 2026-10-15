@@ -74,6 +74,8 @@ def dispatch(trade_id, sender):
         state='DELIVERY_UNKNOWN';delivery='not_confirmed'
     c=store.lock_account()
     c.execute('UPDATE dnb_alert_intents SET state=?,delivery=? WHERE trade_id=?',(state,delivery,trade_id));c.commit()
+    import fx101
+    fx101.log('dnb_manual_alert_delivery', trade_id=trade_id, state=state, confirmed=state=='SENT')
     return state
 
 def reconnect_candidates(snapshot):

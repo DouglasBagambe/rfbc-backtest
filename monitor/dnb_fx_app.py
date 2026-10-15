@@ -20,7 +20,11 @@ def health():
     try:
         mt5_bridge._ensure_schema()
         mt5_store.db().execute('SELECT 1')
+        import dnb_sources
         return jsonify(ok=True, product='dnb Fx', storage='postgres', mode=mt5_bridge.mode(),
+                       analysis_consumer_enabled=os.getenv('DNB_PRODUCERS_ENABLED','0')=='1',
+                       manual_reports_enabled=os.getenv('DNB_MANUAL_ALERTS_ENABLED','0')=='1',
+                       sources=[{'source':s['source'],'status':s['status'],'check_age_seconds':s['check_age_seconds']} for s in dnb_sources.status()],
                        auto_available=False), 200
     except Exception:
         return jsonify(ok=False, product='dnb Fx', error='storage_unavailable',

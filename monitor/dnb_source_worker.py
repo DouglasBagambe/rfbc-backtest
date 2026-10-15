@@ -1,4 +1,5 @@
 """Permanent analysis consumer. Trading execution is a separate gated consumer."""
+import logging
 import json
 import os
 import subprocess
@@ -87,9 +88,14 @@ def cycle(now, *, rfbc=False):
                 mt5_store.db().rollback()
                 dnb_sources.health('RFBC',int(time.time()),'UNAVAILABLE','frozen_scan_failed')
     dispatch_prepared()
+    if os.getenv('DNB_MANUAL_ALERTS_ENABLED','0') == '1':
+        import dnb_gdesk_reports
+        dnb_gdesk_reports.watchdog(now)
+        dnb_gdesk_reports.dispatch(fx101.telegram_send)
     reconcile_demo(int(time.time()))
 
 def start(app):
+    logging.basicConfig(level=os.getenv('LOG_LEVEL','INFO'), format='%(message)s')
     if os.getenv('DNB_PRODUCERS_ENABLED','0') != '1': return None
     stop = threading.Event()
     def work():

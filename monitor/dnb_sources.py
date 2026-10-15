@@ -4,6 +4,7 @@ Source receipts and alert delivery are separate from broker authorisation. A
 receipt survives a worker restart; a stale/rejected decision never becomes an
 entry merely because the demo executor is available.
 """
+import dnb_gdesk_reports
 import json
 import re
 import hashlib
@@ -14,7 +15,7 @@ import mt5_store as store
 
 MAILBOX = 'https://api.github.com/repos/DouglasBagambe/rfbc-backtest/contents/runtime/gdesk_decision.json'
 RAW_MAILBOX = 'https://raw.githubusercontent.com/DouglasBagambe/rfbc-backtest/gdesk-runtime/runtime/gdesk_decision.json'
-SCHEMA = (
+SCHEMA = dnb_gdesk_reports.SCHEMA + (
     'CREATE TABLE IF NOT EXISTS dnb_source_receipts (id TEXT PRIMARY KEY, source TEXT NOT NULL, generated_at INTEGER NOT NULL, received_at INTEGER NOT NULL, result TEXT NOT NULL, payload TEXT NOT NULL)',
     'CREATE TABLE IF NOT EXISTS dnb_source_health (source TEXT PRIMARY KEY, checked_at INTEGER NOT NULL, status TEXT NOT NULL, detail TEXT NOT NULL)',
 )
@@ -111,6 +112,8 @@ def ingest_gdesk(body, now):
     # Repeated polling repairs a crash between receipt and alert preparation.
     import dnb_alerts
     for decision in decisions: dnb_alerts.prepare(decision, now)
+    if body['result'] != 'TRADE':
+        dnb_gdesk_reports.prepare(body['decision_id'], body['result'], body.get('message', ''), now)
     health('G_DESK', now, body['result'], str(body.get('message',''))[:1500])
     return decisions
 
