@@ -1,3 +1,9 @@
+# dnb Fx monitoring
+
+**dnb Desk** analysis, **dnb Risk** controls, **dnb EA** observations and **dnb Bot** delivery.
+
+The permanent gateway is https://dnb-fx.onrender.com. The older RFBC monitor publishes market context only. Broker execution remains gated; historical notes below are retained for compatibility.
+
 # RFBC v1.0 two-pair cloud monitor
 
 > **Scope:** `USDJPYc` + `AUDJPYc` only  

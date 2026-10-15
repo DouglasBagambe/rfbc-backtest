@@ -94,9 +94,13 @@ def health(source, now, status, detail):
     from mt5_bridge import _ensure_schema
     _ensure_schema()
     c = store.lock_account()
+    previous = c.execute('SELECT status,detail FROM dnb_source_health WHERE source=?',(source,)).fetchone()
     c.execute('INSERT INTO dnb_source_health VALUES (?,?,?,?) ON CONFLICT(source) DO UPDATE SET checked_at=excluded.checked_at,status=excluded.status,detail=excluded.detail',
               (source, now, status, detail))
     c.commit()
+    if not previous or previous['status'] != status or previous['detail'] != detail:
+        import fx101
+        fx101.log('dnb_source_health', source=source, status=status, detail=detail)
 
 def ingest_gdesk(body, now):
     decisions = gdesk_decisions(body, now)

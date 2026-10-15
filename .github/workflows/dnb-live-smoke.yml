@@ -1,0 +1,25 @@
+name: dnb Fx live health
+on:
+  push:
+    branches: [fix/dnb-branding]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  external-health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check public gateway from an independent client
+        run: |
+          python - <<'PY'
+          import json, urllib.request
+          for url in ("https://dnb-fx.onrender.com/health", "https://rfbc-usdjpy-monitor.onrender.com/fx101/health"):
+              try:
+                  with urllib.request.urlopen(url, timeout=60) as response:
+                      body=json.load(response)
+                      print(json.dumps({"url":url,"status":response.status,"body":body}))
+              except Exception as error:
+                  print(json.dumps({"url":url,"error":type(error).__name__,"detail":str(error)}))
+                  raise
+          PY

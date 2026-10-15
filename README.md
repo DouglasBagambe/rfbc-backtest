@@ -1,6 +1,20 @@
-# RFBC Backtest
+# dnb Fx
 
-Reproducible research, validation and execution repository for **frozen RFBC v1.0**.
+Trading ecosystem under the lowercase **dnb** brand.
+
+| Component | Name |
+|---|---|
+| Trading system | dnb Fx |
+| Analysis desk | dnb Desk |
+| Risk controls | dnb Risk |
+| MT5 engine | dnb EA |
+| Telegram interface | dnb Bot |
+
+Permanent gateway: https://dnb-fx.onrender.com. GOAT Stride / Instant HERO remains manual-only. The demo observer is separate; the unfinished executor stays disabled. Source keys, strategy names, routes and credential paths retain their existing identifiers for compatibility.
+
+## Frozen RFBC research record
+
+The historical validation and early Exness operating notes below describe the frozen RFBC research/forward phase, not the current GOAT account balance or live execution readiness.
 
 > **Current status:** RFBC v1.0 is research-qualified, broker-qualified and authorized for **small manual forward trading** on `USDJPYc` and `AUDJPYc` only. Full automatic order placement is not enabled.
 
