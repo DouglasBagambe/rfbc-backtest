@@ -14,6 +14,23 @@ import mt5_store
 import mt5_bridge
 import fx101
 
+
+_last_context_warm = 0
+def warm_context_publisher(now):
+    """Inbound HTTP prevents the free context publisher sleeping between scans."""
+    global _last_context_warm
+    if now - _last_context_warm < 300:
+        return
+    try:
+        response = requests.get("https://rfbc-usdjpy-monitor.onrender.com/health", timeout=15)
+        response.raise_for_status()
+        if response.json().get("ok") is not True:
+            raise ValueError("context_publisher_unhealthy")
+        _last_context_warm = now
+        fx101.log("dnb_context_publisher_keepalive", ok=True)
+    except Exception:
+        fx101.log("dnb_context_publisher_keepalive", ok=False)
+
 def scan_rfbc(equity):
     # Isolate the frozen module's environment input from concurrent requests.
     # Inferred market-price management events are never broker acknowledgements.
@@ -105,6 +122,7 @@ def start(app):
             try:
                 with app.app_context():
                     run_rfbc = os.getenv('DNB_RFBC_PRODUCER_ENABLED','0') == '1' and now-last_rfbc >= 60
+                    warm_context_publisher(now)
                     cycle(now,rfbc=run_rfbc)
                     if run_rfbc: last_rfbc = now
             except Exception:
