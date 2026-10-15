@@ -211,6 +211,8 @@ def _fetch_gdesk_runtime_decision() -> dict:
 
 def _consume_gdesk_runtime_decision() -> None:
     """Consume the newest ChatGPT decision from the non-deployed runtime branch."""
+    if os.getenv("G_DESK_DELIVERY_OWNER") == "dnb_fx":
+        return
     if not GDESK_RUNTIME_URL:
         return
     body = _fetch_gdesk_runtime_decision()
@@ -266,6 +268,8 @@ def _consume_gdesk_runtime_decision() -> None:
 
 def _gdesk_delivery_watchdog(instant: datetime | None = None) -> None:
     """Persist a successful missing-hour alert; retry failed sends after restarts."""
+    if os.getenv("G_DESK_DELIVERY_OWNER") == "dnb_fx":
+        return
     instant = instant or datetime.now(timezone.utc)
     if instant.minute < 40:
         return
