@@ -301,6 +301,8 @@ def check():
 
 
 if __name__ == "__main__":
+    import dnb_branding
+    dnb_branding.install()
     if not mt5_bridge.enabled():
         fx101.activate_goat_challenge_profile()
     webhook_url = os.getenv("TELEGRAM_WEBHOOK_URL", "").strip()

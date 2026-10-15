@@ -31,6 +31,8 @@ def health():
                        auto_available=False), 503
 
 if __name__ == '__main__':
+    import dnb_branding
+    dnb_branding.install()
     import dnb_source_worker
     dnb_source_worker.start(app)
     proxy = os.getenv('FX101_MT5_TRUST_PROXY') == '1'
