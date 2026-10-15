@@ -2,7 +2,8 @@
 """G_DESK live-analysis adapter and read-only market-context provider."""
 from __future__ import annotations
 
-import os, time
+import os, time, math
+from zoneinfo import ZoneInfo
 from datetime import datetime, timezone
 
 import pandas as pd
@@ -24,6 +25,54 @@ PAIR_TO_DUKASCOPY = {
 DESK_SYMBOLS = ["EURUSD.x","GBPUSD.x","GBPJPY.x","USDCAD.x","EURJPY.x"]
 _DUKA_CACHE: dict[str, tuple[float, list[dict]]] = {}
 _DUKA_CACHE_SECONDS = 300
+
+
+
+# Dukascopy settles at 17:00 New York time (DST aware).
+# XAU/USD has a daily 17:00-18:00 NY break:
+# https://www.dukascopy.com/swiss/english/forex/forex-trading-accounts/link/
+def _is_trading_hour(symbol: str, stamp: pd.Timestamp) -> bool:
+    local = pd.Timestamp(stamp).tz_convert("America/New_York")
+    day, hour = local.weekday(), local.hour
+    if day == 5 or (day == 4 and hour >= 17) or (day == 6 and hour < 17):
+        return False
+    if symbol[:6] == "XAUUSD" and hour == 17:
+        return False
+    return True
+
+
+def _expected_latest(symbol: str, cutoff: pd.Timestamp) -> pd.Timestamp:
+    stamp = cutoff - pd.Timedelta(hours=1)
+    while not _is_trading_hour(symbol, stamp):
+        stamp -= pd.Timedelta(hours=1)
+    return stamp
+
+
+def _validate_bars(symbol: str, bars: list[dict], cutoff: pd.Timestamp) -> None:
+    if len(bars) < 15:
+        raise RuntimeError(f"insufficient_live_data:{symbol}:{len(bars)}")
+    previous = None
+    for bar in bars:
+        stamp = pd.Timestamp(bar["datetime"])
+        if stamp.tzinfo is None or stamp != stamp.floor("h") or stamp >= cutoff:
+            raise RuntimeError(f"invalid_bar_time:{symbol}:{stamp}")
+        prices = [float(bar[k]) for k in ("open", "high", "low", "close", "bid_close", "ask_close", "spread")]
+        if not all(math.isfinite(v) for v in prices) or min(prices[:6]) <= 0:
+            raise RuntimeError(f"invalid_bar_prices:{symbol}:{stamp}")
+        if bar["high"] < max(bar["open"], bar["close"]) or bar["low"] > min(bar["open"], bar["close"]) or bar["ask_close"] < bar["bid_close"] or bar["spread"] < 0:
+            raise RuntimeError(f"invalid_bar_ohlc_or_spread:{symbol}:{stamp}")
+        if previous is not None:
+            if stamp <= previous:
+                raise RuntimeError(f"duplicate_or_unordered_bar:{symbol}:{stamp}")
+            missing = previous + pd.Timedelta(hours=1)
+            while missing < stamp:
+                if _is_trading_hour(symbol, missing):
+                    raise RuntimeError(f"missing_trading_bar:{symbol}:{missing.isoformat()}")
+                missing += pd.Timedelta(hours=1)
+        previous = stamp
+    expected = _expected_latest(symbol, cutoff)
+    if previous != expected:
+        raise RuntimeError(f"stale_dukascopy_data:{symbol}:latest={previous}:expected={expected.isoformat()}")
 
 
 def _normalise_duka_frame(frame) -> pd.DataFrame:
@@ -78,7 +127,8 @@ def _dukascopy_context(symbols: list[str]) -> dict:
         if pair not in PAIR_TO_DUKASCOPY:
             raise ValueError(f"unsupported_g_desk_symbol:{symbol}")
         cached=_DUKA_CACHE.get(symbol)
-        if cached and time.time()-cached[0] < _DUKA_CACHE_SECONDS:
+        if cached and time.time()-cached[0] < _DUKA_CACHE_SECONDS and cached[1] and pd.Timestamp(cached[1][-1]["datetime"]) == _expected_latest(symbol, cutoff):
+            _validate_bars(symbol, cached[1], cutoff)
             result[symbol]=cached[1]
             continue
 
@@ -107,6 +157,7 @@ def _dukascopy_context(symbols: list[str]) -> dict:
                 "ask_close":float(row["close_ask"]),
                 "spread":float(row["close_ask"]-row["close_bid"]),
             })
+        _validate_bars(symbol, bars, cutoff)
         _DUKA_CACHE[symbol]=(time.time(),bars)
         result[symbol]=bars
     return result
@@ -117,7 +168,7 @@ def context_payload(symbols: list[str] | None = None) -> dict:
     requested=list(symbols or DESK_SYMBOLS)
     context=_dukascopy_context(requested)
     latest={s:(bars[-1]["datetime"] if bars else None) for s,bars in context.items()}
-    market_closed=datetime.now(timezone.utc).weekday() >= 5
+    market_closed=not any(_is_trading_hour(s, pd.Timestamp.now(tz="UTC").floor("h")) for s in requested)
     return {
         "ok":True,
         "source":"Dukascopy BID/ASK",

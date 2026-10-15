@@ -19,6 +19,7 @@ class BridgeTests(unittest.TestCase):
         self.tmp=tempfile.TemporaryDirectory(); os.environ.pop("TURSO_DATABASE_URL",None); os.environ.pop("TURSO_DB_URL",None); os.environ["FX101_DB_PATH"]=str(Path(self.tmp.name)/"bridge.db")
         import fx101, fx101_worker
         self.fx=importlib.reload(fx101); self.worker=importlib.reload(fx101_worker)
+        self.delivery=patch.object(self.fx,"telegram_send",return_value=(True,"200")); self.delivery.start(); self.addCleanup(self.delivery.stop)
         self.fx.create_account({"name":"Synthetic","broker":"Test","account_type":"paper","base_currency":"USD","tracked_balance":100,"per_trade_risk_cap":1,"aggregate_risk_cap":1,"max_positions":1})
     def tearDown(self): self.fx.close_db(); self.tmp.cleanup()
     def body(self, result, **extra):

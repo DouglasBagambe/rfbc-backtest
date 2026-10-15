@@ -184,6 +184,10 @@ def _mark_bridge_consumed(decision_id: str, result: str, payload: dict) -> None:
 
 
 def _reject_bridge(decision_id: str, reason: str, payload: dict) -> None:
+    ok, status = fx101.telegram_send(f"G DESK • SYSTEM ISSUE\nDecision rejected: {reason}")
+    if not ok:
+        fx101.log("gdesk_rejection_delivery_retry", decision_id=decision_id, status=status)
+        return
     _mark_bridge_consumed(decision_id, "REJECTED", {"reason":reason,"payload":payload})
     fx101.log("gdesk_bridge_rejected", reason=reason, decision_id=decision_id)
 
@@ -232,12 +236,14 @@ def _consume_gdesk_runtime_decision() -> None:
         message = str(body.get("message") or "G_DESK analysis bridge reported a system failure.")[:700]
         ok, status = fx101.telegram_send(f"G DESK SYSTEM FAILURE\n{message}")
         fx101.log("gdesk_telegram_delivery", decision_id=decision_id, result=result, ok=ok, status=status)
+        if not ok:
+            return
         _mark_bridge_consumed(decision_id, result, body)
         fx101.log("gdesk_bridge_consumed", decision_id=decision_id, result=result)
         return
 
     if result == "NO_TRADE":
-        ok, status, _ = fx101.ingest_desk_response({"decisions": []})
+        ok, status, _ = fx101.ingest_desk_response({"decisions": [], "message": body.get("message", "")})
     elif result == "TRADE":
         decisions = body.get("decisions")
         if not isinstance(decisions, list) or len(decisions) != 1:
@@ -251,8 +257,35 @@ def _consume_gdesk_runtime_decision() -> None:
     if ok:
         _mark_bridge_consumed(decision_id, result, body)
         fx101.log("gdesk_bridge_consumed", decision_id=decision_id, result=result, ingest_status=status)
+    elif str(status).startswith(("telegram_send_failed", "telegram_delivery_not_attempted")):
+        fx101.log("gdesk_telegram_retry", decision_id=decision_id, status=status)
     else:
         _reject_bridge(decision_id, f"ingest_failed:{status}", body)
+
+
+
+def _gdesk_delivery_watchdog(instant: datetime | None = None) -> None:
+    """Persist a successful missing-hour alert; retry failed sends after restarts."""
+    instant = instant or datetime.now(timezone.utc)
+    if instant.minute < 40:
+        return
+    import g_desk_adapter
+    if not g_desk_adapter._is_trading_hour("EURUSD", pd.Timestamp(instant)):
+        return
+    start = instant.replace(minute=0, second=0, microsecond=0).isoformat()
+    end = (instant.replace(minute=0, second=0, microsecond=0) + __import__("datetime").timedelta(hours=1)).isoformat()
+    c = fx101.db()
+    delivered = c.execute(
+        "SELECT 1 FROM scans WHERE source='G_DESK_BRIDGE' AND scanned_at>=? AND scanned_at<? AND result IN ('TRADE','NO_TRADE','SYSTEM_FAILURE','REJECTED') LIMIT 1",
+        (start, end),
+    ).fetchone()
+    if delivered:
+        return
+    decision_id = "GDESK-MISSED-" + instant.strftime("%Y-%m-%dT%H")
+    ok, status = fx101.telegram_send("G DESK • SYSTEM ISSUE\nHourly analysis result has not been delivered. No trade decision is available; retrying automatically.")
+    fx101.log("gdesk_hourly_delivery_watchdog", decision_id=decision_id, ok=ok, status=status)
+    if ok:
+        _mark_bridge_consumed(decision_id, "SYSTEM_FAILURE", {"reason": "hourly_analysis_not_delivered"})
 
 
 def main() -> None:
@@ -286,16 +319,18 @@ def main() -> None:
 
         hour = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H")
         if hour != last_hour:
-            last_hour = hour
             if mode == "chatgpt_subscription":
                 try:
                     _emit_gdesk_context_snapshot(hour)
+                    last_hour = hour
                     fx101.log("hourly_desk_scan_delegated", owner="chatgpt_subscription", scan_id=f"GDESK-{hour}")
                 except Exception as exc:
                     fx101.log("gdesk_context_publish_failure", error=type(exc).__name__, detail=str(exc)[:180])
             else:
                 try:
                     ok,status = fx101.request_desk_analysis()
+                    if ok:
+                        last_hour = hour
                     fx101.log("hourly_desk_scan", ok=ok,status=status)
                 except Exception as exc:
                     fx101.log("hourly_desk_scan_failure", error=type(exc).__name__)
@@ -303,6 +338,7 @@ def main() -> None:
         if mode == "chatgpt_subscription":
             try:
                 _consume_gdesk_runtime_decision()
+                _gdesk_delivery_watchdog()
             except Exception as exc:
                 fx101.log("gdesk_bridge_poll_failure", error=type(exc).__name__, detail=str(exc)[:180])
 
