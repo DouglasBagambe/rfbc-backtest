@@ -1,27 +1,111 @@
 {
-  "decision_id": "GDESK-20261015T081908767Z-ffec461cd8-SYSTEM_FAILURE",
-  "generated_at": "2026-10-15T08:19:08.767Z",
-  "result": "SYSTEM_FAILURE",
-  "decisions": [],
-  "message": "SYSTEM_FAILURE: XAUUSD.x Dukascopy H1 series skips 2026-10-14 21:00 UTC (20:00 to 22:00 gap). MARKET_OPEN/FRESH and 18/18 symbol events received, but complete-universe bar continuity fails. No trade authorized; not NO_TRADE.",
+  "decision_id": "DNB-DESK-20261015T1248-AUDUSD-RETEST",
+  "generated_at": "2026-10-15T12:48:40.519Z",
+  "result": "TRADE",
+  "message": "dnb Desk: AUDUSD.x SELL LIMIT retest qualifies, score 8/10. Analysis only; no lot size authorised.",
+  "decisions": [
+    {
+      "source": "G_DESK",
+      "symbol": "AUDUSD.x",
+      "side": "SELL",
+      "order_type": "SELL_LIMIT",
+      "entry": 0.69135,
+      "stop": 0.69248,
+      "target": 0.68909,
+      "volume": 0.01,
+      "risk_pct": 0.25,
+      "valid_until": "2026-10-15T13:20:00Z",
+      "cancel_condition": "Cancel unfilled at 13:20 UTC, if an H1 candle closes above 0.692325, if SL 0.69248 is reached before entry, or if target 0.68909 trades before entry. Do not convert to a market order if the limit geometry is invalid at the broker.",
+      "confidence": "B",
+      "setup_name": "H1 12-bar bearish breakout retest",
+      "regime": "Bearish AUDUSD H1 trend",
+      "session": "London / pre-New York",
+      "news_proximity": "Not supplied or assessed; verify before any manual execution.",
+      "exposure_note": "Proposed input capped at 0.25%; short AUD / long USD. Broker positions and actual risk unverified. No lot size authorised.",
+      "reasoning": "H1 bearish 12-bar breakout: close 0.691095 below 0.691355 range low (high 0.698050). ATR14 0.00118964; 6-bar change -0.003995, 12-bar -0.006650. Distance 0.219 ATR; spread 0.000070 / median 0.000080 = 0.875x and 0.059 ATR. Retest entry 0.69135; SL 0.69248 above the last two H1 highs plus buffer; TP 0.68909 gives 2.0R. Score 8/10 (2 structure,2 momentum,1 entry,1 spread,1 RR,1 exposure). Current broker quote, news and lot size still require verification.",
+      "context": {
+        "scan_id": "GDESK-2026-10-15T12-9feadd92d2",
+        "source_generated_at": "2026-10-15T12:47:33.980114+00:00",
+        "market_state": "MARKET_OPEN",
+        "freshness": "FRESH",
+        "symbols_reported": 18,
+        "symbols_received": 18,
+        "validation_errors": [],
+        "stale_symbols": [],
+        "latest_completed_bar": "2026-10-15T11:00:00+00:00",
+        "latest_completed_bar_by_symbol": {
+          "EURUSD.x": "2026-10-15T11:00:00+00:00",
+          "GBPUSD.x": "2026-10-15T11:00:00+00:00",
+          "GBPJPY.x": "2026-10-15T11:00:00+00:00",
+          "USDCAD.x": "2026-10-15T11:00:00+00:00",
+          "EURJPY.x": "2026-10-15T11:00:00+00:00",
+          "AUDUSD.x": "2026-10-15T11:00:00+00:00",
+          "NZDUSD.x": "2026-10-15T11:00:00+00:00",
+          "USDCHF.x": "2026-10-15T11:00:00+00:00",
+          "EURGBP.x": "2026-10-15T11:00:00+00:00",
+          "CADJPY.x": "2026-10-15T11:00:00+00:00",
+          "CHFJPY.x": "2026-10-15T11:00:00+00:00",
+          "EURAUD.x": "2026-10-15T11:00:00+00:00",
+          "GBPAUD.x": "2026-10-15T11:00:00+00:00",
+          "EURCAD.x": "2026-10-15T11:00:00+00:00",
+          "GBPCAD.x": "2026-10-15T11:00:00+00:00",
+          "XAUUSD.x": "2026-10-15T11:00:00+00:00",
+          "AUDJPY.x": "2026-10-15T11:00:00+00:00",
+          "USDJPY.x": "2026-10-15T11:00:00+00:00"
+        },
+        "expected_session_gaps": {
+          "XAUUSD.x": [
+            "2026-10-14T21:00:00Z"
+          ]
+        },
+        "source": "Dukascopy BID/ASK",
+        "timeframe": "H1 completed bars",
+        "manual_only": true,
+        "broker_sizing_authorised": false,
+        "order_type": "SELL_LIMIT",
+        "volume_placeholder": true,
+        "broker_risk_authorised": false
+      }
+    }
+  ],
   "context": {
-    "scan_id": "GDESK-2026-10-15T08-ffec461cd8",
-    "source_generated_at": "2026-10-15T08:02:43.713083+00:00",
-    "ready_event_at": "2026-10-15T08:02:43.803295+00:00",
+    "scan_id": "GDESK-2026-10-15T12-9feadd92d2",
+    "source_generated_at": "2026-10-15T12:47:33.980114+00:00",
     "market_state": "MARKET_OPEN",
     "freshness": "FRESH",
     "symbols_reported": 18,
     "symbols_received": 18,
-    "latest_completed_bar": "2026-10-15T07:00:00+00:00",
-    "incomplete_symbols": [
-      "XAUUSD.x"
-    ],
-    "missing_bars_utc": {
+    "validation_errors": [],
+    "stale_symbols": [],
+    "latest_completed_bar": "2026-10-15T11:00:00+00:00",
+    "latest_completed_bar_by_symbol": {
+      "EURUSD.x": "2026-10-15T11:00:00+00:00",
+      "GBPUSD.x": "2026-10-15T11:00:00+00:00",
+      "GBPJPY.x": "2026-10-15T11:00:00+00:00",
+      "USDCAD.x": "2026-10-15T11:00:00+00:00",
+      "EURJPY.x": "2026-10-15T11:00:00+00:00",
+      "AUDUSD.x": "2026-10-15T11:00:00+00:00",
+      "NZDUSD.x": "2026-10-15T11:00:00+00:00",
+      "USDCHF.x": "2026-10-15T11:00:00+00:00",
+      "EURGBP.x": "2026-10-15T11:00:00+00:00",
+      "CADJPY.x": "2026-10-15T11:00:00+00:00",
+      "CHFJPY.x": "2026-10-15T11:00:00+00:00",
+      "EURAUD.x": "2026-10-15T11:00:00+00:00",
+      "GBPAUD.x": "2026-10-15T11:00:00+00:00",
+      "EURCAD.x": "2026-10-15T11:00:00+00:00",
+      "GBPCAD.x": "2026-10-15T11:00:00+00:00",
+      "XAUUSD.x": "2026-10-15T11:00:00+00:00",
+      "AUDJPY.x": "2026-10-15T11:00:00+00:00",
+      "USDJPY.x": "2026-10-15T11:00:00+00:00"
+    },
+    "expected_session_gaps": {
       "XAUUSD.x": [
         "2026-10-14T21:00:00Z"
       ]
     },
     "source": "Dukascopy BID/ASK",
-    "timeframe": "H1 completed bars"
+    "timeframe": "H1 completed bars",
+    "manual_only": true,
+    "broker_sizing_authorised": false
   }
 }
