@@ -322,7 +322,10 @@ def ingest_desk_response(body: dict[str, Any]) -> tuple[bool, str, list[dict[str
         else: rejected.append(status)
     c=db(); result="TRADE" if accepted else "NO_TRADE" if not rejected else "REJECTED"
     c.execute("INSERT INTO scans VALUES (?,?,?,?,?)",(str(uuid.uuid4()),"G_DESK",now(),result,json.dumps(body))); c.commit()
-    if not accepted and not rejected: telegram_send("G_DESK NO TRADE — no qualified setup across EURUSDc, GBPUSDc, GBPJPYc, USDCADc, EURJPYc.")
+    if not accepted and not rejected:
+        delivered, delivery_status = telegram_send("G DESK • NO TRADE\n" + str(body.get("message") or "No qualified setup across the current desk universe.")[:900])
+        if not delivered:
+            return False, f"telegram_send_failed:{delivery_status}", []
     log("desk_result", result=result, accepted=len(accepted), rejected=rejected)
     return not rejected,result,accepted
 
