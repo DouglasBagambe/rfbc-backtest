@@ -1,0 +1,32 @@
+name: dnb Fx release verification
+on:
+  push:
+    branches: [verify/dnb-release]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  external-health-and-auth:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check live gateway and webhook authentication
+        run: |
+          python - <<'PY'
+          import json, urllib.request, urllib.error
+          base="https://dnb-fx.onrender.com"
+          with urllib.request.urlopen(base+"/health",timeout=60) as response:
+              body=json.load(response)
+              assert response.status==200 and body["ok"] is True
+              assert body["auto_available"] is False
+              assert body["mode"]=="SHADOW"
+              assert body["analysis_consumer_enabled"] is True and body["manual_reports_enabled"] is True
+              print(json.dumps({"health_status":response.status,"health":body}))
+          req=urllib.request.Request(base+"/telegram/webhook",data=b"{}",headers={"Content-Type":"application/json"})
+          try:
+              urllib.request.urlopen(req,timeout=30)
+              raise AssertionError("Unauthenticated Telegram update was accepted")
+          except urllib.error.HTTPError as error:
+              assert error.code==403
+              print("Telegram webhook authentication: PASS (HTTP 403)")
+          PY
