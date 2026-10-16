@@ -1,12 +1,12 @@
 {
-  "decision_id": "DNB-DESK-20261016211841285-NO-TRADE",
-  "generated_at": "2026-10-16T21:18:41.285Z",
+  "decision_id": "DNB-DESK-20261016221927092-NO-TRADE",
+  "generated_at": "2026-10-16T22:19:27.092Z",
   "result": "NO_TRADE",
-  "message": "Market closed for the Friday weekend boundary. All 18 symbols validated through the completed 20:00 UTC H1 bucket; no analysis trade is authorized. Forex reopens Sunday 21:00 UTC and gold Sunday 22:00 UTC during US DST.",
+  "message": "Market closed for the weekend. All 18 symbols validated through the completed 20:00 UTC Friday H1 bucket; no trade analysis is authorized until reopening.",
   "decisions": [],
   "context": {
-    "scan_id": "GDESK-2026-10-16T21-167b63e4eb",
-    "source_generated_at": "2026-10-16T21:01:23.958606+00:00",
+    "scan_id": "GDESK-2026-10-16T22-1e47fe6f2f",
+    "source_generated_at": "2026-10-16T22:00:47.860800+00:00",
     "market_state": "MARKET_CLOSED",
     "freshness": "MARKET_CLOSED",
     "symbols_reported": 18,
@@ -47,7 +47,7 @@
     },
     "market_closure": {
       "status": "CONFIRMED",
-      "reason": "Forex weekend begins Friday 17:00 America/New_York; source snapshot was generated after the 21:00 UTC close during US DST.",
+      "reason": "Forex weekend begins Friday 17:00 America/New_York; source generated after the 21:00 UTC close during US DST.",
       "forex_reopen": "2026-10-18T21:00:00Z",
       "gold_reopen": "2026-10-18T22:00:00Z"
     },
@@ -55,6 +55,6 @@
     "timeframe": "H1 completed bars",
     "manual_only": true,
     "broker_sizing_authorised": false,
-    "analysis_skipped_reason": "Qualification requires MARKET_OPEN/FRESH; the source explicitly reported MARKET_CLOSED."
+    "analysis_skipped_reason": "Qualification requires MARKET_OPEN/FRESH; source reported MARKET_CLOSED."
   }
 }
