@@ -1,6 +1,6 @@
 {
-  "decision_id": "DNB-DESK-20261018202413832-SYSTEM-FAILURE",
-  "generated_at": "2026-10-18T20:24:13.832Z",
+  "decision_id": "DNB-DESK-20261018212341035-SYSTEM-FAILURE",
+  "generated_at": "2026-10-18T21:23:41.035Z",
   "result": "SYSTEM_FAILURE",
   "message": "Current-hour market context is absent after the required retry; no analysis or trade is authorized.",
   "decisions": [],
@@ -12,7 +12,7 @@
     "symbols_reported": 0,
     "symbols_received": 0,
     "validation_errors": [
-      "No gdesk_context_ready event was found for the 2026-10-18T20:00:00Z current hour after two Render log reads through 20:35 UTC.",
+      "No gdesk_context_ready event was found for the 2026-10-18T21:00:00Z current hour after two Render log reads through 21:35 UTC.",
       "No gdesk_context_symbol events could be selected because a current-hour scan_id was unavailable."
     ],
     "stale_symbols": [],
@@ -50,9 +50,10 @@
       ]
     },
     "market_calendar": {
-      "expected_state": "MARKET_CLOSED",
+      "expected_state": "PARTIAL_REOPEN",
       "forex_reopen": "2026-10-18T21:00:00Z",
-      "gold_reopen": "2026-10-18T22:00:00Z"
+      "gold_reopen": "2026-10-18T22:00:00Z",
+      "note": "Forex has reopened, but its first Sunday H1 bar is not complete at source time; gold remains closed."
     },
     "source": "G_DESK",
     "timeframe": "H1 completed bars",
