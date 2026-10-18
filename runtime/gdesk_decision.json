@@ -1,60 +1,62 @@
 {
-  "decision_id": "DNB-DESK-20261018172259118-NO-TRADE",
-  "generated_at": "2026-10-18T17:22:59.118Z",
-  "result": "NO_TRADE",
-  "message": "Market closed for the weekend. All 18 symbols validated through the completed 20:00 UTC Friday H1 bucket; no trade analysis is authorized until reopening.",
+  "decision_id": "DNB-DESK-20261018182532889-SYSTEM-FAILURE",
+  "generated_at": "2026-10-18T18:25:32.889Z",
+  "result": "SYSTEM_FAILURE",
+  "message": "Current-hour market context is absent after the required retry; no analysis or trade is authorized.",
   "decisions": [],
   "context": {
-    "scan_id": "GDESK-2026-10-18T17-21ffe90907",
-    "source_generated_at": "2026-10-18T17:00:54.959877+00:00",
-    "market_state": "MARKET_CLOSED",
-    "freshness": "MARKET_CLOSED",
-    "symbols_reported": 18,
-    "symbols_received": 18,
-    "validation_errors": [],
+    "scan_id": null,
+    "source_generated_at": null,
+    "market_state": "UNKNOWN",
+    "freshness": "UNKNOWN",
+    "symbols_reported": 0,
+    "symbols_received": 0,
+    "validation_errors": [
+      "No gdesk_context_ready event was found for the 2026-10-18T18:00:00Z current hour after two Render log reads through 18:35 UTC.",
+      "No gdesk_context_symbol events could be selected because a current-hour scan_id was unavailable."
+    ],
     "stale_symbols": [],
+    "missing_symbols": [
+      "EURUSD.x",
+      "GBPUSD.x",
+      "GBPJPY.x",
+      "USDCAD.x",
+      "EURJPY.x",
+      "AUDUSD.x",
+      "NZDUSD.x",
+      "USDCHF.x",
+      "EURGBP.x",
+      "CADJPY.x",
+      "CHFJPY.x",
+      "EURAUD.x",
+      "GBPAUD.x",
+      "EURCAD.x",
+      "GBPCAD.x",
+      "XAUUSD.x",
+      "USDJPY.x",
+      "AUDJPY.x"
+    ],
     "latest_completed_bar": "2026-10-16T20:00:00+00:00",
-    "latest_completed_bar_by_symbol": {
-      "EURUSD.x": "2026-10-16T20:00:00+00:00",
-      "GBPUSD.x": "2026-10-16T20:00:00+00:00",
-      "GBPJPY.x": "2026-10-16T20:00:00+00:00",
-      "USDCAD.x": "2026-10-16T20:00:00+00:00",
-      "EURJPY.x": "2026-10-16T20:00:00+00:00",
-      "AUDUSD.x": "2026-10-16T20:00:00+00:00",
-      "NZDUSD.x": "2026-10-16T20:00:00+00:00",
-      "USDCHF.x": "2026-10-16T20:00:00+00:00",
-      "EURGBP.x": "2026-10-16T20:00:00+00:00",
-      "CADJPY.x": "2026-10-16T20:00:00+00:00",
-      "CHFJPY.x": "2026-10-16T20:00:00+00:00",
-      "EURAUD.x": "2026-10-16T20:00:00+00:00",
-      "GBPAUD.x": "2026-10-16T20:00:00+00:00",
-      "EURCAD.x": "2026-10-16T20:00:00+00:00",
-      "GBPCAD.x": "2026-10-16T20:00:00+00:00",
-      "XAUUSD.x": "2026-10-16T20:00:00+00:00",
-      "USDJPY.x": "2026-10-16T20:00:00+00:00",
-      "AUDJPY.x": "2026-10-16T20:00:00+00:00"
-    },
+    "latest_completed_bar_by_symbol": {},
     "expected_session_gaps": {
       "XAUUSD.x": [
         {
           "missing_bucket": "2026-10-15T21:00:00Z",
           "previous_bar": "2026-10-15T20:00:00+00:00",
           "next_bar": "2026-10-15T22:00:00+00:00",
-          "status": "EXPECTED",
-          "reason": "Scheduled 17:00-18:00 America/New_York gold maintenance break during US DST"
+          "status": "CALENDAR_EXPECTED_NOT_REVALIDATED",
+          "reason": "Scheduled 17:00-18:00 America/New_York gold maintenance break during US DST; current source snapshot is absent."
         }
       ]
     },
-    "market_closure": {
-      "status": "CONFIRMED",
-      "reason": "Forex weekend begins Friday 17:00 America/New_York; source generated after the 21:00 UTC close during US DST.",
+    "market_calendar": {
+      "expected_state": "MARKET_CLOSED",
       "forex_reopen": "2026-10-18T21:00:00Z",
       "gold_reopen": "2026-10-18T22:00:00Z"
     },
-    "source": "Dukascopy BID/ASK",
+    "source": "G_DESK",
     "timeframe": "H1 completed bars",
     "manual_only": true,
-    "broker_sizing_authorised": false,
-    "analysis_skipped_reason": "Qualification requires MARKET_OPEN/FRESH; source reported MARKET_CLOSED."
+    "broker_sizing_authorised": false
   }
 }
