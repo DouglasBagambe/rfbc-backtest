@@ -1,6 +1,6 @@
 {
-  "decision_id": "DNB-DESK-20261018192627335-SYSTEM-FAILURE",
-  "generated_at": "2026-10-18T19:26:27.335Z",
+  "decision_id": "DNB-DESK-20261018202413832-SYSTEM-FAILURE",
+  "generated_at": "2026-10-18T20:24:13.832Z",
   "result": "SYSTEM_FAILURE",
   "message": "Current-hour market context is absent after the required retry; no analysis or trade is authorized.",
   "decisions": [],
@@ -12,7 +12,7 @@
     "symbols_reported": 0,
     "symbols_received": 0,
     "validation_errors": [
-      "No gdesk_context_ready event was found for the 2026-10-18T19:00:00Z current hour after two Render log reads through 19:35 UTC.",
+      "No gdesk_context_ready event was found for the 2026-10-18T20:00:00Z current hour after two Render log reads through 20:35 UTC.",
       "No gdesk_context_symbol events could be selected because a current-hour scan_id was unavailable."
     ],
     "stale_symbols": [],
