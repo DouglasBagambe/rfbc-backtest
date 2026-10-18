@@ -1,12 +1,12 @@
 {
-  "decision_id": "DNB-DESK-20261018062003162-NO-TRADE",
-  "generated_at": "2026-10-18T06:20:03.162Z",
+  "decision_id": "DNB-DESK-20261018072514959-NO-TRADE",
+  "generated_at": "2026-10-18T07:25:14.959Z",
   "result": "NO_TRADE",
   "message": "Market closed for the weekend. All 18 symbols validated through the completed 20:00 UTC Friday H1 bucket; no trade analysis is authorized until reopening.",
   "decisions": [],
   "context": {
-    "scan_id": "GDESK-2026-10-18T06-8015824745",
-    "source_generated_at": "2026-10-18T06:01:05.568305+00:00",
+    "scan_id": "GDESK-2026-10-18T07-7b3b0ea9bc",
+    "source_generated_at": "2026-10-18T07:00:34.758017+00:00",
     "market_state": "MARKET_CLOSED",
     "freshness": "MARKET_CLOSED",
     "symbols_reported": 18,
