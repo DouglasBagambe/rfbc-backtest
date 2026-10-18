@@ -1,6 +1,6 @@
 {
-  "decision_id": "DNB-DESK-20261018212341035-SYSTEM-FAILURE",
-  "generated_at": "2026-10-18T21:23:41.035Z",
+  "decision_id": "DNB-DESK-20261018222449816-SYSTEM-FAILURE",
+  "generated_at": "2026-10-18T22:24:49.816Z",
   "result": "SYSTEM_FAILURE",
   "message": "Current-hour market context is absent after the required retry; no analysis or trade is authorized.",
   "decisions": [],
@@ -12,8 +12,9 @@
     "symbols_reported": 0,
     "symbols_received": 0,
     "validation_errors": [
-      "No gdesk_context_ready event was found for the 2026-10-18T21:00:00Z current hour after two Render log reads through 21:35 UTC.",
-      "No gdesk_context_symbol events could be selected because a current-hour scan_id was unavailable."
+      "No gdesk_context_ready event was found for the 2026-10-18T22:00:00Z current hour after two Render log reads through 22:35 UTC.",
+      "No gdesk_context_symbol events could be selected because a current-hour scan_id was unavailable.",
+      "The 18-symbol universe could not be validated after the Sunday market reopen."
     ],
     "stale_symbols": [],
     "missing_symbols": [
@@ -36,7 +37,7 @@
       "USDJPY.x",
       "AUDJPY.x"
     ],
-    "latest_completed_bar": "2026-10-16T20:00:00+00:00",
+    "latest_completed_bar": "2026-10-18T21:00:00+00:00",
     "latest_completed_bar_by_symbol": {},
     "expected_session_gaps": {
       "XAUUSD.x": [
@@ -50,10 +51,12 @@
       ]
     },
     "market_calendar": {
-      "expected_state": "PARTIAL_REOPEN",
+      "expected_state": "MARKET_OPEN",
       "forex_reopen": "2026-10-18T21:00:00Z",
       "gold_reopen": "2026-10-18T22:00:00Z",
-      "note": "Forex has reopened, but its first Sunday H1 bar is not complete at source time; gold remains closed."
+      "expected_latest_completed_forex_bar": "2026-10-18T21:00:00+00:00",
+      "expected_latest_completed_gold_bar": "2026-10-16T20:00:00+00:00",
+      "note": "Forex and gold have reopened; the current gold H1 bar is incomplete at source time."
     },
     "source": "G_DESK",
     "timeframe": "H1 completed bars",
