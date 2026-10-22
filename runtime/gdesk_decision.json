@@ -1,6 +1,6 @@
 {
-  "decision_id": "DNB-DESK-20261022052300000-SYSTEM-FAILURE",
-  "generated_at": "2026-10-22T05:23:00.000Z",
+  "decision_id": "DNB-DESK-20261022062030000-SYSTEM-FAILURE",
+  "generated_at": "2026-10-22T06:20:30.000Z",
   "result": "SYSTEM_FAILURE",
   "message": "Current-hour market context is absent after the required retry; no analysis or trade is authorized.",
   "decisions": [],
@@ -12,7 +12,7 @@
     "symbols_reported": 0,
     "symbols_received": 0,
     "validation_errors": [
-      "No gdesk_context_ready event was found for the 2026-10-22T05:00:00Z current hour after two Render log reads through 05:23:00 UTC.",
+      "No gdesk_context_ready event was found for the 2026-10-22T06:00:00Z current hour after two Render log reads through 06:20:30 UTC.",
       "No gdesk_context_symbol events could be selected because a current-hour scan_id was unavailable.",
       "The open 18-symbol market universe could not be validated."
     ],
@@ -37,7 +37,7 @@
       "USDJPY.x",
       "AUDJPY.x"
     ],
-    "latest_completed_bar": "2026-10-22T04:00:00+00:00",
+    "latest_completed_bar": "2026-10-22T05:00:00+00:00",
     "latest_completed_bar_by_symbol": {},
     "expected_session_gaps": {
       "XAUUSD.x": [
@@ -75,8 +75,8 @@
       "expected_state": "MARKET_OPEN",
       "forex_reopen": "2026-10-18T21:00:00Z",
       "gold_reopen": "2026-10-18T22:00:00Z",
-      "expected_latest_completed_forex_bar": "2026-10-22T04:00:00+00:00",
-      "expected_latest_completed_gold_bar": "2026-10-22T04:00:00+00:00",
+      "expected_latest_completed_forex_bar": "2026-10-22T05:00:00+00:00",
+      "expected_latest_completed_gold_bar": "2026-10-22T05:00:00+00:00",
       "gold_maintenance_break": "2026-10-21T21:00:00Z/2026-10-21T22:00:00Z"
     },
     "source": "G_DESK",
