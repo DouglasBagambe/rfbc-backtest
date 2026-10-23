@@ -1,90 +1,46 @@
 {
-  "decision_id": "DNB-DESK-20261023202500000-SYSTEM-FAILURE",
-  "generated_at": "2026-10-23T20:25:00.000Z",
-  "result": "SYSTEM_FAILURE",
-  "message": "Current-hour market context is absent after the required retry; no analysis or trade is authorized.",
+  "decision_id": "DNB-DESK-20261023212500000-NO-TRADE",
+  "generated_at": "2026-10-23T21:25:00.000Z",
+  "result": "NO_TRADE",
+  "message": "Market closed for the scheduled weekend session; no trade analysis or order is authorized.",
   "decisions": [],
   "context": {
     "scan_id": null,
     "source_generated_at": null,
-    "market_state": "UNKNOWN",
-    "freshness": "UNKNOWN",
+    "market_state": "MARKET_CLOSED",
+    "freshness": "NOT_APPLICABLE",
     "symbols_reported": 0,
     "symbols_received": 0,
     "validation_errors": [
-      "No gdesk_context_ready event was found for the 2026-10-23T20:00:00Z current hour after two Render log reads through 20:24:00 UTC.",
-      "No gdesk_context_symbol events could be selected because a current-hour scan_id was unavailable.",
-      "The open 18-symbol market universe could not be validated."
+      "No current-hour gdesk_context_ready event appeared after two Render log reads through 21:24:00 UTC.",
+      "Per the supplied session calendar, the Friday weekend closure began at 2026-10-23T21:00:00Z (17:00 America/New_York); symbol events and fresh open-market bars are not expected during closure.",
+      "Actual latest completed H1 timestamps could not be independently revalidated from a source snapshot; the calendar-derived final tradable bucket is recorded."
     ],
     "stale_symbols": [],
-    "missing_symbols": [
-      "EURUSD.x",
-      "GBPUSD.x",
-      "GBPJPY.x",
-      "USDCAD.x",
-      "EURJPY.x",
-      "AUDUSD.x",
-      "NZDUSD.x",
-      "USDCHF.x",
-      "EURGBP.x",
-      "CADJPY.x",
-      "CHFJPY.x",
-      "EURAUD.x",
-      "GBPAUD.x",
-      "EURCAD.x",
-      "GBPCAD.x",
-      "XAUUSD.x",
-      "USDJPY.x",
-      "AUDJPY.x"
-    ],
-    "latest_completed_bar": "2026-10-23T19:00:00+00:00",
+    "missing_symbols": [],
+    "latest_completed_bar": "2026-10-23T20:00:00+00:00",
     "latest_completed_bar_by_symbol": {},
     "expected_session_gaps": {
-      "XAUUSD.x": [
-        {
-          "missing_bucket": "2026-10-15T21:00:00Z",
-          "previous_bar": "2026-10-15T20:00:00+00:00",
-          "next_bar": "2026-10-15T22:00:00+00:00",
-          "status": "CALENDAR_EXPECTED_NOT_REVALIDATED",
-          "reason": "Scheduled 17:00-18:00 America/New_York gold maintenance break during US DST; current source snapshot is absent."
-        },
-        {
-          "missing_bucket": "2026-10-19T21:00:00Z",
-          "previous_bar": "2026-10-19T20:00:00+00:00",
-          "next_bar": "2026-10-19T22:00:00+00:00",
-          "status": "CALENDAR_EXPECTED_NOT_REVALIDATED",
-          "reason": "Scheduled 17:00-18:00 America/New_York gold maintenance break during US DST; current source snapshot is absent."
-        },
-        {
-          "missing_bucket": "2026-10-20T21:00:00Z",
-          "previous_bar": "2026-10-20T20:00:00+00:00",
-          "next_bar": "2026-10-20T22:00:00+00:00",
-          "status": "CALENDAR_EXPECTED_NOT_REVALIDATED",
-          "reason": "Scheduled 17:00-18:00 America/New_York gold maintenance break during US DST; current source snapshot is absent."
-        },
-        {
-          "missing_bucket": "2026-10-21T21:00:00Z",
-          "previous_bar": "2026-10-21T20:00:00+00:00",
-          "next_bar": "2026-10-21T22:00:00+00:00",
-          "status": "CALENDAR_EXPECTED_NOT_REVALIDATED",
-          "reason": "Scheduled 17:00-18:00 America/New_York gold maintenance break during US DST; current source snapshot is absent."
-        },
-        {
-          "missing_bucket": "2026-10-22T21:00:00Z",
-          "previous_bar": "2026-10-22T20:00:00+00:00",
-          "next_bar": "2026-10-22T22:00:00+00:00",
-          "status": "CALENDAR_EXPECTED_NOT_REVALIDATED",
-          "reason": "Scheduled 17:00-18:00 America/New_York gold maintenance break during US DST; current source snapshot is absent."
-        }
-      ]
+      "forex_weekend": {
+        "start": "2026-10-23T21:00:00Z",
+        "end": "2026-10-25T21:00:00Z",
+        "status": "CALENDAR_EXPECTED",
+        "reason": "Scheduled Friday 17:00 to Sunday 17:00 America/New_York forex weekend closure during US DST."
+      },
+      "XAUUSD.x": {
+        "start": "2026-10-23T21:00:00Z",
+        "end": "2026-10-25T22:00:00Z",
+        "status": "CALENDAR_EXPECTED",
+        "reason": "Scheduled weekend closure; gold reopens Sunday 18:00 America/New_York."
+      }
     },
     "market_calendar": {
-      "expected_state": "MARKET_OPEN",
-      "forex_reopen": "2026-10-18T21:00:00Z",
-      "gold_reopen": "2026-10-18T22:00:00Z",
-      "expected_latest_completed_forex_bar": "2026-10-23T19:00:00+00:00",
-      "expected_latest_completed_gold_bar": "2026-10-23T19:00:00+00:00",
-      "gold_maintenance_break": "2026-10-22T21:00:00Z/2026-10-22T22:00:00Z"
+      "expected_state": "MARKET_CLOSED",
+      "closure_started": "2026-10-23T21:00:00Z",
+      "forex_reopen": "2026-10-25T21:00:00Z",
+      "gold_reopen": "2026-10-25T22:00:00Z",
+      "expected_latest_completed_forex_bar": "2026-10-23T20:00:00+00:00",
+      "expected_latest_completed_gold_bar": "2026-10-23T20:00:00+00:00"
     },
     "source": "G_DESK",
     "timeframe": "H1 completed bars",
