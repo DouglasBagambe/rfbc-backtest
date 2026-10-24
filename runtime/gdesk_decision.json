@@ -1,6 +1,6 @@
 {
-  "decision_id": "DNB-DESK-20261024202300000-NO-TRADE",
-  "generated_at": "2026-10-24T20:23:00.000Z",
+  "decision_id": "DNB-DESK-20261024212300000-NO-TRADE",
+  "generated_at": "2026-10-24T21:23:00.000Z",
   "result": "NO_TRADE",
   "message": "Market closed for the scheduled weekend session; no trade analysis or order is authorized.",
   "decisions": [],
@@ -12,7 +12,7 @@
     "symbols_reported": 0,
     "symbols_received": 0,
     "validation_errors": [
-      "No current-hour gdesk_context_ready event appeared after two Render log reads through 20:22:30 UTC on 2026-10-24.",
+      "No current-hour gdesk_context_ready event appeared after two Render log reads through 21:22:30 UTC on 2026-10-24.",
       "Per the supplied session calendar, the Friday weekend closure began at 2026-10-23T21:00:00Z (17:00 America/New_York); symbol events and fresh open-market bars are not expected during closure.",
       "Actual latest completed H1 timestamps could not be independently revalidated from a source snapshot; the calendar-derived final tradable bucket is recorded."
     ],
