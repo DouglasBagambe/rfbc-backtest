@@ -1,20 +1,20 @@
 {
-  "decision_id": "DNB-DESK-20261025202400000-NO-TRADE",
-  "generated_at": "2026-10-25T20:24:00.000Z",
+  "decision_id": "DNB-DESK-20261025212500000-NO-TRADE",
+  "generated_at": "2026-10-25T21:25:00.000Z",
   "result": "NO_TRADE",
-  "message": "Market closed for the scheduled weekend session; no trade analysis or order is authorized.",
+  "message": "No trade: forex has reopened, but XAUUSD.x remains in its scheduled weekend closure and no complete current-hour 18-symbol context snapshot is available.",
   "decisions": [],
   "context": {
     "scan_id": null,
     "source_generated_at": null,
-    "market_state": "MARKET_CLOSED",
-    "freshness": "NOT_APPLICABLE",
+    "market_state": "PARTIALLY_OPEN",
+    "freshness": "UNVERIFIED",
     "symbols_reported": 0,
     "symbols_received": 0,
     "validation_errors": [
-      "No current-hour gdesk_context_ready event appeared after two Render log reads through 20:23:30 UTC on 2026-10-25.",
-      "Per the supplied session calendar, the Friday weekend closure began at 2026-10-23T21:00:00Z (17:00 America/New_York); symbol events and fresh open-market bars are not expected during closure.",
-      "Actual latest completed H1 timestamps could not be independently revalidated from a source snapshot; the calendar-derived final tradable bucket is recorded."
+      "No current-hour gdesk_context_ready event appeared after two Render log reads through 21:24:00 UTC on 2026-10-25.",
+      "The required full 18-symbol universe cannot be validated while XAUUSD.x remains in its scheduled Sunday closure through 2026-10-25T22:00:00Z.",
+      "Actual latest completed H1 timestamps could not be independently revalidated from a source snapshot; the calendar-derived latest completed bucket is recorded."
     ],
     "stale_symbols": [],
     "missing_symbols": [],
@@ -24,18 +24,18 @@
       "forex_weekend": {
         "start": "2026-10-23T21:00:00Z",
         "end": "2026-10-25T21:00:00Z",
-        "status": "CALENDAR_EXPECTED",
+        "status": "ENDED",
         "reason": "Scheduled Friday 17:00 to Sunday 17:00 America/New_York forex weekend closure during US DST."
       },
       "XAUUSD.x": {
         "start": "2026-10-23T21:00:00Z",
         "end": "2026-10-25T22:00:00Z",
-        "status": "CALENDAR_EXPECTED",
+        "status": "CALENDAR_EXPECTED_ACTIVE",
         "reason": "Scheduled weekend closure; gold reopens Sunday 18:00 America/New_York."
       }
     },
     "market_calendar": {
-      "expected_state": "MARKET_CLOSED",
+      "expected_state": "PARTIALLY_OPEN",
       "closure_started": "2026-10-23T21:00:00Z",
       "forex_reopen": "2026-10-25T21:00:00Z",
       "gold_reopen": "2026-10-25T22:00:00Z",
