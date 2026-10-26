@@ -1,6 +1,6 @@
 {
-  "decision_id": "DNB-DESK-20261026083300000-SYSTEM-FAILURE",
-  "generated_at": "2026-10-26T08:33:00.000Z",
+  "decision_id": "DNB-DESK-20261026092600000-SYSTEM-FAILURE",
+  "generated_at": "2026-10-26T09:26:00.000Z",
   "result": "SYSTEM_FAILURE",
   "message": "No current-hour G_DESK context was published while the full market was open; no trade analysis or order is authorized.",
   "decisions": [],
@@ -12,12 +12,12 @@
     "symbols_reported": 0,
     "symbols_received": 0,
     "validation_errors": [
-      "No current-hour gdesk_context_ready event appeared after two Render log reads through 08:33:00 UTC on 2026-10-26.",
+      "No current-hour gdesk_context_ready event appeared after two Render log reads through 09:26:00 UTC on 2026-10-26.",
       "Forex and XAUUSD.x were both open under the supplied session calendar, so the full 18-symbol snapshot was required but absent.",
       "No gdesk_context_symbol events could be associated with a scan_id; completeness, OHLC/spreads, gaps, latest-bar timestamps, indicators, and qualification metrics could not be validated."
     ],
     "stale_symbols": [],
-    "latest_completed_bar": "2026-10-26T07:00:00+00:00",
+    "latest_completed_bar": "2026-10-26T08:00:00+00:00",
     "latest_completed_bar_by_symbol": {},
     "expected_session_gaps": {
       "forex_weekend": {
@@ -38,8 +38,8 @@
       "closure_started": "2026-10-23T21:00:00Z",
       "forex_reopen": "2026-10-25T21:00:00Z",
       "gold_reopen": "2026-10-25T22:00:00Z",
-      "expected_latest_completed_forex_bar": "2026-10-26T07:00:00+00:00",
-      "expected_latest_completed_gold_bar": "2026-10-26T07:00:00+00:00"
+      "expected_latest_completed_forex_bar": "2026-10-26T08:00:00+00:00",
+      "expected_latest_completed_gold_bar": "2026-10-26T08:00:00+00:00"
     },
     "source": "G_DESK",
     "timeframe": "H1 completed bars",
