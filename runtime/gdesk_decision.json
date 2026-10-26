@@ -1,19 +1,19 @@
 {
-  "decision_id": "DNB-DESK-20261026212600000-SYSTEM-FAILURE",
-  "generated_at": "2026-10-26T21:26:00.000Z",
+  "decision_id": "DNB-DESK-20261026222900000-SYSTEM-FAILURE",
+  "generated_at": "2026-10-26T22:29:00.000Z",
   "result": "SYSTEM_FAILURE",
-  "message": "No current-hour G_DESK context was published while forex was open; XAUUSD.x was in its scheduled daily break. No trade analysis or order is authorized.",
+  "message": "No current-hour G_DESK context was published while the full market was open; no trade analysis or order is authorized.",
   "decisions": [],
   "context": {
     "scan_id": null,
     "source_generated_at": null,
-    "market_state": "FOREX_OPEN_XAU_SCHEDULED_BREAK",
+    "market_state": "MARKET_OPEN_EXPECTED",
     "freshness": "UNAVAILABLE",
     "symbols_reported": 0,
     "symbols_received": 0,
     "validation_errors": [
-      "No current-hour gdesk_context_ready event appeared after two Render log reads through 21:25:30 UTC on 2026-10-26.",
-      "Forex was open and still required a current complete context snapshot; XAUUSD.x was inside its scheduled 21:00-22:00 UTC daily break.",
+      "No current-hour gdesk_context_ready event appeared after two Render log reads through 22:28:00 UTC on 2026-10-26.",
+      "Forex and XAUUSD.x were both open under the supplied session calendar, so the full 18-symbol snapshot was required but absent.",
       "No gdesk_context_symbol events could be associated with a scan_id; completeness, OHLC/spreads, gaps, latest-bar timestamps, indicators, and qualification metrics could not be validated."
     ],
     "stale_symbols": [],
@@ -23,8 +23,8 @@
       "XAUUSD.x_daily_break": {
         "start": "2026-10-26T21:00:00Z",
         "end": "2026-10-26T22:00:00Z",
-        "status": "ACTIVE",
-        "reason": "Scheduled 17:00-18:00 America/New_York gold break during US DST; a 21:00 UTC gold bar is not expected."
+        "status": "ENDED",
+        "reason": "Scheduled 17:00-18:00 America/New_York gold break during US DST; the 21:00 UTC gold bar is not expected."
       },
       "forex_weekend": {
         "start": "2026-10-23T21:00:00Z",
@@ -34,12 +34,12 @@
       }
     },
     "market_calendar": {
-      "expected_state": "FOREX_OPEN_XAU_SCHEDULED_BREAK",
+      "expected_state": "MARKET_OPEN",
       "forex_reopen": "2026-10-25T21:00:00Z",
       "gold_reopen_after_weekend": "2026-10-25T22:00:00Z",
       "gold_daily_break_start": "2026-10-26T21:00:00Z",
       "gold_daily_break_end": "2026-10-26T22:00:00Z",
-      "expected_latest_completed_forex_bar": "2026-10-26T20:00:00+00:00",
+      "expected_latest_completed_forex_bar": "2026-10-26T21:00:00+00:00",
       "expected_latest_completed_gold_bar": "2026-10-26T20:00:00+00:00"
     },
     "source": "G_DESK",
