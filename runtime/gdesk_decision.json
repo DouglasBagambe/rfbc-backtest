@@ -1,50 +1,46 @@
 {
-  "decision_id": "DNB-DESK-20261028152200000-SYSTEM-FAILURE",
-  "generated_at": "2026-10-28T15:22:00.000Z",
+  "decision_id": "DNB-DESK-20261028182424000-SYSTEM-FAILURE-11",
+  "generated_at": "2026-10-28T18:24:24.000Z",
   "result": "SYSTEM_FAILURE",
-  "message": "The dnb Fx gateway is suspended for billing and published no current-hour G_DESK context; no trade analysis or order is authorized.",
+  "message": "No current-hour gdesk_context_ready snapshot or symbol events were available after the required retry. Context completeness and bar freshness cannot be validated; no trade analysis or order is authorized.",
   "decisions": [],
   "context": {
     "scan_id": null,
     "source_generated_at": null,
-    "market_state": "MARKET_OPEN_EXPECTED",
+    "market_state": "UNKNOWN",
     "freshness": "UNAVAILABLE",
+    "symbols_expected": 18,
     "symbols_reported": 0,
     "symbols_received": 0,
     "validation_errors": [
-      "Render reports dnb-fx (srv-db7nv1t9fdbs73eto5d0) suspended with suspender=billing.",
-      "No current-hour gdesk_context_ready or gdesk_context_symbol event appeared after two Render log reads through 15:21:22 UTC on 2026-10-28.",
-      "The required 18-symbol snapshot was absent, so completeness, duplicates, OHLC/spreads, gaps, latest-bar timestamps, indicators, and setup qualification could not be validated."
+      "Initial Render app-log read for service srv-db7nv1t9fdbs73eto5d0 returned no logs for 2026-10-28T18:00:00Z through 2026-10-28T18:24:30Z; no current-hour gdesk_context_ready event was available.",
+      "Required retry read for 2026-10-28T18:20:00Z through 2026-10-28T18:25:00Z also returned no logs; no newer snapshot or gdesk_context_symbol events were available.",
+      "Render service event history returned no events. Service operational/billing state and delivery status are not independently confirmed by this scan.",
+      "The required 18-symbol snapshot was absent. Uniqueness, required symbols, OHLC/spread validity, unexpected gaps, latest completed bar timestamps, indicators, exposure, and candidate qualification could not be validated."
     ],
-    "stale_symbols": [],
-    "latest_completed_bar": "2026-10-28T14:00:00+00:00",
+    "stale_symbols": null,
+    "latest_completed_bar": null,
     "latest_completed_bar_by_symbol": {},
+    "expected_latest_completed_bucket_unverified": "2026-10-28T17:00:00Z",
     "expected_session_gaps": {
-      "XAUUSD.x_daily_break": {
-        "start": "2026-10-27T21:00:00Z",
-        "end": "2026-10-27T22:00:00Z",
-        "status": "ENDED",
-        "reason": "Scheduled 17:00-18:00 America/New_York gold break during US DST; the 21:00 UTC gold bar is not expected."
+      "status_at_scan_time": "No scheduled session gap expected at 2026-10-28T18:24:24Z; forex and gold are expected open by calendar.",
+      "gold_daily_break": {
+        "next_start": "2026-10-28T21:00:00Z",
+        "next_end": "2026-10-28T22:00:00Z",
+        "status": "FUTURE",
+        "reason": "Scheduled 17:00-18:00 America/New_York gold break during US DST; no candle is expected wholly inside the break."
       },
       "forex_weekend": {
-        "start": "2026-10-23T21:00:00Z",
-        "end": "2026-10-25T21:00:00Z",
+        "previous_start": "2026-10-23T21:00:00Z",
+        "previous_end": "2026-10-25T21:00:00Z",
         "status": "ENDED",
-        "reason": "Scheduled Friday 17:00 to Sunday 17:00 America/New_York forex weekend closure during US DST."
+        "reason": "Scheduled Friday 17:00 to Sunday 17:00 America/New_York forex closure during US DST."
       }
-    },
-    "market_calendar": {
-      "expected_state": "MARKET_OPEN",
-      "forex_reopen": "2026-10-25T21:00:00Z",
-      "gold_reopen_after_weekend": "2026-10-25T22:00:00Z",
-      "gold_daily_break_start": "2026-10-27T21:00:00Z",
-      "gold_daily_break_end": "2026-10-27T22:00:00Z",
-      "expected_latest_completed_forex_bar": "2026-10-28T14:00:00+00:00",
-      "expected_latest_completed_gold_bar": "2026-10-28T14:00:00+00:00"
     },
     "source": "G_DESK",
     "timeframe": "H1 completed bars",
     "manual_only": true,
-    "broker_sizing_authorised": false
+    "broker_sizing_authorised": false,
+    "volume_placeholder": true
   }
 }
