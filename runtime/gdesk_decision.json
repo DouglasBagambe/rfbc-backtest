@@ -1,8 +1,8 @@
 {
-  "decision_id": "DNB-DESK-20261028T202315Z-SYSTEM-FAILURE-12",
-  "generated_at": "2026-10-28T20:23:15Z",
+  "decision_id": "DNB-DESK-20261028T212051Z-SYSTEM-FAILURE-13",
+  "generated_at": "2026-10-28T21:20:51Z",
   "result": "SYSTEM_FAILURE",
-  "message": "Render returned no app logs for the dnb Fx service in the initial current-hour query or the newer-snapshot retry. No gdesk_context_ready event or symbol data is available; the required 18-symbol universe and actual completed-bar freshness cannot be validated. No trade is authorized.",
+  "message": "Render returned no app logs in the initial current-hour context query or the required newer-snapshot retry. No gdesk_context_ready or linked symbol events are available; the 18-symbol universe and actual completed-bar freshness cannot be validated. No trade is authorized.",
   "decisions": [],
   "context": {
     "scan_id": null,
@@ -13,34 +13,38 @@
     "symbols_reported": 0,
     "symbols_received": 0,
     "validation_errors": [
-      "Initial Render app-log query for service srv-db7nv1t9fdbs73eto5d0 from 2026-10-28T19:20:00Z through 2026-10-28T20:23:30Z returned zero logs; no current-hour gdesk_context_ready event was available.",
-      "Required newer-snapshot retry for 2026-10-28T20:00:00Z through 2026-10-28T20:24:00Z also returned zero logs.",
-      "Without a ready event or symbol events, scan_id linkage, event uniqueness, full .x universe, symbol completeness, OHLC/spread validity, actual latest H1 timestamps, and unexpected data gaps cannot be validated. ATR14, prior-12 ranges, directional changes, breakout distances, spread ratios, setup scoring, and candidate selection were not performed."
+      "Initial current-hour Render log query for service srv-db7nv1t9fdbs73eto5d0 (2026-10-28T20:00:00Z through 2026-10-28T21:21:00Z), filtered for gdesk_context_ready, returned zero logs.",
+      "Required newer-snapshot retry for the same service (2026-10-28T20:20:00Z through 2026-10-28T21:21:00Z), unfiltered, also returned zero logs.",
+      "Render service event history returned no events. No ready or symbol event is available to validate scan_id linkage, uniqueness, the required full 18-symbol .x universe, symbol completeness, OHLC/spread integrity, actual H1 timestamps, or unexpected gaps. ATR14, prior-12 ranges, 6/12-bar changes, breakout distances, spread ratios, setup scoring, and candidate selection were not performed."
     ],
     "stale_symbols": null,
-    "latest_completed_bar": "2026-10-28T19:00:00Z",
+    "latest_completed_bar": "2026-10-28T20:00:00Z",
+    "latest_completed_bar_note": "Calendar-derived expected H1 bar-start timestamp only at run time; no source snapshot or supplied bars were available to verify any symbol's actual latest completed bucket.",
     "latest_completed_bar_by_symbol": {},
-    "expected_latest_completed_bucket": "2026-10-28T19:00:00Z",
-    "latest_completed_bucket_note": "Calendar-derived expected most recently completed H1 bucket label only; no supplied bars were available to verify any symbol's actual latest bucket.",
     "expected_session_gaps": {
-      "status_at_scan_time": "No scheduled forex or gold closure expected by the session calendar at 2026-10-28T20:23:15Z; live market state remains unverified.",
+      "status_at_run_time": "No source status available. Calendar indicates the forex session is scheduled open; the scheduled Dukascopy gold daily break is active.",
+      "reference_time_utc": "2026-10-28T21:20:51Z",
+      "forex": {
+        "expected_status": "SCHEDULED_OPEN",
+        "reason": "Wednesday is outside the scheduled Friday-to-Sunday New York forex closure."
+      },
       "gold_daily_break": {
-        "next_start": "2026-10-28T21:00:00Z",
-        "next_end": "2026-10-28T22:00:00Z",
-        "status": "FUTURE",
-        "reason": "Scheduled 17:00-18:00 America/New_York gold break during US daylight time. Bars wholly inside the break are expected to be absent."
+        "status": "ACTIVE_EXPECTED_CLOSURE",
+        "start": "2026-10-28T21:00:00Z",
+        "end": "2026-10-28T22:00:00Z",
+        "reason": "17:00-18:00 America/New_York scheduled gold break during US daylight time. Bars wholly inside this interval are expected to be absent; do not fabricate or forward-fill."
       },
       "forex_weekend": {
         "next_start": "2026-10-30T21:00:00Z",
         "next_end": "2026-11-01T21:00:00Z",
         "status": "FUTURE",
-        "reason": "Scheduled Friday 17:00 to Sunday 17:00 America/New_York forex closure during US daylight time."
+        "reason": "Friday 17:00 through Sunday 17:00 America/New_York scheduled closure during US daylight time."
       },
       "observed_symbol_gaps": "UNKNOWN",
       "fabricated_or_forward_filled_bars": 0
     },
     "delivery_status": "UNVERIFIED",
-    "delivery_evidence": "The gateway app-log queries returned no entries, so neither dnb_manual_alert_delivery state=SENT nor dnb_hourly_report_delivery ok=true could be confirmed.",
+    "delivery_evidence": "No gateway app logs were returned, so dnb_manual_alert_delivery state=SENT and dnb_hourly_report_delivery ok=true could not be verified.",
     "source": "G_DESK",
     "timeframe": "H1 completed bars",
     "manual_only": true,
