@@ -1,6 +1,6 @@
 {
-  "decision_id": "DNB-DESK-20261028132000000-SYSTEM-FAILURE",
-  "generated_at": "2026-10-28T13:20:00.000Z",
+  "decision_id": "DNB-DESK-20261028142400000-SYSTEM-FAILURE",
+  "generated_at": "2026-10-28T14:24:00.000Z",
   "result": "SYSTEM_FAILURE",
   "message": "The dnb Fx gateway is suspended for billing and published no current-hour G_DESK context; no trade analysis or order is authorized.",
   "decisions": [],
@@ -13,11 +13,11 @@
     "symbols_received": 0,
     "validation_errors": [
       "Render reports dnb-fx (srv-db7nv1t9fdbs73eto5d0) suspended with suspender=billing.",
-      "No current-hour gdesk_context_ready or gdesk_context_symbol event appeared after two Render log reads through 13:19:29 UTC on 2026-10-28.",
+      "No current-hour gdesk_context_ready or gdesk_context_symbol event appeared after two Render log reads through 14:23:19 UTC on 2026-10-28.",
       "The required 18-symbol snapshot was absent, so completeness, duplicates, OHLC/spreads, gaps, latest-bar timestamps, indicators, and setup qualification could not be validated."
     ],
     "stale_symbols": [],
-    "latest_completed_bar": "2026-10-28T12:00:00+00:00",
+    "latest_completed_bar": "2026-10-28T13:00:00+00:00",
     "latest_completed_bar_by_symbol": {},
     "expected_session_gaps": {
       "XAUUSD.x_daily_break": {
@@ -39,8 +39,8 @@
       "gold_reopen_after_weekend": "2026-10-25T22:00:00Z",
       "gold_daily_break_start": "2026-10-27T21:00:00Z",
       "gold_daily_break_end": "2026-10-27T22:00:00Z",
-      "expected_latest_completed_forex_bar": "2026-10-28T12:00:00+00:00",
-      "expected_latest_completed_gold_bar": "2026-10-28T12:00:00+00:00"
+      "expected_latest_completed_forex_bar": "2026-10-28T13:00:00+00:00",
+      "expected_latest_completed_gold_bar": "2026-10-28T13:00:00+00:00"
     },
     "source": "G_DESK",
     "timeframe": "H1 completed bars",
