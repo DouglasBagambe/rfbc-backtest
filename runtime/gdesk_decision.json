@@ -1,8 +1,8 @@
 {
-  "decision_id": "DNB-DESK-20261028182424000-SYSTEM-FAILURE-11",
-  "generated_at": "2026-10-28T18:24:24.000Z",
+  "decision_id": "DNB-DESK-20261028T192508Z-SYSTEM-FAILURE",
+  "generated_at": "2026-10-28T19:25:08.337Z",
   "result": "SYSTEM_FAILURE",
-  "message": "No current-hour gdesk_context_ready snapshot or symbol events were available after the required retry. Context completeness and bar freshness cannot be validated; no trade analysis or order is authorized.",
+  "message": "No Render app logs or current-hour gdesk_context_ready/symbol events were returned on the initial read or required retry. The 18-symbol snapshot, completed-bar freshness, and candidate rules cannot be validated; no trade is authorized.",
   "decisions": [],
   "context": {
     "scan_id": null,
@@ -13,30 +13,32 @@
     "symbols_reported": 0,
     "symbols_received": 0,
     "validation_errors": [
-      "Initial Render app-log read for service srv-db7nv1t9fdbs73eto5d0 returned no logs for 2026-10-28T18:00:00Z through 2026-10-28T18:24:30Z; no current-hour gdesk_context_ready event was available.",
-      "Required retry read for 2026-10-28T18:20:00Z through 2026-10-28T18:25:00Z also returned no logs; no newer snapshot or gdesk_context_symbol events were available.",
-      "Render service event history returned no events. Service operational/billing state and delivery status are not independently confirmed by this scan.",
-      "The required 18-symbol snapshot was absent. Uniqueness, required symbols, OHLC/spread validity, unexpected gaps, latest completed bar timestamps, indicators, exposure, and candidate qualification could not be validated."
+      "Initial Render app-log query for service srv-db7nv1t9fdbs73eto5d0 from 2026-10-28T19:00:00Z through 2026-10-28T19:25:00Z returned zero logs; no current-hour gdesk_context_ready event was available.",
+      "Required retry query for 2026-10-28T17:00:00Z through 2026-10-28T19:25:00Z also returned zero logs; no newer ready snapshot or symbol events were available.",
+      "With no ready event or symbol events, uniqueness, the required .x universe, per-symbol completeness, price/spread validity, unexpected gaps, and actual bar timestamps cannot be checked. ATR14, ranges, directional changes, spread ratios, setup scores, and exposure suitability were not calculated."
     ],
     "stale_symbols": null,
-    "latest_completed_bar": null,
+    "latest_completed_bar": "2026-10-28T18:00:00Z",
     "latest_completed_bar_by_symbol": {},
-    "expected_latest_completed_bucket_unverified": "2026-10-28T17:00:00Z",
+    "expected_latest_completed_bucket": "2026-10-28T18:00:00Z",
+    "latest_completed_bucket_note": "Expected most recent completed H1 bucket by wall-clock/session calendar only; no actual symbol bars were available to verify it.",
     "expected_session_gaps": {
-      "status_at_scan_time": "No scheduled session gap expected at 2026-10-28T18:24:24Z; forex and gold are expected open by calendar.",
+      "status_at_scan_time": "No scheduled session closure expected by calendar at scan time; live market state remains unverified.",
       "gold_daily_break": {
         "next_start": "2026-10-28T21:00:00Z",
         "next_end": "2026-10-28T22:00:00Z",
         "status": "FUTURE",
-        "reason": "Scheduled 17:00-18:00 America/New_York gold break during US DST; no candle is expected wholly inside the break."
+        "reason": "Scheduled 17:00-18:00 America/New_York gold break during US daylight time; bars wholly inside the break are not expected."
       },
       "forex_weekend": {
-        "previous_start": "2026-10-23T21:00:00Z",
-        "previous_end": "2026-10-25T21:00:00Z",
-        "status": "ENDED",
-        "reason": "Scheduled Friday 17:00 to Sunday 17:00 America/New_York forex closure during US DST."
+        "next_start": "2026-10-30T21:00:00Z",
+        "next_end": "2026-11-01T21:00:00Z",
+        "status": "FUTURE",
+        "reason": "Scheduled Friday 17:00 to Sunday 17:00 America/New_York forex closure during US daylight time."
       }
     },
+    "delivery_status": "UNVERIFIED",
+    "delivery_evidence": "No gateway app logs were returned; dnb_manual_alert_delivery state=SENT and dnb_hourly_report_delivery ok=true could not be confirmed.",
     "source": "G_DESK",
     "timeframe": "H1 completed bars",
     "manual_only": true,
